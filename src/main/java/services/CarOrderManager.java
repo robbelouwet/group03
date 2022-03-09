@@ -1,16 +1,18 @@
 package services;
 
-import domain.*;
+import domain.OrderStatus;
+import domain.ProductionScheduler;
+import domain.car.CarModel;
+import domain.car.CarOrder;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CarOrderManager {
 
     @Getter // this needs to be a by-reference getter! Cloning every time defeats the singleton pattern
-    private final CarOrderManager instance = new CarOrderManager();
+    private static final CarOrderManager instance = new CarOrderManager();
 
     private List<CarOrder> orders;
     private List<CarModel> carModels;

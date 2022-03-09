@@ -1,4 +1,6 @@
-package domain;
+package domain.assembly;
+
+import domain.WorkStation;
 
 import java.util.LinkedList;
 import java.util.List;

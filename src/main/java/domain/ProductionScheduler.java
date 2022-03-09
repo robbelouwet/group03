@@ -1,5 +1,8 @@
 package domain;
 
+import domain.assembly.AssemblyProcess;
+import domain.car.CarOrder;
+
 public class ProductionScheduler {
 
     public void addOrder(CarOrder order){

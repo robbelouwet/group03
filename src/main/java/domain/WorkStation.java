@@ -1,11 +1,16 @@
 package domain;
 
-import java.util.ArrayList;
+import domain.assembly.AssemblyProcess;
+import domain.assembly.AssemblyTask;
+import domain.car.CarOrder;
+
+import java.util.List;
 
 public class WorkStation {
     private AssemblyProcess currentProcess;
 
-    public ArrayList<AssemblyTask> getTasks(){
+    @Deprecated // currentProcess 1 -> 1..* tasks?
+    public List<AssemblyTask> getTasks(){
         throw new UnsupportedOperationException();
     }
 

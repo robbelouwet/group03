@@ -1,5 +1,6 @@
-package domain;
+package domain.car;
 
+import domain.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 

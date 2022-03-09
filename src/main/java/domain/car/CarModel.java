@@ -1,4 +1,6 @@
-package domain;
+package domain.car;
+
+import domain.car.specification.CarModelSpecification;
 
 public class CarModel {
     private final String name;

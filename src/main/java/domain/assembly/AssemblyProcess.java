@@ -1,15 +1,16 @@
-package domain;
+package domain.assembly;
 
+import domain.car.CarOrder;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 public class AssemblyProcess {
-    private ArrayList<AssemblyTask> tasks;
+    private List<AssemblyTask> tasks;
     @Setter private CarOrder carOrder;
 
-    public ArrayList<AssemblyTask> getTasks() {
+    public List<AssemblyTask> getTasks() {
         throw new UnsupportedOperationException();
     }
 
