@@ -8,11 +8,7 @@ import java.util.List;
 
 public class AssemblyProcess {
     private List<AssemblyTask> tasks;
-    private final CarOrder carOrder;
-
-    public AssemblyProcess(CarOrder carOrder) {
-        this.carOrder = carOrder;
-    }
+    @Setter private CarOrder carOrder;
 
     public List<AssemblyTask> getTasks() {
         throw new UnsupportedOperationException();
@@ -25,4 +21,11 @@ public class AssemblyProcess {
     public LocalDateTime getStartTimeOrder() {
         throw new UnsupportedOperationException();
     }
+
+    public void updateEndTimeOrder(LocalDateTime dateTime) {
+    }
+
+    public void removeCarOrder() {
+    }
+
 }

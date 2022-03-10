@@ -1,28 +1,22 @@
 package domain.car;
 
-import lombok.Getter;
+import domain.car.specification.CarModelSpecification;
 
-/**
- * @immutable
- */
 public class CarModel {
-    /**
-     * @immutable
-     */
-    @Getter
     private final String name;
-    /**
-     * @immutable
-     * @representationObject
-     */
-    @Getter
-    private final CarModelSpecification modelSpecification;
+    private final CarModelSpecification specification;
 
-    /**
-     * @post | getName().equals(name) && getModelSpecification() == specification
-     */
     public CarModel(String name, CarModelSpecification specification) {
         this.name = name;
-        this.modelSpecification = specification;
+        this.specification = specification;
+    }
+
+    public String getModelSpecification(){
+        return name;
+    }
+
+    @Override
+    public CarModel clone(){
+        return new CarModel(name, specification.clone());
     }
 }

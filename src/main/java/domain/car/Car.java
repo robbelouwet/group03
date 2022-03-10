@@ -1,19 +1,22 @@
 package domain.car;
 
-import lombok.Getter;
+import domain.car.specification.CarModelSpecification;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Car {
-    @Getter
-    private final Map<String, String> selections;
-    @Getter
-    private final CarModel model;
+    private List<CarModelSpecification> specifications;
 
-    public Car(CarModel carModel, Map<String, String> selections) {
-        this.model = carModel;
-        this.selections = selections; // TODO clone this map
+    @Override
+    public Car clone() {
+        //TODO
+        return new Car();
+    }
+
+    public List<CarModelSpecification> getSpecifications() {
+        return specifications.stream()
+                .map(CarModelSpecification::clone)
+                .collect(Collectors.toList());
     }
 }
