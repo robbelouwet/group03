@@ -1,7 +1,6 @@
 package app.ui;
 
 import app.presentation.AssemblyLineController;
-import domain.ProductionScheduler;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -11,14 +10,6 @@ public class GarageHolderView {
     private final AssemblyLineController controller;
     private final Scanner scanner;
 
-    public static void main(String[] args) {
-        ProductionScheduler.getInstance();  // Init
-        try {
-            new GarageHolderView(new Scanner(System.in));
-        } catch (IllegalStateException | NoSuchElementException e) {
-            System.out.println("Exiting application");
-        }
-    }
 
     public GarageHolderView(Scanner scanner) {
         this.scanner = scanner;
