@@ -3,7 +3,7 @@ package app.presentation;
 import domain.WorkStation;
 import domain.assembly.AssemblyTask;
 
-public class CarMechanicUIController {
+public class CarController {
     public void loginToSystem() {
 
     }

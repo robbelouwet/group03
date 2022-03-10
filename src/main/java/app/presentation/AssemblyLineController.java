@@ -1,6 +1,6 @@
 package app.presentation;
 
-import app.ui.GarageHolderUI;
+import app.ui.GarageHolderView;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import services.CarOrderManager;
@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GarageHolderUIController {
+public class AssemblyLineController {
     private final CarOrderManager carOrderManager = CarOrderManager.getInstance();
-    private final GarageHolderUI ui;
+    private final GarageHolderView ui;
 
     private CarModel selectedModel;
 
-    public GarageHolderUIController(GarageHolderUI ui) {
+    public AssemblyLineController(GarageHolderView ui) {
         this.ui = ui;
     }
 

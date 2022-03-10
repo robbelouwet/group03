@@ -1,28 +1,28 @@
 package app.ui;
 
-import app.presentation.GarageHolderUIController;
+import app.presentation.AssemblyLineController;
 import domain.ProductionScheduler;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class GarageHolderUI {
+public class GarageHolderView {
     // TODO obviously this class needs some work, I just made this for testing
-    private final GarageHolderUIController controller;
+    private final AssemblyLineController controller;
     private final Scanner scanner;
 
     public static void main(String[] args) {
         ProductionScheduler.getInstance();  // Init
         try {
-            new GarageHolderUI(new Scanner(System.in));
+            new GarageHolderView(new Scanner(System.in));
         } catch (IllegalStateException | NoSuchElementException e) {
             System.out.println("Exiting application");
         }
     }
 
-    public GarageHolderUI(Scanner scanner) {
+    public GarageHolderView(Scanner scanner) {
         this.scanner = scanner;
-        controller = new GarageHolderUIController(this);
+        controller = new AssemblyLineController(this);
         controller.loginToSystem();
     }
 

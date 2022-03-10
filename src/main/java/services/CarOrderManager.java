@@ -35,14 +35,14 @@ public class CarOrderManager {
 
     public List<CarOrder> getPendingOrders() {
         return carOrderCatalog.getOrders().stream()
-                .filter(o -> o.getStatus() == OrderStatus.Pending)
+                .filter(o -> !o.isFinished())
                 .map(CarOrder::clone)
                 .collect(Collectors.toList());
     }
 
     public List<CarOrder> getFinishedOrders() {
         return carOrderCatalog.getOrders().stream()
-                .filter(o -> o.getStatus() == OrderStatus.Finished)
+                .filter(CarOrder::isFinished)
                 .map(CarOrder::clone)
                 .collect(Collectors.toList());
     }
