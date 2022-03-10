@@ -6,6 +6,8 @@ import domain.car.Car;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import lombok.Getter;
+import persistence.CarOrderCatalog;
+import persistence.CarOrderCatalogObserver;
 import persistence.CarRepository;
 
 import java.time.LocalDateTime;
@@ -18,11 +20,10 @@ public class CarOrderManager {
     private static CarOrderManager instance;
 
     private final CarRepository carRepository = new CarRepository();
-    private final List<CarOrder> orders = new ArrayList<>();
-    private final ProductionScheduler scheduler;
+    private final CarOrderCatalog carOrderCatalog;
 
     private CarOrderManager() {
-        scheduler = ProductionScheduler.getInstance();
+        carOrderCatalog = CarOrderCatalog.getInstance();
     }
 
     public static CarOrderManager getInstance() {
@@ -33,14 +34,14 @@ public class CarOrderManager {
     }
 
     public List<CarOrder> getPendingOrders() {
-        return orders.stream()
+        return carOrderCatalog.getOrders().stream()
                 .filter(o -> o.getStatus() == OrderStatus.Pending)
                 .map(CarOrder::clone)
                 .collect(Collectors.toList());
     }
 
     public List<CarOrder> getFinishedOrders() {
-        return orders.stream()
+        return carOrderCatalog.getOrders().stream()
                 .filter(o -> o.getStatus() == OrderStatus.Finished)
                 .map(CarOrder::clone)
                 .collect(Collectors.toList());
@@ -52,8 +53,7 @@ public class CarOrderManager {
 
     public CarOrder submitCarOrder(CarModel carModel, Map<String, String> data) {
         CarOrder order = new CarOrder(LocalDateTime.now(), carModel, data);
-        scheduler.addOrder(order);
-        orders.add(order);
+        carOrderCatalog.addOrder(order);
         return order.clone();
     }
 }

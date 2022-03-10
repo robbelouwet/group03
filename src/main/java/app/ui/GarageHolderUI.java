@@ -1,10 +1,9 @@
 package app.ui;
 
 import app.presentation.GarageHolderUIController;
-import domain.car.CarModel;
-import domain.car.CarModelSpecification;
-import domain.car.CarOrder;
+import domain.ProductionScheduler;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class GarageHolderUI {
@@ -13,6 +12,7 @@ public class GarageHolderUI {
     private final Scanner scanner;
 
     public static void main(String[] args) {
+        ProductionScheduler.getInstance();  // Init
         try {
             new GarageHolderUI(new Scanner(System.in));
         } catch (IllegalStateException | NoSuchElementException e) {
@@ -26,7 +26,7 @@ public class GarageHolderUI {
         controller.loginToSystem();
     }
 
-    public void showOverview(List<CarOrder> pendingOrders, List<CarOrder> finishedOrders) {
+    public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
         System.out.println("Pending orders:");
         for (var order : pendingOrders) {
             System.out.println(order);
@@ -49,14 +49,14 @@ public class GarageHolderUI {
         }
     }
 
-    private boolean isModelName(String name, List<CarModel> models) {
-        return models.stream().anyMatch(m -> m.getName().equals(name));
+    private boolean isModelName(String name, List<String> models) {
+        return models.stream().anyMatch(m -> m.equals(name));
     }
 
-    public void showCarModels(List<CarModel> models) {
+    public void showCarModels(List<String> models) {
         System.out.println("Carmodel options:");
         for (var model : models) {
-            System.out.println(model.getName());
+            System.out.println(model);
         }
         System.out.print("Type the name of a model to select it: ");
         String model = scanner.nextLine();
@@ -65,7 +65,7 @@ public class GarageHolderUI {
             model = scanner.nextLine();
         }
         String finalModel = model;
-        CarModel carModel = models.stream().filter(m -> m.getName().equals(finalModel)).findAny().orElseThrow();
+        String carModel = models.stream().filter(m -> m.equals(finalModel)).findAny().orElseThrow();
         controller.selectModel(carModel);
     }
 
@@ -73,12 +73,11 @@ public class GarageHolderUI {
         return values.stream().anyMatch(v -> v.equals(value));
     }
 
-    public void showCarForm(CarModelSpecification specification) {
-        Map<String, List<String>> options = specification.getOptions();
+    public void showCarForm(Map<String, List<String>> options) {
         System.out.println("Make a selection for each option, or type [cancel]");
         Map<String, String> selection = new HashMap<>();
         for (var key : options.keySet()) {
-            System.out.println(key);
+            System.out.println("Option: " + key);
             for (var value : options.get(key)) {
                 System.out.println(value);
             }
@@ -101,8 +100,8 @@ public class GarageHolderUI {
         controller.submitCarOrder(selection);
     }
 
-    public void showPredictedEndTime(CarOrder order) {
-        System.out.println("Predicted end time: " + order.getEndTime());
+    public void showPredictedEndTime(LocalDateTime endTime) {
+        System.out.println("Predicted end time: " + endTime);
         controller.loginToSystem();
     }
 }

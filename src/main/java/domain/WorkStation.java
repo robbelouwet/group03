@@ -1,13 +1,12 @@
 package domain;
 
-import domain.assembly.AssemblyProcess;
 import domain.assembly.AssemblyTask;
 import domain.car.CarOrder;
 
 import java.util.List;
 
 public class WorkStation {
-    private AssemblyProcess currentProcess;
+    private CarOrder currentOrder;
 
     @Deprecated // currentProcess 1 -> 1..* tasks?
     public List<AssemblyTask> getTasks(){

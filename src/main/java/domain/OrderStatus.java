@@ -2,5 +2,6 @@ package domain;
 
 public enum OrderStatus {
     Pending,
-    Finished
+    Finished,
+    OnAssemblyLine
 }

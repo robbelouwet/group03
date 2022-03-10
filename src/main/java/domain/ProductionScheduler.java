@@ -1,37 +1,42 @@
 package domain;
 
-import domain.assembly.AssemblyProcess;
 import domain.car.CarOrder;
 import lombok.Getter;
-import services.CarOrderManager;
+import persistence.CarOrderCatalog;
+import persistence.CarOrderCatalogObserver;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.time.Duration;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
-public class ProductionScheduler {
+public class ProductionScheduler implements CarOrderCatalogObserver {
     @Getter
     private static final ProductionScheduler instance = new ProductionScheduler();
 
-    private final Queue<AssemblyProcess> scheduledProcesses = new LinkedList<>();
+    private final CarOrderCatalog carOrderCatalog;
 
-    public void addOrder(CarOrder order){
-        AssemblyProcess process = new AssemblyProcess(order);
-        scheduledProcesses.add(process);
-        // TODO calculate predicted end time
+    private ProductionScheduler() {
+        carOrderCatalog = CarOrderCatalog.getInstance();
+        carOrderCatalog.registerListener(this);
     }
 
-    public AssemblyProcess getNextProcess(){
+    public CarOrder getNextProcess(){
+        var orders = carOrderCatalog.getOrders().stream().filter(o -> o.getStatus().equals(OrderStatus.Pending)).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());
+        if (orders.size() == 0) {
+            return null;
+        }
+        CarOrder order = orders.get(0);
+        order.setStatus(OrderStatus.OnAssemblyLine);
+        return order;
+    }
+
+    private void delayed(Duration delay) {
         throw new UnsupportedOperationException();
     }
 
-    private void updateSchedule(AssemblyProcess process){
-        // TODO how are we calculating this?
-    }
-
     @Override
-    public ProductionScheduler clone() {
-        return new ProductionScheduler();
+    public void carOrderAdded(CarOrder order) {
+        // TODO calculate
+        order.setEndTime(order.getStartTime().plusDays(1));
     }
 }
