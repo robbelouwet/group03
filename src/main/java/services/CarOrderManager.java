@@ -2,21 +2,35 @@ package services;
 
 import domain.OrderStatus;
 import domain.ProductionScheduler;
+import domain.car.Car;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import lombok.Getter;
+import persistence.CarRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CarOrderManager {
+    private static CarOrderManager instance;
 
-    @Getter // this needs to be a by-reference getter! Cloning every time defeats the singleton pattern
-    private static final CarOrderManager instance = new CarOrderManager();
+    private final CarRepository carRepository = new CarRepository();
+    private final List<CarOrder> orders = new ArrayList<>();
+    private final ProductionScheduler scheduler;
 
-    private List<CarOrder> orders;
-    private List<CarModel> carModels;
-    private ProductionScheduler scheduler;
+    private CarOrderManager() {
+        scheduler = ProductionScheduler.getInstance();
+    }
+
+    public static CarOrderManager getInstance() {
+        if (instance == null) {
+            instance = new CarOrderManager();
+        }
+        return instance;
+    }
 
     public List<CarOrder> getPendingOrders() {
         return orders.stream()
@@ -33,12 +47,13 @@ public class CarOrderManager {
     }
 
     public List<CarModel> getCarModels() {
-        return carModels.stream()
-                .map(CarModel::clone)
-                .collect(Collectors.toList());
+        return carRepository.getModels();
     }
 
-    public ProductionScheduler getScheduler() {
-        return scheduler.clone();
+    public CarOrder submitCarOrder(CarModel carModel, Map<String, String> data) {
+        CarOrder order = new CarOrder(LocalDateTime.now(), carModel, data);
+        scheduler.addOrder(order);
+        orders.add(order);
+        return order.clone();
     }
 }
