@@ -1,8 +1,8 @@
-package app.presentation;
+package app.controllers;
 
 import app.ui.TestFrame;
-import services.AssemblyManager;
-import services.CarOrderManager;
+import services.assembly.AssemblyManager;
+import services.car.CarOrderManager;
 
 public class TestPresenter {
 

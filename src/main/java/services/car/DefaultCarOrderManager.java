@@ -1,7 +1,7 @@
-package services;
+package services.car;
 
 import domain.OrderStatus;
-import domain.ProductionScheduler;
+import domain.scheduler.ProductionScheduler;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import lombok.Getter;
@@ -9,15 +9,18 @@ import lombok.Getter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CarOrderManager {
+// package-private!
+class DefaultCarOrderManager extends CarOrderManager {
 
     @Getter // this needs to be a by-reference getter! Cloning every time defeats the singleton pattern
-    private static final CarOrderManager instance = new CarOrderManager();
+    private static final DefaultCarOrderManager instance = new DefaultCarOrderManager();
 
     private List<CarOrder> orders;
     private List<CarModel> carModels;
     private ProductionScheduler scheduler;
 
+
+    @Override
     public List<CarOrder> getPendingOrders() {
         return orders.stream()
                 .filter(o -> o.getStatus() == OrderStatus.Pending)
@@ -25,6 +28,7 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<CarOrder> getFinishedOrders() {
         return orders.stream()
                 .filter(o -> o.getStatus() == OrderStatus.Finished)
@@ -32,12 +36,14 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<CarModel> getCarModels() {
         return carModels.stream()
                 .map(CarModel::clone)
                 .collect(Collectors.toList());
     }
 
+    @Override
     public ProductionScheduler getScheduler() {
         return scheduler.clone();
     }
