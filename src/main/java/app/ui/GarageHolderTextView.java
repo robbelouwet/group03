@@ -1,23 +1,24 @@
 package app.ui;
 
-import app.presentation.AssemblyLineController;
 import app.presentation.CarController;
+import app.ui.interfaces.IGarageHolderView;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class GarageHolderView {
+public class GarageHolderTextView implements IGarageHolderView {
     // TODO obviously this class needs some work, I just made this for testing
     private final CarController controller;
     private final Scanner scanner;
 
 
-    public GarageHolderView(Scanner scanner) {
+    public GarageHolderTextView(Scanner scanner) {
         this.scanner = scanner;
         controller = new CarController(this);
         controller.showMainMenu();
     }
 
+    @Override
     public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
         System.out.println("Pending orders:");
         for (var order : pendingOrders) {
@@ -36,15 +37,15 @@ public class GarageHolderView {
         }
         if (action.equals("order")) {
             controller.showModels();
-        } else {
-            return;
         }
     }
 
-    private boolean isModelName(String name, List<String> models) {
+    @Override
+    public boolean isModelName(String name, List<String> models) {
         return models.stream().anyMatch(m -> m.equals(name));
     }
 
+    @Override
     public void showCarModels(List<String> models) {
         System.out.println("Carmodel options:");
         for (var model : models) {
@@ -61,10 +62,12 @@ public class GarageHolderView {
         controller.selectModel(carModel);
     }
 
-    private boolean isValue(String value, List<String> values) {
+    @Override
+    public boolean isValue(String value, List<String> values) {
         return values.stream().anyMatch(v -> v.equals(value));
     }
 
+    @Override
     public void showCarForm(Map<String, List<String>> options) {
         System.out.println("Make a selection for each option, or type [cancel]");
         Map<String, String> selection = new HashMap<>();
@@ -92,6 +95,7 @@ public class GarageHolderView {
         controller.submitCarOrder(selection);
     }
 
+    @Override
     public void showPredictedEndTime(LocalDateTime endTime) {
         System.out.println("Predicted end time: " + endTime);
         controller.showMainMenu();

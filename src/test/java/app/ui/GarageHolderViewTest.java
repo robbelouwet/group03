@@ -1,15 +1,15 @@
 package app.ui;
 
-import domain.ProductionScheduler;
+import domain.scheduler.ProductionScheduler;
 
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GarageHolderViewTest {
     public static void main(String[] args) {
+        // TODO: bad idea, implement static initialize method that first checks the instance,
+        //  then performs initializing logic
         ProductionScheduler.getInstance(); // init
-        new GarageHolderView(new Scanner(System.in));
+        new GarageHolderTextView(new Scanner(System.in));
     }
 
 }

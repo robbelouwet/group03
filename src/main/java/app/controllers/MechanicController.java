@@ -1,6 +1,6 @@
-package app.presentation;
+package app.controllers;
 
-import app.ui.interfaces.IGarageHolderView;
+import app.ui.GarageHolderTextView;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import services.car.CarOrderManager;
@@ -9,29 +9,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CarController {
+public class MechanicController {
     private final CarOrderManager carOrderManager = CarOrderManager.getInstance();
-    private final IGarageHolderView ui;
+    private final GarageHolderTextView view;
 
     private CarModel selectedModel;
 
-    public CarController(IGarageHolderView ui) {
-        this.ui = ui;
+    public MechanicController(GarageHolderTextView view) {
+        this.view = view;
     }
 
-    public void showMainMenu() {
+    public void loginToSystem() {
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         List<CarOrder> finishedOrders = carOrderManager.getFinishedOrders();
-        ui.showOverview(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()), finishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
+        view.showOverview(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()), finishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
     }
 
     public void showModels() {
-        ui.showCarModels(carOrderManager.getCarModels().stream().map(CarModel::getName).collect(Collectors.toList()));
+        view.showCarModels(carOrderManager.getCarModels().stream().map(CarModel::getName).collect(Collectors.toList()));
     }
 
     public void selectModel(String model) {
         selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
-        ui.showCarForm(selectedModel.getModelSpecification().getOptions());
+        view.showCarForm(selectedModel.getModelSpecification().getOptions());
     }
 
     public void submitCarOrder(Map<String, String> data) {
@@ -40,6 +40,6 @@ public class CarController {
         }
         CarModel model = selectedModel;
         selectedModel = null;
-        ui.showPredictedEndTime(carOrderManager.submitCarOrder(model, data).getEndTime());
+        view.showPredictedEndTime(carOrderManager.submitCarOrder(model, data).getEndTime());
     }
 }

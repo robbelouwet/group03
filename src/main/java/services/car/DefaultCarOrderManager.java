@@ -1,38 +1,30 @@
-package services;
+package services.car;
 
-import domain.OrderStatus;
-import domain.ProductionScheduler;
-import domain.car.Car;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import lombok.Getter;
 import persistence.CarOrderCatalog;
-import persistence.CarOrderCatalogObserver;
 import persistence.CarRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CarOrderManager {
-    private static CarOrderManager instance;
+// package-private!
+class DefaultCarOrderManager extends CarOrderManager {
 
+    @Getter // this needs to be a by-reference getter! Cloning every time defeats the singleton pattern
+    private static final DefaultCarOrderManager instance = new DefaultCarOrderManager();
     private final CarRepository carRepository = new CarRepository();
     private final CarOrderCatalog carOrderCatalog;
 
-    private CarOrderManager() {
+    DefaultCarOrderManager() {
         carOrderCatalog = CarOrderCatalog.getInstance();
     }
 
-    public static CarOrderManager getInstance() {
-        if (instance == null) {
-            instance = new CarOrderManager();
-        }
-        return instance;
-    }
 
+    @Override
     public List<CarOrder> getPendingOrders() {
         return carOrderCatalog.getOrders().stream()
                 .filter(o -> !o.isFinished())
@@ -40,6 +32,7 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<CarOrder> getFinishedOrders() {
         return carOrderCatalog.getOrders().stream()
                 .filter(CarOrder::isFinished)
@@ -47,6 +40,7 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<CarModel> getCarModels() {
         return carRepository.getModels();
     }

@@ -1,6 +1,6 @@
 package app.ui;
 
-import app.presentation.TestPresenter;
+import app.controllers.TestPresenter;
 import javax.swing.*;
 import java.awt.*;
 
