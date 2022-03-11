@@ -1,6 +1,5 @@
 package domain.scheduler;
 
-import domain.assembly.AssemblyProcess;
 import domain.car.CarOrder;
 import lombok.Getter;
 
@@ -11,9 +10,9 @@ public abstract class ProductionScheduler {
 
     public abstract void addOrder(CarOrder order);
 
-    public abstract AssemblyProcess getNextProcess();
+    public abstract CarOrder getNextOrder();
 
-    public abstract void updateSchedule(AssemblyProcess process);
+    public abstract void updateSchedule(CarOrder process);
 
     @Override
     public ProductionScheduler clone(){

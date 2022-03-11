@@ -1,18 +1,17 @@
 package app.ui;
 
-import app.controllers.CarController;
-import app.ui.interfaces.IGarageHolderView;
+import app.presentation.CarController;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class GarageHolderTextView implements IGarageHolderView {
+public class GarageHolderView {
     // TODO obviously this class needs some work, I just made this for testing
     private final CarController controller;
     private final Scanner scanner;
 
 
-    public GarageHolderTextView(Scanner scanner) {
+    public GarageHolderView(Scanner scanner) {
         this.scanner = scanner;
         controller = new CarController(this);
         controller.loginToSystem();
@@ -36,6 +35,8 @@ public class GarageHolderTextView implements IGarageHolderView {
         }
         if (action.equals("order")) {
             controller.showModels();
+        } else {
+            return;
         }
     }
 

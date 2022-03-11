@@ -4,10 +4,9 @@ import app.controllers.ManagerController;
 import app.ui.interfaces.IManagerView;
 
 public class ManagerTextView implements IManagerView {
-    ManagerController assemblyController;
+    ManagerController managerController;
 
     public ManagerTextView() {
-        assemblyController = new ManagerController();
-        assemblyController.setManagerView(this);
+        managerController = new ManagerController(this);
     }
 }

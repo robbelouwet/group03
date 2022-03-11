@@ -1,11 +1,11 @@
 package services.car;
 
-import domain.scheduler.ProductionScheduler;
+
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import lombok.Getter;
-
 import java.util.List;
+import java.util.Map;
 
 public abstract class CarOrderManager {
 
@@ -19,5 +19,5 @@ public abstract class CarOrderManager {
 
     public abstract List<CarModel> getCarModels();
 
-    public abstract ProductionScheduler getScheduler();
+    public abstract CarOrder submitCarOrder(CarModel carModel, Map<String, String> data);
 }
