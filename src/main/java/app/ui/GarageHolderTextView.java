@@ -1,6 +1,6 @@
 package app.ui;
 
-import app.controllers.CarController;
+import app.presentation.CarController;
 import app.ui.interfaces.IGarageHolderView;
 
 import java.time.LocalDateTime;
@@ -15,9 +15,10 @@ public class GarageHolderTextView implements IGarageHolderView {
     public GarageHolderTextView(Scanner scanner) {
         this.scanner = scanner;
         controller = new CarController(this);
-        controller.loginToSystem();
+        controller.showMainMenu();
     }
 
+    @Override
     public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
         System.out.println("Pending orders:");
         for (var order : pendingOrders) {
@@ -39,10 +40,12 @@ public class GarageHolderTextView implements IGarageHolderView {
         }
     }
 
-    private boolean isModelName(String name, List<String> models) {
+    @Override
+    public boolean isModelName(String name, List<String> models) {
         return models.stream().anyMatch(m -> m.equals(name));
     }
 
+    @Override
     public void showCarModels(List<String> models) {
         System.out.println("Carmodel options:");
         for (var model : models) {
@@ -59,10 +62,12 @@ public class GarageHolderTextView implements IGarageHolderView {
         controller.selectModel(carModel);
     }
 
-    private boolean isValue(String value, List<String> values) {
+    @Override
+    public boolean isValue(String value, List<String> values) {
         return values.stream().anyMatch(v -> v.equals(value));
     }
 
+    @Override
     public void showCarForm(Map<String, List<String>> options) {
         System.out.println("Make a selection for each option, or type [cancel]");
         Map<String, String> selection = new HashMap<>();
@@ -74,14 +79,14 @@ public class GarageHolderTextView implements IGarageHolderView {
             System.out.print("Select a value: ");
             String value = scanner.nextLine();
             if (value.equals("cancel")) {
-                controller.loginToSystem();
+                controller.showMainMenu();
                 return;
             }
             while (!isValue(value, options.get(key))) {
                 System.out.print("Try again: ");
                 value = scanner.nextLine();
                 if (value.equals("cancel")) {
-                    controller.loginToSystem();
+                    controller.showMainMenu();
                     return;
                 }
             }
@@ -90,8 +95,9 @@ public class GarageHolderTextView implements IGarageHolderView {
         controller.submitCarOrder(selection);
     }
 
+    @Override
     public void showPredictedEndTime(LocalDateTime endTime) {
         System.out.println("Predicted end time: " + endTime);
-        controller.loginToSystem();
+        controller.showMainMenu();
     }
 }
