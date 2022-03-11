@@ -1,19 +1,19 @@
 package app.ui;
 
-import app.presentation.AssemblyLineController;
+import app.presentation.CarController;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class GarageHolderView {
     // TODO obviously this class needs some work, I just made this for testing
-    private final AssemblyLineController controller;
+    private final CarController controller;
     private final Scanner scanner;
 
 
     public GarageHolderView(Scanner scanner) {
         this.scanner = scanner;
-        controller = new AssemblyLineController(this);
+        controller = new CarController(this);
         controller.loginToSystem();
     }
 
