@@ -11,6 +11,6 @@
         <module name="group03.test" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="15" />
   </component>
 </project>
