@@ -38,9 +38,7 @@ public class TestFrame extends JFrame {
         testPanel.add(textField);
         textField.setColumns(15);
         add(testPanel);
-        testBtn.addActionListener(e -> {
-            presenter.testEvent();
-        });
+        testBtn.addActionListener(e -> presenter.testEvent());
     }
 
     public void updateSuccess(String text){
