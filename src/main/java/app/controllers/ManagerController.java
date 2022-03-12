@@ -11,4 +11,8 @@ public class ManagerController {
         // TODO: create controller and/or view?
         this.managerView = managerView;
     }
+
+    public void advanceAssemblyLine(int timeSpent){
+        assemblyManager.advance(timeSpent);
+    }
 }

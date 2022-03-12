@@ -8,5 +8,15 @@ public class ManagerTextView implements IManagerView {
 
     public ManagerTextView() {
         managerController = new ManagerController(this);
+        initialize();
+    }
+
+    private void initialize(){
+        System.out.println("Hi manager!");
+    }
+
+    @Override
+    public void confirmMove(int timeSpent) {
+        managerController.advanceAssemblyLine(timeSpent);
     }
 }

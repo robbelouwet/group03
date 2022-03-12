@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.ui.GarageHolderTextView;
+import app.ui.interfaces.IGarageHolderView;
 import domain.car.CarModel;
 import domain.car.CarOrder;
 import services.car.CarOrderManager;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class CarController {
     private final CarOrderManager carOrderManager = CarOrderManager.getInstance();
-    private final GarageHolderTextView view;
+    private final IGarageHolderView view;
 
     // TODO: the controller slaat geen state voor business logica,
     // doe dit in de manager best in de manager
@@ -21,7 +22,7 @@ public class CarController {
         this.view = view;
     }
 
-    public void loginToSystem() {
+    public void showMainMenu() {
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         List<CarOrder> finishedOrders = carOrderManager.getFinishedOrders();
         view.showOverview(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()), finishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
