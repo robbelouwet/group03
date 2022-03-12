@@ -1,12 +1,17 @@
 package app.ui;
 
+import app.controllers.MechanicController;
 import app.ui.interfaces.ICarMechanicView;
-import services.assembly.AssemblyManager;
 
 public class CarMechanicTextView implements ICarMechanicView {
-    private final AssemblyManager assemblyManager = AssemblyManager.getInstance();
+    private final MechanicController mechanicController;
 
     public CarMechanicTextView() {
-        // TODO: create controller and/or view?
+        this.mechanicController = new MechanicController(this);
+        initialize();
+    }
+
+    private void initialize(){
+        System.out.println("Hi mechanic!");
     }
 }
