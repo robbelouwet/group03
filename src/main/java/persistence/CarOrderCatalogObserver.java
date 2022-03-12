@@ -1,6 +1,6 @@
 package persistence;
 
-import domain.car.CarOrder;
+import domain.order.CarOrder;
 
 public interface CarOrderCatalogObserver {
     void carOrderAdded(CarOrder order);

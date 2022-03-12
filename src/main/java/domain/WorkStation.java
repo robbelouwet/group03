@@ -1,7 +1,7 @@
 package domain;
 
 import domain.assembly.AssemblyTask;
-import domain.car.CarOrder;
+import domain.order.CarOrder;
 
 import java.util.List;
 

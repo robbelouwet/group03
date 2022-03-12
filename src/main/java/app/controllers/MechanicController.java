@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.ui.GarageHolderTextView;
 import domain.car.CarModel;
-import domain.car.CarOrder;
+import domain.order.CarOrder;
 import services.car.CarOrderManager;
 
 import java.util.List;

@@ -1,7 +1,8 @@
 package app.ui;
 
-import app.presentation.CarController;
+import app.controllers.CarController;
 import app.ui.interfaces.IGarageHolderView;
+import domain.time.DateTime;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -96,7 +97,7 @@ public class GarageHolderTextView implements IGarageHolderView {
     }
 
     @Override
-    public void showPredictedEndTime(LocalDateTime endTime) {
+    public void showPredictedEndTime(DateTime endTime) {
         System.out.println("Predicted end time: " + endTime);
         controller.showMainMenu();
     }
