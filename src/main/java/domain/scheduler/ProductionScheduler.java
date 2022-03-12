@@ -20,6 +20,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private static final long DEFAULT_PRODUCTION_TIME = 3 * 60;
 
     private final CarOrderCatalog carOrderCatalog;
+    private boolean firstSpotFree = true; // TODO not a fan of this, we need to think of a better solution
 
     private ProductionScheduler() {
         carOrderCatalog = CarOrderCatalog.getInstance();
@@ -57,9 +58,11 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private DateTime calculateEndTimeOfFirstOrder() {
         var currentTime = TimeManager.getCurrentTime();
 
+        // TODO rethink this, because if there is an order on the first spot, we need to add 60 otherwise we don't
+
         // Is there time to put another order on the belt in 60 minutes?
-        if (currentTime.getMinutes() + 60 + DEFAULT_PRODUCTION_TIME <= END_SHIFT) {
-            return currentTime.addTime(60 + DEFAULT_PRODUCTION_TIME);
+        if (currentTime.getMinutes() + (firstSpotFree ? 0 : 60) + DEFAULT_PRODUCTION_TIME <= END_SHIFT) {
+            return currentTime.addTime((firstSpotFree ? 0 : 60) + DEFAULT_PRODUCTION_TIME);
         }
         return getFirstFinishTimeNextDay(currentTime);
     }
@@ -96,16 +99,20 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     }
 
     /**
-     * Notify the scheduler that time has passed.
+     * Notify the scheduler that time has passed and the first spot on the assembly line is free.
      * If the passed time is not 60 minutes, it will recalculate the predicted end times
      *
      * @param minutes the passed time in minutes
      */
     public void timePassed(long minutes) {
         TimeManager.addTime(minutes);
-
+        firstSpotFree = true;
         if (minutes != 60) {
             recalculatePredictedEndTimes();
         }
+    }
+
+    public void firstSpotTaken() {
+        firstSpotFree = false;
     }
 }
