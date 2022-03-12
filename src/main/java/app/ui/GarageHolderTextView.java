@@ -13,10 +13,14 @@ public class GarageHolderTextView implements IGarageHolderView {
     private final Scanner scanner;
 
 
-    public GarageHolderTextView(Scanner scanner) {
-        this.scanner = scanner;
+    public GarageHolderTextView() {
+        this.scanner = new Scanner(System.in);
         controller = new CarController(this);
-        controller.showMainMenu();
+        initialize();
+    }
+
+    private void initialize(){
+        System.out.println("Hi garage holder!");
     }
 
     @Override

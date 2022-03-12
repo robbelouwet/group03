@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-public interface IGarageHolderView {
+public interface IGarageHolderView{
+
     void showOverview(List<String> pendingOrders, List<String> finishedOrders);
 
     boolean isModelName(String name, List<String> models);

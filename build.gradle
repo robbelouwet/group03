@@ -19,6 +19,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
+    testImplementation 'org.junit.platform:junit-platform-suite-api:1.7.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-suite-engine:1.7.0'
+
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
@@ -26,6 +29,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation 'org.openjfx:javafx-swing:19-ea+3'
+
+    testImplementation 'org.mockito:mockito-core:2.1.0'
 }
 
 test {

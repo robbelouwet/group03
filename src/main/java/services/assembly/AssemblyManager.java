@@ -1,12 +1,15 @@
 package services.assembly;
 
+import domain.assembly.AssemblyLine;
 import lombok.Getter;
 
-public abstract class AssemblyManager {
-
+// package-private!
+public class AssemblyManager {
     @Getter
-    // inject concrete instance
-    private static final AssemblyManager instance = new DefaultAssemblyManager();
+    private static final AssemblyManager instance = new AssemblyManager();
+    private final AssemblyLine assemblyLine = new AssemblyLine();
 
-    public abstract void advance();
+    public void advance(int timeSpent) {
+        assemblyLine.advance(timeSpent);
+    }
 }

@@ -3,6 +3,7 @@ package domain;
 import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class WorkStation {
@@ -18,12 +19,20 @@ public class WorkStation {
     }
 
     public boolean hasCompleted(){
-        throw new UnsupportedOperationException();
+        return currentOrder != null && currentOrder.isFinished();
     }
 
-    public void updateEndTimeOrder(int timeSpent){}
-
-    public void clearProcessOrder(){}
+    public void updateEndTimeOrder(int timeSpent){
+        LocalDateTime calculatedEndTime = currentOrder.getStartTime().plusMinutes(timeSpent);
+        currentOrder.setEndTime(calculatedEndTime);
+    }
 
     public void updateCurrentOrder(CarOrder order){}
+
+    public CarOrder finishCarOrder(){
+        currentOrder.setStatus(OrderStatus.Finished);
+        var order = currentOrder.clone();
+        currentOrder = null;
+        return order;
+    }
 }

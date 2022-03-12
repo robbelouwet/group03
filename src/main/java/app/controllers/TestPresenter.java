@@ -16,7 +16,7 @@ public class TestPresenter {
     }
 
     public void testEvent(){
-        assemblyManager.advance();
+        assemblyManager.advance(10);
         testFrame.updateSuccess("Success!");
 
     }

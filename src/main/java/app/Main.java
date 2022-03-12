@@ -1,13 +1,12 @@
 package app;
 
-import app.ui.TestFrame;
 
-import javax.swing.SwingUtilities;
+import app.ui.AppTextView;
 
 public class Main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new TestFrame();
-        });
+        // usually, you put this view on a graphical canvas or something,
+        // since we don't have that here, just create and forget the view
+        new AppTextView();
     }
 }
