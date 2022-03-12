@@ -1,8 +1,13 @@
 package app.controllers;
 
+import app.ui.CarMechanicTextView;
 import app.ui.GarageHolderTextView;
+import domain.WorkStation;
+import domain.assembly.AssemblyLine;
+import domain.assembly.AssemblyTask;
 import domain.car.CarModel;
 import domain.car.CarOrder;
+import services.assembly.AssemblyManager;
 import services.car.CarOrderManager;
 
 import java.util.List;
@@ -10,36 +15,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MechanicController {
-    private final CarOrderManager carOrderManager = CarOrderManager.getInstance();
-    private final GarageHolderTextView view;
+    private final AssemblyManager assemblyManager = AssemblyManager.getInstance();
+    private final CarMechanicTextView view;
 
-    private CarModel selectedModel;
-
-    public MechanicController(GarageHolderTextView view) {
+    public MechanicController(CarMechanicTextView view) {
         this.view = view;
     }
 
     public void loginToSystem() {
-        List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
-        List<CarOrder> finishedOrders = carOrderManager.getFinishedOrders();
-        view.showOverview(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()), finishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
+        List<WorkStation> availableWorkstations =  assemblyManager.getAvailableWorkStations();
+        view.showWorkStations(availableWorkstations);
     }
 
-    public void showModels() {
-        view.showCarModels(carOrderManager.getCarModels().stream().map(CarModel::getName).collect(Collectors.toList()));
-    }
+    void selectWorkStation(WorkStation workStation);
 
-    public void selectModel(String model) {
-        selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
-        view.showCarForm(selectedModel.getModelSpecification().getOptions());
-    }
+    void selectTask(AssemblyTask assemblyTask);
 
-    public void submitCarOrder(Map<String, String> data) {
-        if (selectedModel == null) {
-            throw new IllegalStateException();
-        }
-        CarModel model = selectedModel;
-        selectedModel = null;
-        view.showPredictedEndTime(carOrderManager.submitCarOrder(model, data).getEndTime());
-    }
+    void finishedTask();
+
+
+
+
+
 }
