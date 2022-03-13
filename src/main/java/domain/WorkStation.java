@@ -27,7 +27,9 @@ public class WorkStation {
         currentOrder.setEndTime(calculatedEndTime);
     }
 
-    public void updateCurrentOrder(CarOrder order){}
+    public void updateCurrentOrder(CarOrder order){
+        // TODO: Set currentOrder to order (clone?)
+    }
 
     public CarOrder finishCarOrder(){
         currentOrder.setStatus(OrderStatus.Finished);
