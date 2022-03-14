@@ -1,9 +1,8 @@
 package app.ui;
 
+import app.utils.ConsoleReader;
 import app.controllers.AppController;
 import app.ui.interfaces.IAppView;
-
-import java.util.Scanner;
 
 public class AppTextView implements IAppView {
     private final AppController appController;
@@ -14,11 +13,9 @@ public class AppTextView implements IAppView {
 
     @Override
     public String showMenu() {
-        Scanner s = new Scanner(System.in);
         // TODO: show the menu
         // is he a mechanic, manager or garage holder?
-        System.out.println("Who are you?");
-        return s.nextLine();
+        return ConsoleReader.getInstance().ask("Who are you?");
     }
 
     @Override
