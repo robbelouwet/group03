@@ -12,7 +12,7 @@ import java.util.Map;
  * This class represents an order that was placed by a garage holder.
  * During its lifecycle, its predicted end time and status will be updated.
  */
-public class CarOrder implements Cloneable {
+public class CarOrder {
     private final DateTime startTime;
     @Setter
     private DateTime endTime;
