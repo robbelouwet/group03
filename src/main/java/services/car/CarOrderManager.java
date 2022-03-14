@@ -8,7 +8,6 @@ import lombok.Getter;
 import persistence.CarOrderCatalog;
 import persistence.CarRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,6 +18,8 @@ public class CarOrderManager {
 
     private final CarRepository carRepository = new CarRepository();
     private final CarOrderCatalog carOrderCatalog;
+
+    private CarModel selectedModel;
 
     CarOrderManager() {
         carOrderCatalog = CarOrderCatalog.getInstance();
@@ -42,9 +43,34 @@ public class CarOrderManager {
         return carRepository.getModels();
     }
 
-    public CarOrder submitCarOrder(CarModel carModel, Map<String, String> data) {
-        CarOrder order = new CarOrder(TimeManager.getCurrentTime(), carModel, data);
+    /**
+     * Throws an exception if getSelectedModel() == null
+     * After this call getSelectedModel() will be reset to null
+     *
+     * @param data a map that maps the option-name to the selected value
+     * @return A copy of the CarOrder that is created
+     */
+    public CarOrder submitCarOrder(Map<String, String> data) {
+        if (selectedModel == null) {
+            throw new IllegalStateException();
+        }
+
+        CarOrder order = new CarOrder(TimeManager.getCurrentTime(), selectedModel, data);
         carOrderCatalog.addOrder(order);
+        selectedModel = null;
         return order.clone();
+    }
+
+    /**
+     * After this call getSelectedModel() == model
+     *
+     * @param model
+     */
+    public void selectModel(CarModel model) {
+        selectedModel = model;
+    }
+
+    public CarModel getSelectedModel() {
+        return selectedModel;
     }
 }

@@ -13,8 +13,6 @@ public class CarController {
     private final CarOrderManager carOrderManager = CarOrderManager.getInstance();
     private final IGarageHolderView ui;
 
-    private CarModel selectedModel;
-
     public CarController(IGarageHolderView ui) {
         this.ui = ui;
     }
@@ -42,7 +40,9 @@ public class CarController {
      * @param model the name of the selected model
      */
     public void selectModel(String model) {
-        selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
+        var selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
+
+        carOrderManager.selectModel(selectedModel);
         ui.showCarForm(selectedModel.getModelSpecification().getOptions());
     }
 
@@ -53,11 +53,6 @@ public class CarController {
      * @param data a map which maps the option-key to the selected value
      */
     public void submitCarOrder(Map<String, String> data) {
-        if (selectedModel == null) {
-            throw new IllegalStateException();
-        }
-        CarModel model = selectedModel;
-        selectedModel = null;
-        ui.showPredictedEndTime(carOrderManager.submitCarOrder(model, data).getEndTime());
+        ui.showPredictedEndTime(carOrderManager.submitCarOrder(data).getEndTime());
     }
 }
