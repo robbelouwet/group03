@@ -18,11 +18,12 @@ public class AssemblyLine {
     }
 
     public void advance(int timeSpent) {
+        scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
             finishLastWorkStation();
             moveAllOrders();
             restartFirstWorkStation();
-        } else scheduler.recalculatePredictedEndTimes(timeSpent);
+        }
     }
 
     private void restartFirstWorkStation() {

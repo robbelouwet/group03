@@ -2,7 +2,6 @@ package app.utils;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Scanner;
 
 public class ConsoleReader {

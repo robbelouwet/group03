@@ -3,9 +3,6 @@ package app.ui;
 import app.controllers.AppController;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
-import services.car.CarOrderManager;
-
-import java.util.Scanner;
 
 public class AppTextView implements IAppView {
 

@@ -22,7 +22,8 @@ public class PerformTasksIntegrationTest {
 
     @Test
     public void advanceTest() {
-        when(mockedReader.ask("Who are you?")).thenReturn("car mechanic");
+        when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("mechanic");
+        when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("quit");
         view.start();
     }
 }
