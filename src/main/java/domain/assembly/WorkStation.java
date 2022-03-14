@@ -3,30 +3,42 @@ package domain.assembly;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.time.DateTime;
+import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WorkStation {
+    @Getter
+    private String name;
     private CarOrder currentOrder;
+    // TODO: assign
+    private List<AssemblyTask> tasks;
 
-    @Deprecated // currentProcess 1 -> 1..* tasks?
     public List<AssemblyTask> getTasks() {
-        throw new UnsupportedOperationException();
+        return new ArrayList<>(tasks);
+    }
+
+    public WorkStation(String name, List<AssemblyTask> tasks) {
+        this.name = name;
+        this.tasks = tasks;
     }
 
     public CarOrder getCarOrder() {
-        throw new UnsupportedOperationException();
+        return currentOrder;
     }
 
     public boolean hasCompleted() {
-        return currentOrder != null && currentOrder.isFinished();
+        return currentOrder == null || currentOrder.isFinished();
     }
 
     public void updateEndTimeOrder(DateTime currentTime) {
-        currentOrder.setEndTime(currentTime);
+        if (currentOrder != null)
+            currentOrder.setEndTime(currentTime);
     }
 
     public void updateCurrentOrder(CarOrder order) {
+        currentOrder = order;
     }
 
     public CarOrder finishCarOrder() {
