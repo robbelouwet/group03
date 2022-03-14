@@ -77,8 +77,7 @@ public class GarageHolderTextView implements IGarageHolderView {
             for (var value : options.get(key)) {
                 System.out.println(value);
             }
-            System.out.print("Select a value: ");
-            String value = ConsoleReader.getInstance().ask("Try again: ");
+            String value = ConsoleReader.getInstance().ask("Select a value: ");
             if (value.equals("cancel")) {
                 controller.showMainMenu();
                 return;
