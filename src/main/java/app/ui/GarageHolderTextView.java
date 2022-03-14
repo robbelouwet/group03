@@ -2,8 +2,8 @@ package app.ui;
 
 import app.controllers.CarController;
 import app.ui.interfaces.IGarageHolderView;
+import domain.time.DateTime;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class GarageHolderTextView implements IGarageHolderView {
@@ -11,15 +11,15 @@ public class GarageHolderTextView implements IGarageHolderView {
     private final CarController controller;
     private final Scanner scanner;
 
-
     public GarageHolderTextView() {
         this.scanner = new Scanner(System.in);
         controller = new CarController(this);
         initialize();
     }
 
-    private void initialize(){
+    private void initialize() {
         System.out.println("Hi garage holder!");
+        controller.showMainMenu();
     }
 
     @Override
@@ -96,11 +96,20 @@ public class GarageHolderTextView implements IGarageHolderView {
             }
             selection.put(key, value);
         }
-        controller.submitCarOrder(selection);
+        System.out.print("Confirm order? [confirm] | [cancel]: ");
+        var confirm = scanner.nextLine();
+        while (!(confirm.equals("confirm") || confirm.equals("cancel"))) {
+            System.out.print("Try again: ");
+        }
+        if (confirm.equals("confirm")) {
+            controller.submitCarOrder(selection);
+        } else {
+            controller.showMainMenu();
+        }
     }
 
     @Override
-    public void showPredictedEndTime(LocalDateTime endTime) {
+    public void showPredictedEndTime(DateTime endTime) {
         System.out.println("Predicted end time: " + endTime);
         controller.showMainMenu();
     }

@@ -14,13 +14,21 @@ public class AppController {
     }
 
     private void initialize() {
+        loop();
+    }
+
+    private void loop() {
         String role = appView.showMenu();
 
+        boolean quit = false;
         switch (role) {
             case "manager" -> new ManagerTextView();
             case "garage holder" -> new GarageHolderTextView();
             case "mechanic" -> new CarMechanicTextView();
+            case "quit" -> quit = true;
             default -> System.out.println("Sorry, don't know that role");
         }
+        if (quit) return;
+        loop();
     }
 }

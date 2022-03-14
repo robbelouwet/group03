@@ -5,13 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * An immutable object that represents the options you can select for a carmodel
+ */
 public class CarModelSpecification {
     private final Map<String, List<String>> options;
 
+    /**
+     * @param options a map that maps the name of an option to the values you can select
+     */
     public CarModelSpecification(Map<String, List<String>> options) {
         this.options = copyOptions(options);
     }
 
+    /**
+     * A map that maps the name of an option to the values you can select
+     */
     public Map<String, List<String>> getOptions() {
         return copyOptions(options);
     }
@@ -22,5 +31,9 @@ public class CarModelSpecification {
             copy.put(key, new ArrayList<>(options.get(key)));
         }
         return copy;
+    }
+
+    public boolean isValidInputData(Map<String, String> data) {
+        return options.keySet().equals(data.keySet()) && data.keySet().stream().allMatch(opt -> options.get(opt).contains(data.get(opt)));
     }
 }

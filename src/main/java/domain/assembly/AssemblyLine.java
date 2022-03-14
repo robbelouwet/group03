@@ -1,7 +1,8 @@
 package domain.assembly;
 
-import domain.WorkStation;
+import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
+import domain.time.TimeManager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,24 +14,27 @@ public class AssemblyLine {
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
 
     public void advance(int timeSpent) {
+        scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
-            finishLastWorkStation(timeSpent);
+            finishLastWorkStation();
             moveAllOrders();
             restartFirstWorkStation();
-        } else {
-            // TODO: reschedule
         }
     }
 
     private void restartFirstWorkStation() {
         WorkStation first = workStations.getFirst();
-        first.updateCurrentOrder(scheduler.getNextOrder());
+        var nextOrder = scheduler.getNextOrder();
+        if (nextOrder != null) {
+            scheduler.firstSpotTaken();  // TODO rethink this, but we need some way for the scheduler to know if the first spot is free
+            nextOrder.setStatus(OrderStatus.OnAssemblyLine);
+            first.updateCurrentOrder(nextOrder);
+        }
     }
 
-    private void finishLastWorkStation(int timeSpent){
+    private void finishLastWorkStation() {
         WorkStation last = workStations.getLast();
-        last.updateEndTimeOrder(timeSpent);
-        scheduler.updateSchedule(last.finishCarOrder());
+        last.updateEndTimeOrder(TimeManager.getCurrentTime());
     }
 
     /*
@@ -44,7 +48,7 @@ public class AssemblyLine {
         ListIterator<WorkStation> it = workStations.listIterator(size);
         while (it.hasPrevious()) {
             var current = it.previous();
-            if (it.hasPrevious()){
+            if (it.hasPrevious()) {
                 var previous = it.previous();
                 current.updateCurrentOrder(previous.getCarOrder());
                 // Reset the pointer

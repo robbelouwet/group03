@@ -2,22 +2,75 @@ package services.car;
 
 
 import domain.car.CarModel;
-import domain.car.CarOrder;
+import domain.order.CarOrder;
+import domain.time.TimeManager;
 import lombok.Getter;
+import persistence.CarOrderCatalog;
+import persistence.CarRepository;
+
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public abstract class CarOrderManager {
-
+public class CarOrderManager {
     @Getter
-    // inject concrete instance
-    private static final CarOrderManager instance = new DefaultCarOrderManager();
+    private static final CarOrderManager instance = new CarOrderManager();
 
-    public abstract List<CarOrder> getPendingOrders();
+    private final CarRepository carRepository = new CarRepository();
+    private final CarOrderCatalog carOrderCatalog;
 
-    public abstract List<CarOrder> getFinishedOrders();
+    private CarModel selectedModel;
 
-    public abstract List<CarModel> getCarModels();
+    CarOrderManager() {
+        carOrderCatalog = CarOrderCatalog.getInstance();
+    }
 
-    public abstract CarOrder submitCarOrder(CarModel carModel, Map<String, String> data);
+    public List<CarOrder> getPendingOrders() {
+        return carOrderCatalog.getOrders().stream()
+                .filter(o -> !o.isFinished())
+                .map(CarOrder::copy)
+                .collect(Collectors.toList());
+    }
+
+    public List<CarOrder> getFinishedOrders() {
+        return carOrderCatalog.getOrders().stream()
+                .filter(CarOrder::isFinished)
+                .map(CarOrder::copy)
+                .collect(Collectors.toList());
+    }
+
+    public List<CarModel> getCarModels() {
+        return carRepository.getModels();
+    }
+
+    /**
+     * Throws an exception if getSelectedModel() == null
+     * After this call getSelectedModel() will be reset to null
+     *
+     * @param data a map that maps the option-name to the selected value
+     * @return A copy of the CarOrder that is created
+     */
+    public CarOrder submitCarOrder(Map<String, String> data) {
+        if (selectedModel == null) {
+            throw new IllegalStateException();
+        }
+
+        CarOrder order = new CarOrder(TimeManager.getCurrentTime(), selectedModel, data);
+        carOrderCatalog.addOrder(order);
+        selectedModel = null;
+        return order.copy();
+    }
+
+    /**
+     * After this call getSelectedModel() == model
+     *
+     * @param model
+     */
+    public void selectModel(CarModel model) {
+        selectedModel = model;
+    }
+
+    public CarModel getSelectedModel() {
+        return selectedModel;
+    }
 }
