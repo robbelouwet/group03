@@ -10,10 +10,9 @@ public class AppController {
 
     public AppController(IAppView view) {
         appView = view;
-        initialize();
     }
 
-    private void initialize() {
+    public void initialize() {
         loop();
     }
 

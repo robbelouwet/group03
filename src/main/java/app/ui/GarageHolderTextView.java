@@ -2,6 +2,7 @@ package app.ui;
 
 import app.controllers.CarController;
 import app.ui.interfaces.IGarageHolderView;
+import app.utils.ConsoleReader;
 import domain.time.DateTime;
 
 import java.util.*;
@@ -32,12 +33,10 @@ public class GarageHolderTextView implements IGarageHolderView {
         for (var order : finishedOrders) {
             System.out.println(order);
         }
-        System.out.print("Make an order [order] | Cancel [cancel]: ");
-        String action = scanner.nextLine();
+        String action = ConsoleReader.getInstance().ask("Make an order [order] | Cancel [cancel]: ");
         while (!(action.equals("order") || action.equals("cancel"))) {
             System.out.println("This is not a valid option.");
-            System.out.print("Make an order [order] | Cancel [cancel]: ");
-            action = scanner.nextLine();
+            action = ConsoleReader.getInstance().ask("Make an order [order] | Cancel [cancel]: ");
         }
         if (action.equals("order")) {
             controller.showModels();
@@ -55,11 +54,9 @@ public class GarageHolderTextView implements IGarageHolderView {
         for (var model : models) {
             System.out.println(model);
         }
-        System.out.print("Type the name of a model to select it: ");
-        String model = scanner.nextLine();
+        String model = ConsoleReader.getInstance().ask(("Type the name of a model to select it: "));
         while (!isModelName(model, models)) {
-            System.out.print("Try again: ");
-            model = scanner.nextLine();
+            model = ConsoleReader.getInstance().ask("Try again: ");
         }
         String finalModel = model;
         String carModel = models.stream().filter(m -> m.equals(finalModel)).findAny().orElseThrow();
@@ -80,15 +77,14 @@ public class GarageHolderTextView implements IGarageHolderView {
             for (var value : options.get(key)) {
                 System.out.println(value);
             }
-            System.out.print("Select a value: ");
-            String value = scanner.nextLine();
+            String value = ConsoleReader.getInstance().ask("Select a value: ");
             if (value.equals("cancel")) {
                 controller.showMainMenu();
                 return;
             }
             while (!isValue(value, options.get(key))) {
                 System.out.print("Try again: ");
-                value = scanner.nextLine();
+                value = ConsoleReader.getInstance().ask("Try again: ");
                 if (value.equals("cancel")) {
                     controller.showMainMenu();
                     return;
@@ -96,8 +92,7 @@ public class GarageHolderTextView implements IGarageHolderView {
             }
             selection.put(key, value);
         }
-        System.out.print("Confirm order? [confirm] | [cancel]: ");
-        var confirm = scanner.nextLine();
+        var confirm = ConsoleReader.getInstance().ask("Confirm order? [confirm] | [cancel]: ");
         while (!(confirm.equals("confirm") || confirm.equals("cancel"))) {
             System.out.print("Try again: ");
         }

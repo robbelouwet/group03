@@ -21,7 +21,7 @@ public class CarOrderManager {
 
     private CarModel selectedModel;
 
-    CarOrderManager() {
+    public CarOrderManager() {
         carOrderCatalog = CarOrderCatalog.getInstance();
     }
 
@@ -52,7 +52,7 @@ public class CarOrderManager {
      */
     public CarOrder submitCarOrder(Map<String, String> data) {
         if (selectedModel == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("There was no model selected!");
         }
 
         CarOrder order = new CarOrder(TimeManager.getCurrentTime(), selectedModel, data);

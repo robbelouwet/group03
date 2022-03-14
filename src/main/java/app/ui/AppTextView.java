@@ -2,9 +2,7 @@ package app.ui;
 
 import app.controllers.AppController;
 import app.ui.interfaces.IAppView;
-import services.car.CarOrderManager;
-
-import java.util.Scanner;
+import app.utils.ConsoleReader;
 
 public class AppTextView implements IAppView {
 
@@ -16,10 +14,13 @@ public class AppTextView implements IAppView {
 
     @Override
     public String showMenu() {
-        Scanner s = new Scanner(System.in);
         // TODO: show the menu
         // is he a mechanic, manager or garage holder?
-        System.out.println("Who are you? [manager] | [garage holder] | [mechanic] | [quit]");
-        return s.nextLine();
+        return ConsoleReader.getInstance().ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]");
+    }
+
+    @Override
+    public void start() {
+        appController.initialize();
     }
 }

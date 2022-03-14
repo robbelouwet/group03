@@ -7,11 +7,15 @@ import domain.time.TimeManager;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 public class AssemblyLine {
-    // TODO: init the workstations
     private LinkedList<WorkStation> workStations;
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
+
+    public AssemblyLine(LinkedList<WorkStation> workStations) {
+        this.workStations = workStations;
+    }
 
     public void advance(int timeSpent) {
         scheduler.recalculatePredictedEndTimes(timeSpent);
@@ -57,8 +61,12 @@ public class AssemblyLine {
         }
     }
 
+    public LinkedList<WorkStation> getWorkStations() {
+        return new LinkedList<>(workStations);
+    }
+
     public List<WorkStation> getAvailableWorkStations() {
-        throw new UnsupportedOperationException();
+        return workStations.stream().filter(WorkStation::hasCompleted).collect(Collectors.toList());
     }
 
     private boolean hasAllCompleted() {
