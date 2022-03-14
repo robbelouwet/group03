@@ -2,12 +2,10 @@ package app.ui;
 
 import app.controllers.AppController;
 import app.ui.interfaces.IAppView;
-import services.car.CarOrderManager;
 
 import java.util.Scanner;
 
 public class AppTextView implements IAppView {
-
     private final AppController appController;
 
     public AppTextView() {
@@ -21,5 +19,10 @@ public class AppTextView implements IAppView {
         // is he a mechanic, manager or garage holder?
         System.out.println("Who are you?");
         return s.nextLine();
+    }
+
+    @Override
+    public void start() {
+        appController.initialize();
     }
 }

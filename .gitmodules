@@ -1,0 +1,3 @@
+[submodule "libs/textuitester"]
+	path = libs/textuitester
+	url = https://github.com/btj/textuitester.git
