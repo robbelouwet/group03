@@ -1,36 +1,43 @@
 package domain.assembly;
 
-import domain.WorkStation;
+import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
+import domain.time.TimeManager;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 public class AssemblyLine {
-    // TODO: init the workstations
     private LinkedList<WorkStation> workStations;
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
 
+    public AssemblyLine(LinkedList<WorkStation> workStations) {
+        this.workStations = workStations;
+    }
+
     public void advance(int timeSpent) {
         if (hasAllCompleted()) {
-            finishLastWorkStation(timeSpent);
+            finishLastWorkStation();
             moveAllOrders();
             restartFirstWorkStation();
-        } else {
-            // TODO: reschedule
-        }
+        } else scheduler.recalculatePredictedEndTimes(timeSpent);
     }
 
     private void restartFirstWorkStation() {
         WorkStation first = workStations.getFirst();
-        first.updateCurrentOrder(scheduler.getNextOrder());
+        var nextOrder = scheduler.getNextOrder();
+        if (nextOrder != null) {
+            scheduler.firstSpotTaken();  // TODO rethink this, but we need some way for the scheduler to know if the first spot is free
+            nextOrder.setStatus(OrderStatus.OnAssemblyLine);
+            first.updateCurrentOrder(nextOrder);
+        }
     }
 
-    private void finishLastWorkStation(int timeSpent){
+    private void finishLastWorkStation() {
         WorkStation last = workStations.getLast();
-        last.updateEndTimeOrder(timeSpent);
-        scheduler.updateSchedule(last.finishCarOrder());
+        last.updateEndTimeOrder(TimeManager.getCurrentTime());
     }
 
     /*
@@ -44,7 +51,7 @@ public class AssemblyLine {
         ListIterator<WorkStation> it = workStations.listIterator(size);
         while (it.hasPrevious()) {
             var current = it.previous();
-            if (it.hasPrevious()){
+            if (it.hasPrevious()) {
                 var previous = it.previous();
                 current.updateCurrentOrder(previous.getCarOrder());
                 // Reset the pointer
@@ -53,8 +60,12 @@ public class AssemblyLine {
         }
     }
 
+    public LinkedList<WorkStation> getWorkStations() {
+        return new LinkedList<>(workStations);
+    }
+
     public List<WorkStation> getAvailableWorkStations() {
-        throw new UnsupportedOperationException();
+        return workStations.stream().filter(WorkStation::hasCompleted).collect(Collectors.toList());
     }
 
     private boolean hasAllCompleted() {

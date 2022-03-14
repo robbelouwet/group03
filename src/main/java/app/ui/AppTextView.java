@@ -1,10 +1,14 @@
 package app.ui;
 
-import app.utils.ConsoleReader;
 import app.controllers.AppController;
 import app.ui.interfaces.IAppView;
+import app.utils.ConsoleReader;
+import services.car.CarOrderManager;
+
+import java.util.Scanner;
 
 public class AppTextView implements IAppView {
+
     private final AppController appController;
 
     public AppTextView() {
@@ -15,7 +19,7 @@ public class AppTextView implements IAppView {
     public String showMenu() {
         // TODO: show the menu
         // is he a mechanic, manager or garage holder?
-        return ConsoleReader.getInstance().ask("Who are you?");
+        return ConsoleReader.getInstance().ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]");
     }
 
     @Override

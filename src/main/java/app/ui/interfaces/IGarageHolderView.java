@@ -1,5 +1,7 @@
 package app.ui.interfaces;
 
+import domain.time.DateTime;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -16,5 +18,5 @@ public interface IGarageHolderView{
 
     void showCarForm(Map<String, List<String>> options);
 
-    void showPredictedEndTime(LocalDateTime endTime);
+    void showPredictedEndTime(DateTime endTime);
 }
