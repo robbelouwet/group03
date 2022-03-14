@@ -32,4 +32,8 @@ public class CarModelSpecification {
         }
         return copy;
     }
+
+    public boolean isValidInputData(Map<String, String> data) {
+        return options.keySet().equals(data.keySet()) && data.keySet().stream().allMatch(opt -> options.get(opt).contains(data.get(opt)));
+    }
 }

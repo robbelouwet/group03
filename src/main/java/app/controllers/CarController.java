@@ -53,6 +53,10 @@ public class CarController {
      * @param data a map which maps the option-key to the selected value
      */
     public void submitCarOrder(Map<String, String> data) {
+        var carModel = carOrderManager.getSelectedModel();
+        if (!carModel.isValidInputData(data)) {
+            throw new IllegalArgumentException("The data object does not match the modelspecification!");
+        }
         ui.showPredictedEndTime(carOrderManager.submitCarOrder(data).getEndTime());
     }
 }

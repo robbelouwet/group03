@@ -2,6 +2,8 @@ package domain.car;
 
 import lombok.Getter;
 
+import java.util.Map;
+
 /**
  * An immutable object that represents a car model
  */
@@ -15,5 +17,9 @@ public class CarModel {
     public CarModel(String name, CarModelSpecification specification) {
         this.name = name;
         this.modelSpecification = specification;
+    }
+
+    public boolean isValidInputData(Map<String, String> data) {
+        return modelSpecification.isValidInputData(data);
     }
 }

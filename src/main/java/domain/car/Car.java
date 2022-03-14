@@ -20,8 +20,7 @@ public class Car {
      * @param selections the concrete selection of options, a map which maps the option-name to its value
      */
     public Car(CarModel carModel, Map<String, String> selections) {
-        var options = carModel.getModelSpecification().getOptions();
-        if (!options.keySet().equals(selections.keySet()) || !selections.keySet().stream().allMatch(opt -> options.get(opt).contains(selections.get(opt)))) {
+        if (!carModel.isValidInputData(selections)) {
             throw new IllegalArgumentException("The data object does not match the modelspecification!");
         }
         this.model = carModel;

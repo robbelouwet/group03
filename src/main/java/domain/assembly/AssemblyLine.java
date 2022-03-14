@@ -1,6 +1,5 @@
 package domain.assembly;
 
-import domain.WorkStation;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
@@ -15,7 +14,7 @@ public class AssemblyLine {
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
 
     public void advance(int timeSpent) {
-        scheduler.timePassed(timeSpent);
+        scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
             finishLastWorkStation();
             moveAllOrders();

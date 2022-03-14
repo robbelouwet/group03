@@ -1,11 +1,9 @@
-package domain;
+package domain.assembly;
 
-import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.time.DateTime;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class WorkStation {
@@ -33,7 +31,7 @@ public class WorkStation {
 
     public CarOrder finishCarOrder() {
         currentOrder.setStatus(OrderStatus.Finished);
-        var order = currentOrder.clone();
+        var order = currentOrder.copy();
         currentOrder = null;
         return order;
     }

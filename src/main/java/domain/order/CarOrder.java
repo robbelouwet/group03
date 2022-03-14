@@ -44,15 +44,12 @@ public class CarOrder implements Cloneable {
         this.status = status;
     }
 
-    @Override
-    public CarOrder clone() {
-        // A shallow copy is all that we need, since all our representation objects are immutable
-        try {
-            return (CarOrder) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
+    /**
+     * Creates a copy of this object, which makes it impossible to change the representation of the current object
+     */
+    public CarOrder copy() {
+        // We take a shallow copy, since all representation objects are immutable
+        return new CarOrder(startTime, endTime, car, status);
     }
 
     @Override

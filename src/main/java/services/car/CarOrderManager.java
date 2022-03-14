@@ -28,14 +28,14 @@ public class CarOrderManager {
     public List<CarOrder> getPendingOrders() {
         return carOrderCatalog.getOrders().stream()
                 .filter(o -> !o.isFinished())
-                .map(CarOrder::clone)
+                .map(CarOrder::copy)
                 .collect(Collectors.toList());
     }
 
     public List<CarOrder> getFinishedOrders() {
         return carOrderCatalog.getOrders().stream()
                 .filter(CarOrder::isFinished)
-                .map(CarOrder::clone)
+                .map(CarOrder::copy)
                 .collect(Collectors.toList());
     }
 
@@ -58,7 +58,7 @@ public class CarOrderManager {
         CarOrder order = new CarOrder(TimeManager.getCurrentTime(), selectedModel, data);
         carOrderCatalog.addOrder(order);
         selectedModel = null;
-        return order.clone();
+        return order.copy();
     }
 
     /**
