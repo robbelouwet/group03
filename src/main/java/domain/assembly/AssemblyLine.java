@@ -3,6 +3,7 @@ package domain.assembly;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
+import lombok.Getter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class AssemblyLine {
     private final LinkedList<WorkStation> workStations;
+    @Getter
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
 
     public AssemblyLine(LinkedList<WorkStation> workStations) {
@@ -42,6 +44,8 @@ public class AssemblyLine {
     private void finishLastWorkStation() {
         WorkStation last = workStations.getLast();
         last.updateEndTimeOrder(TimeManager.getCurrentTime());
+        if (last.getCarOrder() != null)
+            last.finishCarOrder();
     }
 
     /*

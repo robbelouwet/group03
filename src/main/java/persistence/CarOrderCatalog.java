@@ -2,6 +2,7 @@ package persistence;
 
 import domain.order.CarOrder;
 import lombok.Getter;
+import persistence.interfaces.CarOrderCatalogObserver;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,6 +3,7 @@ package persistence;
 import domain.car.Car;
 import domain.car.CarModel;
 import domain.car.CarModelSpecification;
+import persistence.interfaces.ICarRepository;
 
 import java.util.*;
 

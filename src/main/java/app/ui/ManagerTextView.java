@@ -33,6 +33,7 @@ public class ManagerTextView implements IManagerView {
         for (var order : pendingOrders) {
             System.out.println(order);
         }
+
         System.out.println("Future Assembly Line Status:");
         for (var order : simFinishedOrders) {
             System.out.println(order);

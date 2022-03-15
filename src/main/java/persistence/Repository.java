@@ -1,14 +1,12 @@
 package persistence;
 
-import domain.car.Car;
+import persistence.interfaces.IRepository;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Predicate;
 
-// TODO
-public class Repository<K, V> implements IRepository<K, V>{
+public class Repository<K, V> implements IRepository<K, V> {
     private HashMap<K, V> map;
 
     @Override

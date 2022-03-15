@@ -12,7 +12,7 @@ public class AssemblyManager {
     @Getter
     private final AssemblyLine assemblyLine;
 
-    public AssemblyManager(AssemblyLine aline) {
+    AssemblyManager(AssemblyLine aline) {
         assemblyLine = aline;
     }
 

@@ -14,15 +14,12 @@ import java.util.stream.Collectors;
 
 public class CarOrderManager {
     @Getter
-    private static final CarOrderManager instance = new CarOrderManager();
-
-    @Getter
     private final CarRepository carRepository = new CarRepository();
     private final CarOrderCatalog carOrderCatalog;
 
     private CarModel selectedModel;
 
-    public CarOrderManager() {
+    CarOrderManager() {
         carOrderCatalog = CarOrderCatalog.getInstance();
     }
 

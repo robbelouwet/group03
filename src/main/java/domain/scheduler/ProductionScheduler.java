@@ -6,7 +6,7 @@ import domain.time.DateTime;
 import domain.time.TimeManager;
 import lombok.Getter;
 import persistence.CarOrderCatalog;
-import persistence.CarOrderCatalogObserver;
+import persistence.interfaces.CarOrderCatalogObserver;
 
 import java.util.Comparator;
 import java.util.List;
