@@ -1,13 +1,15 @@
-package services.assembly;
+package services;
 
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AssemblyManager {
+    @Getter
     private final AssemblyLine assemblyLine;
 
     public AssemblyManager(AssemblyLine aline) {

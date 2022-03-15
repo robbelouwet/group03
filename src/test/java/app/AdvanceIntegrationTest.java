@@ -5,22 +5,17 @@ import app.ui.AppTextView;
 import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
 import app.ui.interfaces.IAppView;
-import domain.car.CarModel;
+import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import org.junit.jupiter.api.Test;
 import services.ManagerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.Mockito.*;
+
 
 public class AdvanceIntegrationTest {
     private IAppView appView;
@@ -52,14 +47,26 @@ public class AdvanceIntegrationTest {
 
         }});
 
-        when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("manager");
-        when(mockedReader.ask("Advance Assembly Line? [yes] | [no]")).thenReturn("yes");
-        when(mockedReader.ask("Time spent? [positive number]")).thenReturn("20");
-        when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("quit");
-
-        // TODO
-
+        int j;
+        for (j = 0; j < 6; j++) {
+            when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("manager");
+            when(mockedReader.ask("Advance Assembly Line? [yes] | [no]")).thenReturn("yes");
+            when(mockedReader.ask("Time spent? [positive number]")).thenReturn("20");
+        }
         appView.start();
+        System.out.println(j);
+
+        // now advance 6 times
+        // pre:     3 pending orders | empty assembly line | 0 finished orders
+        // post:    0 pending orders | empty assembly line | 3 finished orders
+        for (int i = 0; i < 6; i++) {
+            ManagerFactory.getInstance().getAssemblyLineManager().advance(60);
+            // TODO: call the CarMechanicView instead of calling the AssemblyLine directly, this is not end-to-end otherwise!
+            var ws = ManagerFactory.getInstance().getAssemblyLineManager().getAssemblyLine().getWorkStations();
+            ws.forEach(w -> w.getTasks().forEach(AssemblyTask::finishTask));
+        }
+
+        // now verify we have
     }
 
     @Test
@@ -85,7 +92,6 @@ public class AdvanceIntegrationTest {
 
         // advance the empty assembly line once, to put the newly created order on the first work station
         ManagerFactory.getInstance().getAssemblyLineManager().advance(60);
-        ManagerFactory.getInstance().getAssemblyLineManager().
 
         // now mock a manager view for testing to catch the exception later on
         IManagerView mgrView = new IManagerView() {

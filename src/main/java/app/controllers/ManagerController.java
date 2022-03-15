@@ -4,8 +4,8 @@ import app.ui.interfaces.IManagerView;
 import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import services.ManagerFactory;
-import services.assembly.AssemblyManager;
-import services.car.CarOrderManager;
+import services.AssemblyManager;
+import services.CarOrderManager;
 
 import java.util.List;
 import java.util.stream.Collectors;

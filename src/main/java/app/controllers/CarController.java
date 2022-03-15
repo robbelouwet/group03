@@ -3,7 +3,7 @@ package app.controllers;
 import app.ui.interfaces.IGarageHolderView;
 import domain.car.CarModel;
 import domain.order.CarOrder;
-import services.car.CarOrderManager;
+import services.CarOrderManager;
 
 import java.util.List;
 import java.util.Map;

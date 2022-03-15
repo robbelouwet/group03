@@ -1,9 +1,8 @@
 package app.controllers;
 
 import org.junit.jupiter.api.Test;
-import services.assembly.AssemblyManager;
+import services.AssemblyManager;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ManagerControllerTest {

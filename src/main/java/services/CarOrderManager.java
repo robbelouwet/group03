@@ -1,4 +1,4 @@
-package services.car;
+package services;
 
 
 import domain.car.CarModel;

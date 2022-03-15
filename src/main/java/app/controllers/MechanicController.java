@@ -1,7 +1,7 @@
 package app.controllers;
 
 import app.ui.interfaces.ICarMechanicView;
-import services.car.CarOrderManager;
+import services.CarOrderManager;
 
 public class MechanicController {
     private final CarOrderManager carOrderManager = CarOrderManager.getInstance();
