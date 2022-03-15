@@ -42,6 +42,7 @@ public class AdvanceIntegrationTest {
 
     @Test
     public void alternateFlowTest() {
+        // first we need to create a CarModel and select options for it, before the assembly line can start working on it
         var model = ManagerFactory.getInstance().getCarOrderManager().getCarRepository().getModels().get(0);
         ManagerFactory.getInstance().getCarOrderManager().selectModel(model);
         ManagerFactory.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>() {{
@@ -58,7 +59,7 @@ public class AdvanceIntegrationTest {
         // advance the empty assembly line once, to put the newly created order on the first work station
         ManagerFactory.getInstance().getAssemblyLineManager().advance(60);
 
-        // now mock a manager view to catch the exception later on
+        // now mock a manager view for testing to catch the exception later on
         IManagerView mgrView = new IManagerView() {
             @Override
             public void confirmMove(int timeSpent) {
