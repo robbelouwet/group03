@@ -7,6 +7,7 @@ import domain.time.TimeManager;
 import lombok.Getter;
 import persistence.CarOrderCatalog;
 import persistence.CarRepository;
+import persistence.PersistenceFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,13 @@ import java.util.stream.Collectors;
 
 public class CarOrderManager {
     @Getter
-    private final CarRepository carRepository = new CarRepository();
-    private final CarOrderCatalog carOrderCatalog;
+    private CarRepository carRepository = PersistenceFactory.getInstance().getCarRepository();
+    private CarOrderCatalog carOrderCatalog = PersistenceFactory.getInstance().getCarOrderCatalog();
 
     private CarModel selectedModel;
 
     CarOrderManager() {
-        carOrderCatalog = CarOrderCatalog.getInstance();
+        var appel = 1;
     }
 
     public List<CarOrder> getPendingOrders() {

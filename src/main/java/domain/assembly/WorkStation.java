@@ -15,11 +15,7 @@ public class WorkStation {
     @Setter
     private CarOrder currentOrder;
     @Getter
-    private List<AssemblyTask> tasks;
-
-    public List<AssemblyTask> getTasks() {
-        return new ArrayList<>(tasks);
-    }
+    private final List<AssemblyTask> tasks;
 
     public WorkStation(String name, List<AssemblyTask> tasks) {
         this.name = name;

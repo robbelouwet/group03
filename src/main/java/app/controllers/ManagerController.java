@@ -3,9 +3,9 @@ package app.controllers;
 import app.ui.interfaces.IManagerView;
 import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
-import services.ManagerFactory;
 import services.AssemblyManager;
 import services.CarOrderManager;
+import services.ManagerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;

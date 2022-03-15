@@ -4,6 +4,7 @@ import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -11,7 +12,12 @@ import java.util.List;
 
 public class ManagerFactory {
     @Getter
-    private static final ManagerFactory instance = new ManagerFactory();
+    @Setter
+    /**
+     * TODO:
+     * Setter can only be called from test package
+     */
+    private static ManagerFactory instance = new ManagerFactory();
     @Getter
     private AssemblyManager assemblyLineManager;
     @Getter
@@ -21,7 +27,7 @@ public class ManagerFactory {
         initializeData();
     }
 
-    private void initializeData() {
+    public void initializeData() {
         AssemblyTask task1 = new AssemblyTask("Assembly car body");
         AssemblyTask task2 = new AssemblyTask("Paint car");
         AssemblyTask task3 = new AssemblyTask("Insert engine");

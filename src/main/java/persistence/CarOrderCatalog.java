@@ -11,10 +11,11 @@ import java.util.List;
  * A class that is responsible for keeping track of all car orders in our application
  */
 public class CarOrderCatalog {
-    @Getter
-    private static final CarOrderCatalog instance = new CarOrderCatalog();
     private final List<CarOrder> orders = new ArrayList<>();
     private final List<CarOrderCatalogObserver> listeners = new ArrayList<>();
+
+    CarOrderCatalog() {
+    }
 
     /**
      * Add an order
@@ -37,7 +38,7 @@ public class CarOrderCatalog {
      * @return a list of all orders in this catalog
      */
     public List<CarOrder> getOrders() {
-        return new ArrayList<>(orders);
+        return orders;
     }
 
     /**

@@ -7,7 +7,7 @@ public class CarMechanicTextView implements ICarMechanicView {
     private final MechanicController mechanicController;
 
     public CarMechanicTextView() {
-        this.mechanicController = new MechanicController(this);
+        mechanicController = new MechanicController(this);
         initialize();
     }
 

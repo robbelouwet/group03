@@ -8,6 +8,9 @@ import persistence.interfaces.ICarRepository;
 import java.util.*;
 
 public class CarRepository extends Repository<UUID, Car> implements ICarRepository {
+    CarRepository() {
+    }
+
     public List<CarModel> getModels() {
         Map<String, List<String>> options = new HashMap<>();
 

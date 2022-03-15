@@ -4,7 +4,6 @@ import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
 import lombok.Getter;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -13,7 +12,7 @@ import java.util.stream.Collectors;
 public class AssemblyLine {
     private final LinkedList<WorkStation> workStations;
     @Getter
-    private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
+    private final ProductionScheduler scheduler = new ProductionScheduler();
 
     public AssemblyLine(LinkedList<WorkStation> workStations) {
         this.workStations = workStations;

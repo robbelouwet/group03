@@ -7,6 +7,10 @@ import java.util.Scanner;
 public class ConsoleReader {
     @Getter
     @Setter // setter to inject a mock when testing
+    /**
+     * TODO:
+     * Setter can only be called from test package
+     */
     private static ConsoleReader instance = new ConsoleReader();
 
     public String ask(String str) {
