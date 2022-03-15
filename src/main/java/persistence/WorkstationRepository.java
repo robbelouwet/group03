@@ -44,12 +44,20 @@ public class WorkstationRepository extends Repository<UUID, WorkStation> impleme
         AssemblyTask task4 = new AssemblyTask("Insert gearbox", actions4);
 
         List<String> actions5 = new ArrayList<>();
+        actions5.add("Install the seat belt components.");
+        actions5.add("Attach the bolts for each seat.");
         AssemblyTask task5 = new AssemblyTask("Install seats", actions5);
 
         List<String> actions6 = new ArrayList<>();
+        actions6.add("Install the air.");
+        actions6.add("Install the co.");
         AssemblyTask task6 = new AssemblyTask("Install airco", actions6);
 
         List<String> actions7 = new ArrayList<>();
+        actions7.add("Lift the car.");
+        actions7.add("Set the wheels on the studs.");
+        actions7.add("Put the lug nuts on.");
+        actions7.add("Put on the hubcap.");
         AssemblyTask task7 = new AssemblyTask("Mount wheels", actions7);
 
         WorkStation ws1 = new WorkStation("Car Body Post",

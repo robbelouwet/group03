@@ -29,7 +29,7 @@ public class AssemblyTask {
 
     @Override
     public String toString() {
-        return String.format("Task %s: is %s", name, finished ? "finished" : "pending");
+        return String.format("Task [%s]: is %s", name, finished ? "finished" : "pending");
     }
 
     public String getTaskInformation(){ return this.toString(); }

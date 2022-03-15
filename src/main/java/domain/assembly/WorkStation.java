@@ -57,4 +57,9 @@ public class WorkStation {
         currentOrder = null;
         return order;
     }
+
+    @Override
+    public String toString() {
+        return "Workstation: [" + this.getName() + "]";
+    }
 }

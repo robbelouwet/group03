@@ -1,21 +1,17 @@
 package app.controllers;
 
 import app.ui.CarMechanicTextView;
-import app.ui.GarageHolderTextView;
-import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
-import domain.car.CarModel;
 import services.assembly.AssemblyManager;
-import services.car.CarOrderManager;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MechanicController {
     private final AssemblyManager assemblyManager = AssemblyManager.getInstance();
     private final CarMechanicTextView view;
+    private WorkStation currentWorkStation;
+    private AssemblyTask currentTask;
 
     public MechanicController(CarMechanicTextView view) {
         this.view = view;
@@ -27,14 +23,19 @@ public class MechanicController {
     }
 
     public void selectWorkStation(WorkStation workStation){
+        currentWorkStation = workStation;
         view.showAvailableTasks(workStation.getTasks());
     }
 
     public void selectTask(AssemblyTask assemblyTask){
-        //view.showTaskInfo();
+        currentTask = assemblyTask;
+        view.showTaskInfo(assemblyTask.getTaskInformation(), assemblyTask.getActions());
     }
 
-    public void finishedTask(){}
+    public void finishTask(){
+        currentTask.finishTask();
+        view.showAvailableTasks(currentWorkStation.getTasks());
+    }
 
 
 

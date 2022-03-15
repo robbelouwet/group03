@@ -28,7 +28,7 @@ public class CarMechanicTextView implements ICarMechanicView {
     public void showWorkStations(List<WorkStation> availableWorkstations) {
         System.out.println("Available workstations:");
         for (WorkStation ws : availableWorkstations) {
-            System.out.println(ws);
+            System.out.println("-" + ws);
         }
 
         String action = ConsoleReader.getInstance().ask("Select a workstation by typing its name: | Cancel [cancel]: ");
@@ -46,7 +46,7 @@ public class CarMechanicTextView implements ICarMechanicView {
     public void showAvailableTasks(List<AssemblyTask> workStationTasks) {
         System.out.println("Available workstation tasks:");
         for (AssemblyTask at : workStationTasks) {
-            System.out.println(at);
+            System.out.println("-" + at);
         }
 
         String action = ConsoleReader.getInstance().ask("Select a task by typing its name: | Cancel [cancel]: ");
@@ -65,7 +65,22 @@ public class CarMechanicTextView implements ICarMechanicView {
 
     @Override
     public void showTaskInfo(String info, List<String> actions) {
+        System.out.println(info);
+        System.out.println("Actions to complete this task:");
+        for (String action: actions){
+            System.out.println("-" + action);
+        }
 
+        String action = ConsoleReader.getInstance().ask("Finish task [finish] | Cancel [cancel]: ");
+        while (!(action.equals("finish") || action.equals("cancel"))) {
+            System.out.println("This is not a valid option.");
+            action = ConsoleReader.getInstance().ask("Finish task [finish] | Cancel [cancel]: ");
+        }
+        if (action.equals("finish")) {
+            controller.finishTask();
+        } else {
+            controller.showMainMenu();
+        }
     }
 
 
