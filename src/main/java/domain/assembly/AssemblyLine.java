@@ -1,5 +1,6 @@
 package domain.assembly;
 
+import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
@@ -74,5 +75,9 @@ public class AssemblyLine {
             if (!ws.hasCompleted()) return false;
         }
         return true;
+    }
+
+    public boolean orderMatchWithLastWorkStation(CarOrder o) {
+        return getWorkStations().getLast().getCarOrder().equals(o);
     }
 }

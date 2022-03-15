@@ -7,7 +7,9 @@ import services.ManagerFactory;
 import services.assembly.AssemblyManager;
 import services.car.CarOrderManager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ManagerController {
@@ -21,20 +23,34 @@ public class ManagerController {
 
     public void showMainMenu() {
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
-        // TODO: How to simulate the AL?
-        List<CarOrder> simFinishedOrders = pendingOrders;
-        List<List<AssemblyTask>> pendingTasks = assemblyManager.getPendingTasks();
-        List<List<AssemblyTask>> finishedTasks = assemblyManager.getFinishedTasks();
+        List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(carOrderManager.getPendingOrders());
+        Map<String, List<String>> pendingTasks = convertToStringList(assemblyManager.getPendingTasks());
+        Map<String, List<String>> finishedTasks = convertToStringList(assemblyManager.getFinishedTasks());
         ui.showOverview(
                 pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()),
                 simFinishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()),
-                pendingTasks.stream().map(tasks -> tasks.stream().map(AssemblyTask::toString).collect(Collectors.toList())).collect(Collectors.toList()),
-                finishedTasks.stream().map(tasks -> tasks.stream().map(AssemblyTask::toString).collect(Collectors.toList())).collect(Collectors.toList())
+                pendingTasks,
+                finishedTasks
         );
     }
 
-    public void advanceAssemblyLine(int timeSpent){
+    /**
+     * This method converts the Map<String, List<AssemblyTask>> to Map<String, List<String>>
+     * This is because the view can not know of domain elements
+     */
+    private Map<String, List<String>> convertToStringList(Map<String, List<AssemblyTask>> pendingTasks) {
+        Map<String, List<String>> tasks = new HashMap<>();
+        pendingTasks.forEach((k, v) -> tasks.put(k, v.stream().map(AssemblyTask::toString).collect(Collectors.toList())));
+        return tasks;
+    }
+
+    public void advanceAssemblyLine(int timeSpent) {
+        /*boolean advanced = */
         assemblyManager.advance(timeSpent);
-        // TODO: show ui the new assemblyline
+        /*if (advanced){
+            then show AL status after move
+        }*/
+        List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
+        ui.showAssemblyLineStatusAfterMove(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
     }
 }

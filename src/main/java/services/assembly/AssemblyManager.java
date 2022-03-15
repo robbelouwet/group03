@@ -3,9 +3,13 @@ package services.assembly;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.order.CarOrder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AssemblyManager {
     private final AssemblyLine assemblyLine;
@@ -18,23 +22,26 @@ public class AssemblyManager {
         assemblyLine.advance(timeSpent);
     }
 
-    // TODO: anyone tips for cleaner and less re-use of methods below?
-    // TODO: Return type of Map<WorkStation, List<AssemblyTasks>>
-    public List<List<AssemblyTask>> getPendingTasks() {
-        List<List<AssemblyTask>> pendingTasks = new ArrayList<>();
+    public Map<String, List<AssemblyTask>> getPendingTasks() {
+        return getTasksbyFinished(false);
+    }
+
+    public Map<String, List<AssemblyTask>> getFinishedTasks() {
+        return getTasksbyFinished(true);
+    }
+
+    private Map<String, List<AssemblyTask>> getTasksbyFinished(boolean isFinished) {
+        Map<String, List<AssemblyTask>> pendingTasks = new HashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getTasks().stream().filter(t -> !t.isFinished()).toList());
-            pendingTasks.add(pTasks);
+            List<AssemblyTask> pTasks = new ArrayList<>(ws.getTasks().stream().filter(t -> isFinished).toList());
+            pendingTasks.put(ws.getName(), pTasks);
         }
         return pendingTasks;
     }
 
-    public List<List<AssemblyTask>> getFinishedTasks() {
-        List<List<AssemblyTask>> finishedTasks = new ArrayList<>();
-        for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getTasks().stream().filter(AssemblyTask::isFinished).toList());
-            finishedTasks.add(pTasks);
-        }
-        return finishedTasks;
+    public List<CarOrder> getSimulatedOrders(List<CarOrder> pendingOrders) {
+        return pendingOrders.stream()
+                .filter(o -> !assemblyLine.orderMatchWithLastWorkStation(o))
+                .collect(Collectors.toList());
     }
 }
