@@ -55,6 +55,11 @@ public class ManagerTextView implements IManagerView {
         }
     }
 
+    @Override
+    public void showErrorMessage(String err) {
+        System.err.println(err);
+    }
+
     private int askTimeSpent() {
         boolean correct = false;
         int result = 0;

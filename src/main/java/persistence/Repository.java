@@ -1,7 +1,10 @@
 package persistence;
 
+import domain.car.Car;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 // TODO

@@ -4,6 +4,7 @@ import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.time.DateTime;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public class WorkStation {
     @Getter
     private String name;
+    @Setter
     private CarOrder currentOrder;
     // TODO: assign
     private List<AssemblyTask> tasks;
@@ -29,7 +31,8 @@ public class WorkStation {
     }
 
     public boolean hasCompleted() {
-        return currentOrder == null || currentOrder.isFinished();
+        return currentOrder == null
+                || tasks.stream().allMatch(AssemblyTask::isFinished);
     }
 
     public void updateEndTimeOrder(DateTime currentTime) {

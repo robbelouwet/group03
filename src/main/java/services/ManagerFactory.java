@@ -3,6 +3,7 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.order.CarOrder;
 import lombok.Getter;
 import services.assembly.AssemblyManager;
 import services.car.CarOrderManager;

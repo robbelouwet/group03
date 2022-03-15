@@ -34,7 +34,8 @@ public class ManagerController {
     }
 
     public void advanceAssemblyLine(int timeSpent){
-        assemblyManager.advance(timeSpent);
-        // TODO: show ui the new assemblyline
+        boolean success = assemblyManager.advance(timeSpent);
+        if (!success) ui.showErrorMessage("Assembly line is blocked!");
+
     }
 }

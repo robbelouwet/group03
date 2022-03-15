@@ -10,4 +10,6 @@ public interface IManagerView {
                       List<String> simFinishedOrders,
                       List<List<String>> pendingTasks,
                       List<List<String>> finishedTasks);
+
+    void showErrorMessage(String err);
 }

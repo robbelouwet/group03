@@ -14,8 +14,8 @@ public class AssemblyManager {
         assemblyLine = aline;
     }
 
-    public void advance(int timeSpent) {
-        assemblyLine.advance(timeSpent);
+    public boolean advance(int timeSpent) {
+        return assemblyLine.advance(timeSpent);
     }
 
     // TODO: anyone tips for cleaner and less re-use of methods below?

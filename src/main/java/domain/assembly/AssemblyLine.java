@@ -17,13 +17,16 @@ public class AssemblyLine {
         this.workStations = workStations;
     }
 
-    public void advance(int timeSpent) {
+    public boolean advance(int timeSpent) {
+        if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
         scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
             finishLastWorkStation();
             moveAllOrders();
             restartFirstWorkStation();
         }
+
+        return true;
     }
 
     private void restartFirstWorkStation() {

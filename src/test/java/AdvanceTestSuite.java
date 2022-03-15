@@ -6,6 +6,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
 @SelectClasses({AdvanceIntegrationTest.class, ManagerControllerTest.class})
-@SuiteDisplayName("Advance Assembly Line Test Suite")
+@SuiteDisplayName("Advance Assembly Line")
 public class AdvanceTestSuite {
 }
