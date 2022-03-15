@@ -10,7 +10,7 @@ import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 public class AssemblyLine {
-    private LinkedList<WorkStation> workStations;
+    private final LinkedList<WorkStation> workStations;
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
 
     public AssemblyLine(LinkedList<WorkStation> workStations) {
