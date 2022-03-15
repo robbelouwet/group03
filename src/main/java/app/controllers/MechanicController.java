@@ -2,11 +2,10 @@ package app.controllers;
 
 import app.ui.CarMechanicTextView;
 import app.ui.GarageHolderTextView;
-import domain.WorkStation;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
+import domain.assembly.WorkStation;
 import domain.car.CarModel;
-import domain.car.CarOrder;
 import services.assembly.AssemblyManager;
 import services.car.CarOrderManager;
 
@@ -22,16 +21,20 @@ public class MechanicController {
         this.view = view;
     }
 
-    public void loginToSystem() {
+    public void showMainMenu() {
         List<WorkStation> availableWorkstations =  assemblyManager.getAvailableWorkStations();
         view.showWorkStations(availableWorkstations);
     }
 
-    void selectWorkStation(WorkStation workStation);
+    public void selectWorkStation(WorkStation workStation){
+        view.showAvailableTasks(workStation.getTasks());
+    }
 
-    void selectTask(AssemblyTask assemblyTask);
+    public void selectTask(AssemblyTask assemblyTask){
+        //view.showTaskInfo();
+    }
 
-    void finishedTask();
+    public void finishedTask(){}
 
 
 

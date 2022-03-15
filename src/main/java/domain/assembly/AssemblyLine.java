@@ -3,6 +3,8 @@ package domain.assembly;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
+import persistence.WorkstationRepository;
+import services.assembly.AssemblyManager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,11 +12,22 @@ import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 public class AssemblyLine {
+    private static AssemblyLine instance;
     private LinkedList<WorkStation> workStations;
-    private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
+    private final ProductionScheduler scheduler;
+    private final WorkstationRepository workstationRepository;
 
-    public AssemblyLine(LinkedList<WorkStation> workStations) {
-        this.workStations = workStations;
+    private AssemblyLine(){
+        workstationRepository = new WorkstationRepository();
+        workStations = new LinkedList<>(workstationRepository.getWorkstations());
+        scheduler = ProductionScheduler.getInstance();
+    }
+
+    public static AssemblyLine getInstance(){
+        if (instance == null){
+            instance = new AssemblyLine();
+        }
+        return instance;
     }
 
     public void advance(int timeSpent) {

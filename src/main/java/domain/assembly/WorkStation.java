@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WorkStation {
     @Getter
@@ -15,8 +16,17 @@ public class WorkStation {
     // TODO: assign
     private List<AssemblyTask> tasks;
 
+    public static boolean isWorkstationName(String name, List<WorkStation> workStations) {
+        return workStations.stream().anyMatch(ws -> ws.getName().equals(name));
+    }
+
+    public static WorkStation getWorkStationByName(String name, List<WorkStation> workStations) {
+        return workStations.stream().filter(ws -> ws.getName().equals(name)).findAny().orElseThrow();
+    }
+
+
     public List<AssemblyTask> getTasks() {
-        return new ArrayList<>(tasks);
+        return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
     }
 
     public WorkStation(String name, List<AssemblyTask> tasks) {

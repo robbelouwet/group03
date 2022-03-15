@@ -1,7 +1,7 @@
 package app.ui.interfaces;
 
-import domain.WorkStation;
 import domain.assembly.AssemblyTask;
+import domain.assembly.WorkStation;
 
 import java.util.List;
 
@@ -12,5 +12,4 @@ public interface ICarMechanicView {
 
     void showTaskInfo(String info, List<String> actions);
 
-    void quit();
 }

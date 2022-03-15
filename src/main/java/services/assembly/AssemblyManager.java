@@ -8,10 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AssemblyManager {
+    private static AssemblyManager instance;
     private final AssemblyLine assemblyLine;
 
-    public AssemblyManager(AssemblyLine aline) {
-        assemblyLine = aline;
+    private AssemblyManager(){
+        assemblyLine = AssemblyLine.getInstance();
+    }
+
+    public static AssemblyManager getInstance(){
+        if (instance == null){
+            instance = new AssemblyManager();
+        }
+        return instance;
     }
 
     public void advance(int timeSpent) {
@@ -36,5 +44,9 @@ public class AssemblyManager {
             finishedTasks.add(pTasks);
         }
         return finishedTasks;
+    }
+
+    public List<WorkStation> getAvailableWorkStations() {
+        return assemblyLine.getAvailableWorkStations();
     }
 }

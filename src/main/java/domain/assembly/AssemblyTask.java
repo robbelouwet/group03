@@ -2,6 +2,8 @@ package domain.assembly;
 
 import lombok.Getter;
 
+import java.util.List;
+
 public class AssemblyTask {
     @Getter private boolean finished;
     @Getter private String name;
@@ -9,6 +11,14 @@ public class AssemblyTask {
     public AssemblyTask(String name) {
         this.name = name;
         this.finished = false;
+    }
+
+    public static boolean isTaskName(String name, List<AssemblyTask> assemblyTasks) {
+        return assemblyTasks.stream().anyMatch(at -> at.getName().equals(name));
+    }
+
+    public static AssemblyTask getAssemblyTaskByName(String name, List<AssemblyTask> assemblyTasks) {
+        return assemblyTasks.stream().filter(at -> at.getName().equals(name)).findAny().orElseThrow();
     }
 
     public void finishTask(){
