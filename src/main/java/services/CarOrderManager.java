@@ -39,7 +39,7 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
-    public List<CarModel> getCarModels() {
+    public List<CarModel> getCarModels()  {
         return carRepository.getModels();
     }
 

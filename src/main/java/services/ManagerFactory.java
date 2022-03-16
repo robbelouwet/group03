@@ -5,6 +5,7 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import lombok.Getter;
 import lombok.Setter;
+import persistence.PersistenceFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

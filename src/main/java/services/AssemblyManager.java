@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class AssemblyManager {
     @Getter
@@ -20,23 +21,21 @@ public class AssemblyManager {
         return assemblyLine.advance(timeSpent);
     }
 
-    // TODO: anyone tips for cleaner and less re-use of methods below?
     // TODO: Return type of Map<WorkStation, List<AssemblyTasks>>
     public List<List<AssemblyTask>> getPendingTasks() {
-        List<List<AssemblyTask>> pendingTasks = new ArrayList<>();
-        for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getTasks().stream().filter(t -> !t.isFinished()).toList());
-            pendingTasks.add(pTasks);
-        }
-        return pendingTasks;
+        return getFilteredTasks(t -> !t.isFinished());
     }
 
     public List<List<AssemblyTask>> getFinishedTasks() {
-        List<List<AssemblyTask>> finishedTasks = new ArrayList<>();
+        return getFilteredTasks(AssemblyTask::isFinished);
+    }
+
+    private List<List<AssemblyTask>> getFilteredTasks(Predicate<AssemblyTask> predicate) {
+        List<List<AssemblyTask>> filtered = new ArrayList<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getTasks().stream().filter(AssemblyTask::isFinished).toList());
-            finishedTasks.add(pTasks);
+            List<AssemblyTask> pTasks = new ArrayList<>(ws.getTasks().stream().filter(predicate).toList());
+            filtered.add(pTasks);
         }
-        return finishedTasks;
+        return filtered;
     }
 }
