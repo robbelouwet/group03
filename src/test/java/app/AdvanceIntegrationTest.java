@@ -7,13 +7,8 @@ import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarOrderCatalog;
-import persistence.CarRepository;
 import persistence.PersistenceFactory;
-import services.AssemblyManager;
-import services.CarOrderManager;
 import services.ManagerFactory;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,17 +23,19 @@ public class AdvanceIntegrationTest {
         ConsoleReader.setInstance(mReader);
     }
 
+    /**
+     * This method 'resets the state of our domain'
+     */
     @BeforeEach
     public void reset() {
-        ManagerFactory.setInstance(new ManagerFactory());
+        // First re-initialize the persistence factory, THEN the manager factory
         PersistenceFactory.setInstance(new PersistenceFactory());
+        ManagerFactory.setInstance(new ManagerFactory());
     }
 
-    @Test
-    public void mainScenarioTest() {
-        // setup preconditions
-        // e.g.: create and place orders on assembly line
-        // first we need to create a CarModel and select options for it, before the assembly line can start working on it
+    @BeforeEach
+    public void setup() {
+        // create 3 car orders from 1 model
         var model = PersistenceFactory.getInstance().getCarRepository().getModels().get(0);
         for (int i = 0; i < 3; i++) {
             ManagerFactory.getInstance().getCarOrderManager().selectModel(model);
@@ -53,11 +50,17 @@ public class AdvanceIntegrationTest {
 
             }});
         }
+    }
 
+    @Test
+    public void mainScenarioTest() {
+        // verify we have 3 pending orders
         var allPending = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().stream().noneMatch(CarOrder::isFinished);
+        var size = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().size();
+        assertEquals(3, size);
         assertTrue(allPending);
 
-        // now mock a manager view for testing to catch the exception later on
+        // now mock an IManagerView
         IManagerView mgrView = new IManagerView() {
             @Override
             public void confirmMove(int timeSpent) {
@@ -74,7 +77,7 @@ public class AdvanceIntegrationTest {
             }
         };
 
-        // now advance 6 times
+        // now 'advance & clear' the assembly line 6 times
         // pre:     3 pending orders | empty assembly line | 0 finished orders
         // post:    0 pending orders | empty assembly line | 3 finished orders
         for (int i = 0; i < 6; i++) {
@@ -89,29 +92,16 @@ public class AdvanceIntegrationTest {
         var allFinished = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().stream().allMatch(CarOrder::isFinished);
         assertTrue(allFinished);
 
-        var size = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().size();
-        assertEquals(3, size);
+        // and 0 pending orders
+        var sizePending = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().size();
+        assertEquals(3, sizePending);
     }
 
     @Test
     public void alternateFlowTest() {
-        // first we need to create a CarModel and select options for it, before the assembly line can start working on it
-        var model = ManagerFactory.getInstance().getCarOrderManager().getCarRepository().getModels().get(0);
-        ManagerFactory.getInstance().getCarOrderManager().selectModel(model);
-        ManagerFactory.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>() {{
-            put("Body", "break");
-            put("Color", "white");
-            put("Engine", "performance");
-            put("Gearbox", "5 speed automatic");
-            put("Seats", "vinyl grey");
-            put("Airco", "automatic");
-            put("Wheels", "sports");
-        }});
-
-        // advance the empty assembly line once, to put the newly created order on the first work station
+        // advance once
         ManagerFactory.getInstance().getAssemblyLineManager().advance(60);
 
-        // now mock a manager view for testing to catch the exception later on
         IManagerView mgrView = new IManagerView() {
             @Override
             public void confirmMove(int timeSpent) {
@@ -128,9 +118,8 @@ public class AdvanceIntegrationTest {
             }
         };
 
-        // when triggering the mocked view to confirm the move and advance the assembly line, the controller will call the showErrorMessage method
-        // because the assembly line is blocked. The controller then triggers an exception in our mocked view, which we expect
-        // catch the exception
+
+        // trigger and catch an error message in the view, because the assembly line is blocked at that first workstation
         Throwable e = assertThrows(RuntimeException.class, () -> mgrView.confirmMove(60));
         assertEquals("Assembly line is blocked!", e.getMessage());
     }

@@ -5,15 +5,24 @@ import lombok.Setter;
 
 
 public class PersistenceFactory {
-    @Getter
-    @Setter
     /**
      * TODO:
      * Setter can only be called from test package
      */
-    private static PersistenceFactory instance = new PersistenceFactory();
+    @Setter
+    private static PersistenceFactory instance;
     @Getter
-    private final CarOrderCatalog carOrderCatalog = new CarOrderCatalog();
+    private final CarOrderCatalog carOrderCatalog;
     @Getter
-    private final CarRepository carRepository = new CarRepository();
+    private final CarRepository carRepository;
+
+    public PersistenceFactory() {
+        carOrderCatalog = new CarOrderCatalog();
+        carRepository = new CarRepository();
+    }
+
+    public static PersistenceFactory getInstance() {
+        if (instance == null) instance = new PersistenceFactory();
+        return instance;
+    }
 }

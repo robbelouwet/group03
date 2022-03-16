@@ -15,13 +15,14 @@ import java.util.stream.Collectors;
 
 public class CarOrderManager {
     @Getter
-    private CarRepository carRepository = PersistenceFactory.getInstance().getCarRepository();
-    private CarOrderCatalog carOrderCatalog = PersistenceFactory.getInstance().getCarOrderCatalog();
+    private final CarRepository carRepository;
+    private final CarOrderCatalog carOrderCatalog;
 
     private CarModel selectedModel;
 
     CarOrderManager() {
-        var appel = 1;
+        carRepository =  PersistenceFactory.getInstance().getCarRepository();
+        carOrderCatalog = PersistenceFactory.getInstance().getCarOrderCatalog();
     }
 
     public List<CarOrder> getPendingOrders() {

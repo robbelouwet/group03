@@ -11,13 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ManagerFactory {
-    @Getter
     @Setter
     /**
      * TODO:
      * Setter can only be called from test package
      */
-    private static ManagerFactory instance = new ManagerFactory();
+    private static ManagerFactory instance;
     @Getter
     private AssemblyManager assemblyLineManager;
     @Getter
@@ -47,5 +46,10 @@ public class ManagerFactory {
 
         assemblyLineManager = new AssemblyManager(aline);
         carOrderManager = new CarOrderManager();
+    }
+
+    public static ManagerFactory getInstance() {
+        if (instance == null) instance = new ManagerFactory();
+        return instance;
     }
 }

@@ -68,7 +68,7 @@ public class AssemblyLine {
     }
 
     public LinkedList<WorkStation> getWorkStations() {
-        return new LinkedList<>(workStations);
+        return workStations;
     }
 
     public List<WorkStation> getAvailableWorkStations() {
