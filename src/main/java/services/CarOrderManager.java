@@ -5,8 +5,8 @@ import domain.car.CarModel;
 import domain.order.CarOrder;
 import domain.time.TimeManager;
 import lombok.Getter;
-import persistence.CarOrderCatalog;
-import persistence.CarRepository;
+import persistence.CarOrderRepository;
+import persistence.CarCatalog;
 import persistence.PersistenceFactory;
 
 import java.util.List;
@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class CarOrderManager {
     @Getter
-    private final CarRepository carRepository;
-    private final CarOrderCatalog carOrderCatalog;
+    private final CarCatalog carRepository;
+    private final CarOrderRepository carOrderCatalog;
 
     private CarModel selectedModel;
 

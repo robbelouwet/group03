@@ -1,8 +1,6 @@
 package persistence;
 
 import domain.order.CarOrder;
-import lombok.Getter;
-import persistence.interfaces.CarOrderCatalogObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +8,11 @@ import java.util.List;
 /**
  * A class that is responsible for keeping track of all car orders in our application
  */
-public class CarOrderCatalog {
+public class CarOrderRepository {
     private final List<CarOrder> orders = new ArrayList<>();
     private final List<CarOrderCatalogObserver> listeners = new ArrayList<>();
 
-    CarOrderCatalog() {
+    CarOrderRepository() {
     }
 
     /**

@@ -4,7 +4,7 @@ import domain.car.CarModel;
 import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarOrderCatalog;
+import persistence.CarOrderRepository;
 import persistence.PersistenceFactory;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ class CarOrderManagerTest {
 
         // mock the factories
         var mockedPFactory = mock(PersistenceFactory.class);
-        var mockedCatalog = mock(CarOrderCatalog.class);
+        var mockedCatalog = mock(CarOrderRepository.class);
         when(mockedPFactory.getCarOrderCatalog()).thenReturn(mockedCatalog);
         when(mockedCatalog.getOrders()).thenReturn(List.of(mockedOrder1, mockedOrder2));
 

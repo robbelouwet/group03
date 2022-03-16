@@ -12,13 +12,13 @@ public class PersistenceFactory {
     @Setter
     private static PersistenceFactory instance;
     @Getter
-    private final CarOrderCatalog carOrderCatalog;
+    private final CarOrderRepository carOrderCatalog;
     @Getter
-    private final CarRepository carRepository;
+    private final CarCatalog carRepository;
 
     public PersistenceFactory() {
-        carOrderCatalog = new CarOrderCatalog();
-        carRepository = new CarRepository();
+        carOrderCatalog = new CarOrderRepository();
+        carRepository = new CarCatalog();
     }
 
     public static PersistenceFactory getInstance() {

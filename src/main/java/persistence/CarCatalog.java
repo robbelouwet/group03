@@ -1,14 +1,12 @@
 package persistence;
 
-import domain.car.Car;
 import domain.car.CarModel;
 import domain.car.CarModelSpecification;
-import persistence.interfaces.ICarRepository;
 
 import java.util.*;
 
-public class CarRepository extends Repository<UUID, Car> implements ICarRepository {
-    CarRepository() {
+public class CarCatalog {
+    CarCatalog() {
     }
 
     public List<CarModel> getModels() {

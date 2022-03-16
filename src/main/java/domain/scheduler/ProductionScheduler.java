@@ -5,9 +5,9 @@ import domain.order.CarOrder;
 import domain.time.DateTime;
 import domain.time.TimeManager;
 import lombok.Getter;
-import persistence.CarOrderCatalog;
+import persistence.CarOrderRepository;
 import persistence.PersistenceFactory;
-import persistence.interfaces.CarOrderCatalogObserver;
+import persistence.CarOrderCatalogObserver;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private static final long END_SHIFT = 22 * 60;  // Day ends at 22 o' clock
     private static final long DEFAULT_PRODUCTION_TIME = 3 * 60;  // An order takes 3 hours normally
 
-    private final CarOrderCatalog carOrderCatalog;
+    private final CarOrderRepository carOrderCatalog;
     private boolean firstSpotFree = true; // TODO not a fan of this, we need to think of a better solution
 
     public ProductionScheduler() {

@@ -1,4 +1,4 @@
-package persistence.interfaces;
+package persistence;
 
 import domain.order.CarOrder;
 
