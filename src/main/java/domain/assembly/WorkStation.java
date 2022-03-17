@@ -2,7 +2,7 @@ package domain.assembly;
 
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
-import domain.time.DateTime;
+import domain.scheduler.DateTime;
 import lombok.Getter;
 import lombok.Setter;
 

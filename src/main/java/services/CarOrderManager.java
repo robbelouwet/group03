@@ -3,7 +3,7 @@ package services;
 
 import domain.car.CarModel;
 import domain.order.CarOrder;
-import domain.time.TimeManager;
+import domain.scheduler.TimeManager;
 import persistence.CarOrderRepository;
 import persistence.CarCatalog;
 

@@ -1,4 +1,4 @@
-package domain.time;
+package domain.scheduler;
 
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ public class TimeManager {
      *
      * @param minutes the amount of minutes to add to the current time
      */
-    public static void addTime(long minutes) {
+    static void addTime(long minutes) {
         currentTime = currentTime.addTime(minutes);
     }
 }

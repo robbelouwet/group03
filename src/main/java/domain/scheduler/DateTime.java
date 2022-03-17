@@ -1,4 +1,4 @@
-package domain.time;
+package domain.scheduler;
 
 /**
  * An immutable class that represents time in our application
