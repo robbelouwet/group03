@@ -2,7 +2,6 @@ package persistence;
 
 import domain.car.CarModel;
 import domain.car.CarModelSpecification;
-import lombok.Getter;
 
 import java.util.*;
 

@@ -1,5 +1,7 @@
 package domain.scheduler;
 
+import java.util.Objects;
+
 /**
  * An immutable class that represents time in our application
  */
@@ -61,5 +63,18 @@ public class DateTime implements Comparable<DateTime> {
     @Override
     public int compareTo(DateTime o) {
         return (int) (minutes - o.minutes);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DateTime dateTime = (DateTime) o;
+        return minutes == dateTime.minutes;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(minutes);
     }
 }

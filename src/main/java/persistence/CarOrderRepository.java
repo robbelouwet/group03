@@ -58,6 +58,9 @@ public class CarOrderRepository {
     public void registerListener(CarOrderCatalogObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.add(listener);
+        for (var order : orders) {
+            listener.carOrderAdded(order);
+        }
     }
 
     /**
