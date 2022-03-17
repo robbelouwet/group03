@@ -12,10 +12,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AssemblyManager {
+    private static AssemblyManager instance;
     private final AssemblyLine assemblyLine;
 
-    public AssemblyManager(AssemblyLine aline) {
-        assemblyLine = aline;
+    private AssemblyManager(){
+        assemblyLine = AssemblyLine.getInstance();
+    }
+
+    public static AssemblyManager getInstance(){
+        if (instance == null){
+            instance = new AssemblyManager();
+        }
+        return instance;
     }
 
     public void advance(int timeSpent) {
@@ -43,5 +51,9 @@ public class AssemblyManager {
         return pendingOrders.stream()
                 .filter(o -> !assemblyLine.orderMatchWithLastWorkStation(o))
                 .collect(Collectors.toList());
+    }
+
+    public List<WorkStation> getAvailableWorkStations() {
+        return assemblyLine.getAvailableWorkStations();
     }
 }

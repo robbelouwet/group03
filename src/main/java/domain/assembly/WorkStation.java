@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WorkStation {
     @Getter
@@ -14,8 +15,9 @@ public class WorkStation {
     private CarOrder currentOrder;
     private List<AssemblyTask> tasks;
 
+
     public List<AssemblyTask> getTasks() {
-        return new ArrayList<>(tasks);
+        return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
     }
 
     public WorkStation(String name, List<AssemblyTask> tasks) {
@@ -45,5 +47,10 @@ public class WorkStation {
         var order = currentOrder.copy();
         currentOrder = null;
         return order;
+    }
+
+    @Override
+    public String toString() {
+        return "Workstation: [" + this.getName() + "]";
     }
 }
