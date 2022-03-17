@@ -12,7 +12,6 @@ public class WorkStation {
     @Getter
     private String name;
     private CarOrder currentOrder;
-    // TODO: assign
     private List<AssemblyTask> tasks;
 
     public List<AssemblyTask> getTasks() {
