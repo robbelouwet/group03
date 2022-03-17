@@ -57,6 +57,11 @@ public class ManagerTextView implements IManagerView {
     }
 
     @Override
+    public void showErrorMessage(String err) {
+        System.err.println(err);
+    }
+
+    @Override
     public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
         System.out.println("Assembly Line Status after the Move:");
         for (var order : pendingOrders) {

@@ -2,9 +2,14 @@ package domain.assembly;
 
 import lombok.Getter;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class {@code AssemblyTask} is the representation of a
+ * task that needs to be performed on a {@code CarOrder} on the {@code AssemblyLine}.
+ */
 public class AssemblyTask {
     @Getter
     private boolean finished;
@@ -13,6 +18,10 @@ public class AssemblyTask {
     @Getter
     private List<String> actions;
 
+    /**
+     * @param name The name of the {@code AssemblyTask} that needs to be performed at a {@code WorkStation}
+     *             // TODO
+     */
     public AssemblyTask(String name, List<String> actions) {
         this.name = name;
         this.finished = false;

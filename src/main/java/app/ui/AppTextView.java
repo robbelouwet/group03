@@ -3,6 +3,7 @@ package app.ui;
 import app.controllers.AppController;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
+import services.ManagerStore;
 
 public class AppTextView implements IAppView {
 
@@ -21,6 +22,7 @@ public class AppTextView implements IAppView {
 
     @Override
     public void start() {
+
         appController.initialize();
     }
 }

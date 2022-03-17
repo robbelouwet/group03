@@ -1,45 +1,50 @@
 package app.controllers;
 
-import app.ui.CarMechanicTextView;
+import app.ui.interfaces.ICarMechanicView;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
-import services.assembly.AssemblyManager;
+import services.AssemblyManager;
+import services.ManagerStore;
+import services.MechanicManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MechanicController {
-    private final AssemblyManager assemblyManager = AssemblyManager.getInstance();
-    private final CarMechanicTextView view;
-    private WorkStation currentWorkStation;
-    private AssemblyTask currentTask;
+    private final ICarMechanicView view;
+    private final MechanicManager mechanicManager;
+    private final AssemblyManager assemblyManager;
 
-    public MechanicController(CarMechanicTextView view) {
+    public MechanicController(ICarMechanicView view) {
         this.view = view;
+        mechanicManager = ManagerStore.getInstance().getMechanicManager();
+        assemblyManager = ManagerStore.getInstance().getAssemblyLineManager();
     }
 
     public void showMainMenu() {
-        List<WorkStation> availableWorkstations =  assemblyManager.getAvailableWorkStations();
+        List<WorkStation> availableWorkstations =  assemblyManager.getBusyWorkStations();
         view.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
     }
 
     public void selectWorkStation(String workStationName){
-        currentWorkStation = assemblyManager.getAvailableWorkStations().stream().filter(ws -> ws.getName().equals(workStationName)).findAny().orElseThrow();
-        view.showAvailableTasks(currentWorkStation.getTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
+        var ws = assemblyManager.getBusyWorkStations().stream()
+                .filter(w -> w.getName().equals(workStationName))
+                .findAny().orElseThrow();
+        mechanicManager.setCurrentWorkStation(ws);
+        view.showAvailableTasks(mechanicManager.getCurrentWorkStation().getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
     }
 
     public void selectTask(String assemblyTaskName){
-        currentTask = currentWorkStation.getTasks().stream().filter(at -> at.getName().equals(assemblyTaskName)).findAny().orElseThrow();
-        view.showTaskInfo(currentTask.getTaskInformation(), currentTask.getActions());
+        var task = mechanicManager.selectTask(assemblyTaskName);
+        view.showTaskInfo(task.getTaskInformation(), task.getActions());
     }
 
     public void finishTask(){
-        currentTask.finishTask();
-        view.showAvailableTasks(currentWorkStation.getTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
+        mechanicManager.finishTask();
+        view.showAvailableTasks(mechanicManager.getTaskNames());
     }
 
-
     public boolean isTaskName(String name) {
-        return currentWorkStation.getTasks().stream().anyMatch(at -> at.getName().equals(name));
+        return mechanicManager.isValidTask(name);
     }
 }

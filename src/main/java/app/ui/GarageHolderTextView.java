@@ -3,17 +3,15 @@ package app.ui;
 import app.controllers.CarController;
 import app.ui.interfaces.IGarageHolderView;
 import app.utils.ConsoleReader;
-import domain.time.DateTime;
+import domain.scheduler.DateTime;
 
 import java.util.*;
 
 public class GarageHolderTextView implements IGarageHolderView {
     // TODO obviously this class needs some work, I just made this for testing
     private final CarController controller;
-    private final Scanner scanner;
 
     public GarageHolderTextView() {
-        this.scanner = new Scanner(System.in);
         controller = new CarController(this);
         initialize();
     }

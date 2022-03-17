@@ -2,23 +2,35 @@ package domain.assembly;
 
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
-import domain.time.DateTime;
+import domain.scheduler.DateTime;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class {@code WorkStation} contains assembly tasks that need to be performed on the current {@code CarOrder}.
+ * It also contains this current {@code CarOrder}.
+ */
 public class WorkStation {
     @Getter
-    private String name;
+    private final String name;
+    @Setter
     private CarOrder currentOrder;
-    private List<AssemblyTask> tasks;
+    private final List<AssemblyTask> tasks;
 
-
-    public List<AssemblyTask> getTasks() {
+    /**
+     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation}.
+     */
+    public List<AssemblyTask> getPendingTasks() {
         return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
     }
 
+    /**
+     * @param name  The name of the {@code WorkStation}.
+     * @param tasks The assembly tasks of the {@code WorkStation}.
+     */
     public WorkStation(String name, List<AssemblyTask> tasks) {
         this.name = name;
         this.tasks = tasks;
@@ -34,28 +46,49 @@ public class WorkStation {
         this.tasks = tasks.stream().map(AssemblyTask::copy).collect(Collectors.toList());
     }
 
+    /**
+     * @return {@code CarOrder} The current {@code CarOrder} on which assembly tasks are performed.
+     */
     public CarOrder getCarOrder() {
         return currentOrder;
     }
 
+    /**
+     * @return true if the current {@code CarOrder} is not null or is finished
+     * @see domain.order.CarOrder#isFinished()
+     */
     public boolean hasCompleted() {
-        return currentOrder == null || currentOrder.isFinished();
+        return currentOrder == null
+                || tasks.stream().allMatch(AssemblyTask::isFinished);
     }
 
+    /**
+     * @param currentTime The current {@code DateTime}
+     * @see domain.order.CarOrder#setEndTime(DateTime currentTime)
+     */
     public void updateEndTimeOrder(DateTime currentTime) {
         if (currentOrder != null)
             currentOrder.setEndTime(currentTime);
     }
 
+    /**
+     * @param order A {@code CarOrder}
+     */
     public void updateCurrentOrder(CarOrder order) {
         currentOrder = order;
     }
 
+    /**
+     * This method sets the current car order on finished if there is one present.
+     */
     public CarOrder finishCarOrder() {
-        currentOrder.setStatus(OrderStatus.Finished);
-        var order = currentOrder.copy();
-        currentOrder = null;
-        return order;
+        if (currentOrder != null) {
+            currentOrder.setStatus(OrderStatus.Finished);
+            var order = currentOrder.copy();
+            currentOrder = null;
+            return order;
+        }
+        return null;
     }
 
     public WorkStation copy() {

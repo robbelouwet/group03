@@ -2,11 +2,12 @@ package persistence;
 
 import domain.car.CarModel;
 import domain.car.CarModelSpecification;
+import lombok.Getter;
 
 import java.util.*;
 
 public class CarCatalog {
-    public List<CarModel> getModels() {
+    public static List<CarModel> getModels() {
         Map<String, List<String>> options = new HashMap<>();
 
         options.put("Body", List.of(new String[]{"sedan", "break"}));

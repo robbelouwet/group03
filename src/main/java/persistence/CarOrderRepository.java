@@ -1,19 +1,30 @@
 package persistence;
 
 import domain.order.CarOrder;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class that is responsible for keeping track of all car orders in our application
  */
-public class CarOrderCatalog {
-    @Getter
-    private static final CarOrderCatalog instance = new CarOrderCatalog();
-    private final List<CarOrder> orders = new ArrayList<>();
+public class CarOrderRepository {
+    private final List<CarOrder> orders;
     private final List<CarOrderCatalogObserver> listeners = new ArrayList<>();
+    private static CarOrderRepository instance;
+
+    public CarOrderRepository() {
+        orders = new ArrayList<>();
+    }
+
+    public CarOrderRepository(List<CarOrder> orders) {
+        this.orders = orders.stream().map(CarOrder::copy).collect(Collectors.toList());
+    }
+
+    public CarOrderRepository copy() {
+        return new CarOrderRepository(orders);
+    }
 
     /**
      * Add an order
@@ -36,7 +47,7 @@ public class CarOrderCatalog {
      * @return a list of all orders in this catalog
      */
     public List<CarOrder> getOrders() {
-        return new ArrayList<>(orders);
+        return orders;
     }
 
     /**
@@ -57,5 +68,10 @@ public class CarOrderCatalog {
     public void unregisterListener(CarOrderCatalogObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.remove(listener);
+    }
+
+    public static CarOrderRepository getInstance() {
+        if (instance == null) instance = new CarOrderRepository();
+        return instance;
     }
 }

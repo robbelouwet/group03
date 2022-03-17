@@ -1,8 +1,7 @@
 package app.ui.interfaces;
 
-import domain.time.DateTime;
+import domain.scheduler.DateTime;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 

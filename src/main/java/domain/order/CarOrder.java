@@ -1,7 +1,7 @@
 package domain.order;
 
 import domain.car.CarModel;
-import domain.time.DateTime;
+import domain.scheduler.DateTime;
 import lombok.Getter;
 import lombok.Setter;
 

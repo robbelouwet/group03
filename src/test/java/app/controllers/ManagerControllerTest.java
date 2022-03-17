@@ -1,20 +1,68 @@
 package app.controllers;
 
+import app.ui.interfaces.IManagerView;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import services.assembly.AssemblyManager;
+import persistence.CarOrderCatalogObserver;
+import services.AssemblyManager;
+import services.CarOrderManager;
+import services.ManagerStore;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import static org.mockito.Mockito.*;
 
 public class ManagerControllerTest {
-    private final AssemblyManager assemblyManager = mock(AssemblyManager.class);
+    private ManagerController mgrController;
+    private IManagerView mgrView;
 
-    public ManagerControllerTest() {
+    @BeforeEach
+    public void setup() {
+         // change this to false to see the exception being thrown
+        var mockedStore = mock(ManagerStore.class);
+        ManagerStore.setInstance(mockedStore);
+        var mockedAManager = mock(AssemblyManager.class);
+        when(mockedAManager.advance(anyInt())).thenReturn(true);
+        var mockedCOManager = mock(CarOrderManager.class);
+        when(mockedCOManager.getCarModels()).thenReturn(new LinkedList<>());
+        when(mockedStore.getAssemblyLineManager()).thenReturn(mockedAManager);
+        when(mockedStore.getCarOrderManager()).thenReturn(mockedCOManager);
+
+        mgrView = new IManagerView() {
+            @Override
+            public void confirmMove(int timeSpent) {
+                (new ManagerController(this)).advanceAssemblyLine(timeSpent);
+            }
+
+            @Override
+            public void showOverview(List<String> pendingOrders,
+                                     List<String> simFinishedOrders,
+                                     Map<String, List<String>> pendingTasks,
+                                     Map<String, List<String>> finishedTasks) {
+
+            }
+
+            @Override
+            public void showErrorMessage(String err) {
+                throw new RuntimeException("Assembly line is blocked!");
+            }
+
+            @Override
+            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+
+            }
+        };
+
+        mgrController = new ManagerController(mgrView);
 
     }
 
     @Test
     void advanceAssemblyLine() {
-       //TODO ...
+        // if something goes wrong, the controller throws an exception,
+        // so just executing and expecting no exception is sufficient
+        mgrController.advanceAssemblyLine(60);
     }
 }

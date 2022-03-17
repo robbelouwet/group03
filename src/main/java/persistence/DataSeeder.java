@@ -4,14 +4,14 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
-public class WorkstationRepository extends Repository<UUID, WorkStation> {
-    public List<WorkStation> getWorkstations(){
-        List<WorkStation> workStations = new ArrayList<>();
+public class DataSeeder {
 
-        // TODO: mogen de assemblyTasks aangemaakt worden in deze repo (en op deze manier lmao)?
+    public static LinkedList<WorkStation> defaultAssemblyLine() {
+        LinkedList<WorkStation> workStations = new LinkedList<>();
+
         List<String> actions1 = new ArrayList<>();
         actions1.add("Lift the body shell onto the chassis frame.");
         actions1.add("Bolt the shell and the frame together.");
@@ -72,5 +72,6 @@ public class WorkstationRepository extends Repository<UUID, WorkStation> {
         workStations.add(ws3);
 
         return workStations;
+
     }
 }
