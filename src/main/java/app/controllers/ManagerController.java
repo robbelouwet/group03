@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class {@code ManagerController} is responsible for the communication between the UI and the Domain.
+ */
 public class ManagerController {
     private final AssemblyManager assemblyManager = ManagerFactory.getInstance().getAssemblyLineManager();
     private final CarOrderManager carOrderManager = ManagerFactory.getInstance().getCarOrderManager();
@@ -21,6 +24,9 @@ public class ManagerController {
         this.ui = ui;
     }
 
+    /**
+     * Provides the UI with the pending & finished tasks and orders of the assembly line.
+     */
     public void showMainMenu() {
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(carOrderManager.getPendingOrders());
@@ -44,6 +50,12 @@ public class ManagerController {
         return tasks;
     }
 
+    /**
+     * This method will try to advance the assembly line forward with one step.
+     * If the assembly line has been successfully moved forward, this method will show an overview of the new assembly line status.
+     *
+     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
+     */
     public void advanceAssemblyLine(int timeSpent) {
         /*boolean advanced = */
         assemblyManager.advance(timeSpent);

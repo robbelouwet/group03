@@ -14,6 +14,10 @@ public class CarModel {
     @Getter
     private final CarModelSpecification modelSpecification;
 
+    /**
+     * @param name          The name of a {@code CarModel}
+     * @param specification All possible options you can choose to mount on a {@code CarModel}
+     */
     public CarModel(String name, CarModelSpecification specification) {
         this.name = name;
         this.modelSpecification = specification;

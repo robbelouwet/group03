@@ -6,18 +6,31 @@ import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 
+/**
+ * Class {@code AssemblyLine} contains multiple workstations and is responsible for them.
+ * The workstations are stored as a {@code LinkedList} for optimal iteration since the {@code AssemblyLine} is responsible for moving the workload of the workstations.
+ * This Class also contains a {@code ProductionScheduler} who schedules the next {@code CarOrder} for the {@code AssemblyLine}.
+ */
 public class AssemblyLine {
     private LinkedList<WorkStation> workStations;
     private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
 
+    /**
+     * @param workStations The workstations that the {@code AssemblyLine} will contain, in the form of a {@code LinkedList}.
+     */
     public AssemblyLine(LinkedList<WorkStation> workStations) {
+        // TODO: defensive programming?
         this.workStations = workStations;
     }
 
+    /**
+     * This method will move the {@code AssemblyLine} one step forward if it isn't blocked (all the workstations are free of work).
+     * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
+     *
+     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
+     */
     public void advance(int timeSpent) {
         scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
@@ -39,6 +52,7 @@ public class AssemblyLine {
 
     private void finishLastWorkStation() {
         WorkStation last = workStations.getLast();
+        last.finishCarOrder();
         last.updateEndTimeOrder(TimeManager.getCurrentTime());
     }
 
@@ -62,12 +76,11 @@ public class AssemblyLine {
         }
     }
 
+    /**
+     * @return {@code LinkedList&#60;WorkStation&#62;} All workstations possessed by the {@code AssemblyLine}
+     */
     public LinkedList<WorkStation> getWorkStations() {
         return new LinkedList<>(workStations);
-    }
-
-    public List<WorkStation> getAvailableWorkStations() {
-        return workStations.stream().filter(WorkStation::hasCompleted).collect(Collectors.toList());
     }
 
     private boolean hasAllCompleted() {
@@ -77,7 +90,11 @@ public class AssemblyLine {
         return true;
     }
 
-    public boolean orderMatchWithLastWorkStation(CarOrder o) {
+    /**
+     * @param o The {@code CarOrder} that needs to be checked if it is present in a specific {@code WorkStation}
+     * @return true if the {@code CarOrder} is present in the {@code WorkStation}
+     */
+    public boolean isPresentInLastWorkstation(CarOrder o) {
         return getWorkStations().getLast().getCarOrder().equals(o);
     }
 }

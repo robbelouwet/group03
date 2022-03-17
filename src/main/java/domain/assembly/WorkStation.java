@@ -8,42 +8,70 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class {@code WorkStation} contains assembly tasks that need to be performed on the current {@code CarOrder}.
+ * It also contains this current {@code CarOrder}.
+ */
 public class WorkStation {
     @Getter
-    private String name;
+    private final String name;
     private CarOrder currentOrder;
-    private List<AssemblyTask> tasks;
+    private final List<AssemblyTask> tasks;
 
+    /**
+     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation}.
+     */
     public List<AssemblyTask> getTasks() {
         return new ArrayList<>(tasks);
     }
 
+    /**
+     * @param name  The name of the {@code WorkStation}.
+     * @param tasks The assembly tasks of the {@code WorkStation}.
+     */
     public WorkStation(String name, List<AssemblyTask> tasks) {
         this.name = name;
         this.tasks = tasks;
     }
 
+    /**
+     * @return {@code CarOrder} The current {@code CarOrder} on which assembly tasks are performed.
+     */
     public CarOrder getCarOrder() {
         return currentOrder;
     }
 
+    /**
+     * @return true if the current {@code CarOrder} is not null or is finished
+     * @see domain.order.CarOrder#isFinished()
+     */
     public boolean hasCompleted() {
         return currentOrder == null || currentOrder.isFinished();
     }
 
+    /**
+     * @param currentTime The current {@code DateTime}
+     * @see domain.order.CarOrder#setEndTime(DateTime currentTime)
+     */
     public void updateEndTimeOrder(DateTime currentTime) {
         if (currentOrder != null)
             currentOrder.setEndTime(currentTime);
     }
 
+    /**
+     * @param order A {@code CarOrder}
+     */
     public void updateCurrentOrder(CarOrder order) {
         currentOrder = order;
     }
 
-    public CarOrder finishCarOrder() {
-        currentOrder.setStatus(OrderStatus.Finished);
-        var order = currentOrder.copy();
-        currentOrder = null;
-        return order;
+    /**
+     * This method sets the current car order on finished if there is one present.
+     */
+    public void finishCarOrder() {
+        if (currentOrder != null) {
+            currentOrder.setStatus(OrderStatus.Finished);
+            currentOrder = null;
+        }
     }
 }
