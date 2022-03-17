@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class WorkstationRepository extends Repository<UUID, WorkStation> implements IWorkstationRepository {
+public class WorkstationRepository extends Repository<UUID, WorkStation> {
     public List<WorkStation> getWorkstations(){
         List<WorkStation> workStations = new ArrayList<>();
 
