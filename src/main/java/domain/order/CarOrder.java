@@ -1,11 +1,11 @@
 package domain.order;
 
-import domain.car.Car;
 import domain.car.CarModel;
 import domain.time.DateTime;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,8 +16,9 @@ public class CarOrder {
     private final DateTime startTime;
     @Setter
     private DateTime endTime;
+    private final Map<String, String> selections;
     @Getter
-    private final Car car;
+    private final CarModel model;
     @Getter
     @Setter
     private OrderStatus status;
@@ -31,16 +32,22 @@ public class CarOrder {
         if (data == null || startTime == null || carModel == null) {
             throw new IllegalArgumentException();
         }
+        if (!carModel.isValidInputData(data)) {
+            throw new IllegalArgumentException("The data object does not match the modelspecification!");
+        }
 
         this.startTime = startTime;
         status = OrderStatus.Pending;
-        car = new Car(carModel, data);
+
+        selections = data;
+        model = carModel;
     }
 
-    private CarOrder(DateTime startTime, DateTime endTime, Car car, OrderStatus status) {
+    private CarOrder(DateTime startTime, DateTime endTime, CarModel model, Map<String, String> selections, OrderStatus status) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.car = car;
+        this.model = model;
+        this.selections = copySelections(selections);
         this.status = status;
     }
 
@@ -48,13 +55,12 @@ public class CarOrder {
      * Creates a copy of this object, which makes it impossible to change the representation of the current object
      */
     public CarOrder copy() {
-        // We take a shallow copy, since all representation objects are immutable
-        return new CarOrder(startTime, endTime, car, status);
+        return new CarOrder(startTime, endTime, model, selections, status);
     }
 
     @Override
     public String toString() {
-        return "Order (" + car.getModel().getName() + "): " + "startTime=" + startTime + ", endTime=" + endTime  + ", status=" + status + '}';
+        return "Order (" + model.getName() + "): " + "startTime=" + startTime + ", endTime=" + endTime + ", status=" + status + '}';
     }
 
     /**
@@ -77,5 +83,16 @@ public class CarOrder {
      */
     public DateTime getEndTime() {
         return endTime;
+    }
+
+    private Map<String, String> copySelections(Map<String, String> selections) {
+        return new HashMap<>(selections);
+    }
+
+    /**
+     * @return the concrete selection of options, a map which maps the option-name to its value
+     */
+    public Map<String, String> getSelections() {
+        return copySelections(selections);
     }
 }

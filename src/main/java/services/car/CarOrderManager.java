@@ -6,7 +6,7 @@ import domain.order.CarOrder;
 import domain.time.TimeManager;
 import lombok.Getter;
 import persistence.CarOrderCatalog;
-import persistence.CarRepository;
+import persistence.CarCatalog;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class CarOrderManager {
     @Getter
     private static final CarOrderManager instance = new CarOrderManager();
 
-    private final CarRepository carRepository = new CarRepository();
+    private final CarCatalog carRepository = new CarCatalog();
     private final CarOrderCatalog carOrderCatalog;
 
     private CarModel selectedModel;
