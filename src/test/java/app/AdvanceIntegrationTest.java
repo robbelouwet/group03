@@ -5,9 +5,14 @@ import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
 import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
+import domain.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import persistence.CarCatalog;
+import persistence.CarOrderRepository;
 import services.ManagerStore;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,23 +27,13 @@ public class AdvanceIntegrationTest {
         ConsoleReader.setInstance(mReader);
     }
 
-    /**
-     * This method 'resets the state of our domain'
-     */
-    @BeforeEach
-    public void reset() {
-        // First re-initialize the persistence factory, THEN the manager factory
-        PersistenceFactory.setInstance(new PersistenceFactory());
-        ManagerStore.setInstance(new ManagerStore());
-    }
-
     @BeforeEach
     public void setup() {
         // create 3 car orders from 1 model
-        var model = PersistenceFactory.getInstance().getCarRepository().getModels().get(0);
+        var model = CarCatalog.getModels().get(0);
+        var orders = new ArrayList<CarOrder>();
         for (int i = 0; i < 3; i++) {
-            ManagerStore.getInstance().getCarOrderManager().selectModel(model);
-            ManagerStore.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>() {{
+            orders.add(new CarOrder(new DateTime(2), model, new HashMap<>() {{
                 put("Body", "break");
                 put("Color", "white");
                 put("Engine", "performance");
@@ -46,18 +41,25 @@ public class AdvanceIntegrationTest {
                 put("Seats", "vinyl grey");
                 put("Airco", "automatic");
                 put("Wheels", "sports");
-
-            }});
+            }}));
         }
+
+        ManagerStore.getInstance().init(new CarOrderRepository(orders));
     }
 
     @Test
     public void mainScenarioTest() {
         // verify we have 3 pending orders
-        var allPending = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().stream().noneMatch(CarOrder::isFinished);
-        var size = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().size();
-        assertEquals(3, size);
-        assertTrue(allPending);
+        var allPending = ManagerStore.getInstance().getCarOrderManager().getPendingOrders();
+        var sizePending = allPending.size();
+        assertEquals(3, sizePending);
+        assertTrue(allPending.stream().noneMatch(CarOrder::isFinished));
+
+        // and 0 finished orders
+        var allFinished = ManagerStore.getInstance().getCarOrderManager().getFinishedOrders();
+        var sizeFinished = allFinished.size();
+        assertEquals(0, sizeFinished);
+        assertTrue(allFinished.stream().allMatch(CarOrder::isFinished));
 
         // now mock an IManagerView
         IManagerView mgrView = new IManagerView() {
@@ -87,13 +89,17 @@ public class AdvanceIntegrationTest {
             ws.forEach(w -> w.getTasks().forEach(AssemblyTask::finishTask));
         }
 
-        // now verify we have 3 finished orders
-        var allFinished = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().stream().allMatch(CarOrder::isFinished);
-        assertTrue(allFinished);
+        // verify we have 0 pending orders
+        var allPendingAfter = ManagerStore.getInstance().getCarOrderManager().getPendingOrders();
+        var sizePendingAfter = allPendingAfter.size();
+        assertEquals(0, sizePendingAfter);
+        assertTrue(allPendingAfter.stream().noneMatch(CarOrder::isFinished));
 
-        // and 0 pending orders
-        var sizePending = PersistenceFactory.getInstance().getCarOrderCatalog().getOrders().size();
-        assertEquals(3, sizePending);
+        // and 3 finished orders
+        var allFinishedAfter = ManagerStore.getInstance().getCarOrderManager().getFinishedOrders();
+        var sizeFinishedAfter = allFinishedAfter.size();
+        assertEquals(3, sizeFinishedAfter);
+        assertTrue(allFinishedAfter.stream().allMatch(CarOrder::isFinished));
     }
 
     @Test

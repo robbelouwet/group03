@@ -7,17 +7,7 @@ import lombok.Getter;
 import java.util.*;
 
 public class CarCatalog {
-
-    private static CarCatalog instance;
-    public static CarCatalog getInstance() {
-        if (instance == null) instance = new CarCatalog();
-        return instance;
-    }
-
-    CarCatalog() {
-    }
-
-    public List<CarModel> getModels() {
+    public static List<CarModel> getModels() {
         Map<String, List<String>> options = new HashMap<>();
 
         options.put("Body", List.of(new String[]{"sedan", "break"}));

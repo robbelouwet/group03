@@ -17,8 +17,8 @@ public class ManagerController {
 
     public ManagerController(IManagerView ui) {
         this.ui = ui;
-        this.assemblyManager = ManagerStore.getAssemblyLineManager();
-        this.carOrderManager = ManagerStore.getCarOrderManager();
+        this.assemblyManager = ManagerStore.getInstance().getAssemblyLineManager();
+        this.carOrderManager = ManagerStore.getInstance().getCarOrderManager();
     }
 
     public void showMainMenu() {

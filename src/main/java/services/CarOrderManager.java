@@ -12,13 +12,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CarOrderManager {
-    private final CarCatalog carCatalog;
     private final CarOrderRepository carRepository;
 
     private CarModel selectedModel;
 
     public CarOrderManager(CarOrderRepository repository) {
-        carCatalog = CarCatalog.getInstance();
         this.carRepository = repository;
     }
 
@@ -37,7 +35,7 @@ public class CarOrderManager {
     }
 
     public List<CarModel> getCarModels()  {
-        return carCatalog.getModels();
+        return CarCatalog.getModels();
     }
 
     /**

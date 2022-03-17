@@ -20,7 +20,9 @@ public class AssemblyManager {
         assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
     }
 
-
+    public AssemblyManager(AssemblyLine aline) {
+        assemblyLine = aline;
+    }
 
     public boolean advance(int timeSpent) {
         return assemblyLine.advance(timeSpent);

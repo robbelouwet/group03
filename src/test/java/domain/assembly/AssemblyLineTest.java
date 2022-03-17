@@ -1,5 +1,6 @@
 package domain.assembly;
 
+import domain.scheduler.ProductionScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ public class AssemblyLineTest {
         when(fakeStation.hasCompleted()).thenReturn(true);
 
         assemblyLine = new AssemblyLine(
-                new LinkedList<>(Arrays.asList(fakeStation, fakeStation, fakeStation)));
+                new LinkedList<>(Arrays.asList(fakeStation, fakeStation, fakeStation)), mock(ProductionScheduler.class));
     }
 
     @Test

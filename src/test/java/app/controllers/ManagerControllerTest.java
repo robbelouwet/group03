@@ -16,16 +16,12 @@ public class ManagerControllerTest {
 
     @BeforeEach
     public void setup() {
-        // first mock the ManagerFactory and its AssemblyLineManager
-        // in order to mock AssemblyLineManager's advance method and isolate the controller's behaviour
-        var mockedFactory = mock(ManagerStore.class);
-        var mockedAssemblyManager = mock(AssemblyManager.class);
-        when(mockedFactory.getAssemblyLineManager()).thenReturn(mockedAssemblyManager);
-        when(mockedAssemblyManager.advance(anyInt())).thenReturn(true); // change this to false to see the exception being thrown
-
-        // re-initialize the persistence factory, THEN the manager factory
-        PersistenceFactory.setInstance(new PersistenceFactory());
-        ManagerStore.setInstance(mockedFactory);
+         // change this to false to see the exception being thrown
+        var mockedStore = mock(ManagerStore.class);
+        ManagerStore.setInstance(mockedStore);
+        var mockedAManager = mock(AssemblyManager.class);
+        when(mockedAManager.advance(anyInt())).thenReturn(true);
+        when(mockedStore.getAssemblyLineManager()).thenReturn(mockedAManager);
 
         mgrView = new IManagerView() {
             @Override

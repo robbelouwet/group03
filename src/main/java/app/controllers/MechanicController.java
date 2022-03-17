@@ -10,6 +10,6 @@ public class MechanicController {
 
     public MechanicController(ICarMechanicView view) {
         this.view = view;
-        carOrderManager = ManagerStore.getCarOrderManager();
+        carOrderManager = ManagerStore.getInstance().getCarOrderManager();
     }
 }

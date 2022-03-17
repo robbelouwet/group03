@@ -20,8 +20,8 @@ public class AssemblyManagerTest {
     @BeforeEach
     public void setup() {
         // mock an AssemblyManager
-        var alin = mock(AssemblyLine.class);
-        when(alin.advance(anyInt())).thenReturn(true);
+        var aline = mock(AssemblyLine.class);
+        when(aline.advance(anyInt())).thenReturn(true);
 
         // mock 2 tasks, with one finished
         var task1 = new AssemblyTask("test1");
@@ -36,7 +36,9 @@ public class AssemblyManagerTest {
         var ws2 = mock(WorkStation.class);
         when(ws2.getTasks()).thenReturn(testTasks);
 
-        assemblyManager = new AssemblyManager(mock(ProductionScheduler.class));
+        // Create an AssemblyManager with mocked AssemblyLine
+        assemblyManager = new AssemblyManager(aline);
+        when(aline.advance(anyInt())).thenReturn(true);
 
         when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
     }

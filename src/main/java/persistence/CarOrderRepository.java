@@ -18,7 +18,7 @@ public class CarOrderRepository {
         orders = new ArrayList<>();
     }
 
-    private CarOrderRepository(List<CarOrder> orders) {
+    public CarOrderRepository(List<CarOrder> orders) {
         this.orders = orders.stream().map(CarOrder::copy).collect(Collectors.toList());
     }
 

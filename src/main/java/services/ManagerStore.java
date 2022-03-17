@@ -1,31 +1,28 @@
 package services;
 
-import domain.assembly.AssemblyLine;
-import domain.assembly.AssemblyTask;
-import domain.assembly.WorkStation;
 import domain.scheduler.ProductionScheduler;
 import lombok.Getter;
+import lombok.Setter;
 import persistence.CarOrderRepository;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class ManagerStore {
+    @Getter @Setter
+    private static ManagerStore instance = new ManagerStore();
+
     /**
      * TODO:
      * Setter can only be called from test package
      */
     @Getter
-    private static AssemblyManager assemblyLineManager;
+    private AssemblyManager assemblyLineManager;
     @Getter
-    private static CarOrderManager carOrderManager;
+    private CarOrderManager carOrderManager;
 
-    public static void init() {
+    public void init() {
         init(new CarOrderRepository());
     }
 
-    public static void init(CarOrderRepository repository) {
+    public void init(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
 
         var scheduler = new ProductionScheduler(carOrderRepository);

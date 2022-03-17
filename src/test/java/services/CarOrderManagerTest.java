@@ -33,12 +33,12 @@ class CarOrderManagerTest {
         when(mockedRepo.getOrders()).thenReturn(List.of(mockedOrder1, mockedOrder2));
 
         // create testing instance of the ManagerStore
-        ManagerStore.init(mockedRepo);
+        ManagerStore.getInstance().init(mockedRepo);
     }
 
     @Test
     void getPendingOrders() {
-        var pendingOrders = ManagerStore.getCarOrderManager().getPendingOrders();
+        var pendingOrders = ManagerStore.getInstance().getCarOrderManager().getPendingOrders();
 
         assertEquals(1, pendingOrders.size());
         assertTrue(pendingOrders.stream().noneMatch(CarOrder::isFinished));
@@ -46,7 +46,7 @@ class CarOrderManagerTest {
 
     @Test
     void getFinishedOrders() {
-        var pendingOrders = ManagerStore.getCarOrderManager().getFinishedOrders();
+        var pendingOrders = ManagerStore.getInstance().getCarOrderManager().getFinishedOrders();
 
         assertEquals(1, pendingOrders.size());
         assertTrue(pendingOrders.stream().allMatch(CarOrder::isFinished));
@@ -56,8 +56,8 @@ class CarOrderManagerTest {
     void submitCarOrder() {
         var mockedModel = mock(CarModel.class);
         when(mockedModel.isValidInputData(anyMap())).thenReturn(true);
-        ManagerStore.getCarOrderManager().selectModel(mockedModel);
-        var order = ManagerStore.getCarOrderManager().submitCarOrder(new HashMap<>());
+        ManagerStore.getInstance().getCarOrderManager().selectModel(mockedModel);
+        var order = ManagerStore.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>());
 
         assertNotNull(order);
     }
@@ -65,8 +65,8 @@ class CarOrderManagerTest {
     @Test
     void selectModel() {
         var mockedModel = mock(CarModel.class);
-        ManagerStore.getCarOrderManager().selectModel(mockedModel);
-        var selectedModel = ManagerStore.getCarOrderManager().getSelectedModel();
+        ManagerStore.getInstance().getCarOrderManager().selectModel(mockedModel);
+        var selectedModel = ManagerStore.getInstance().getCarOrderManager().getSelectedModel();
 
         assertNotNull(selectedModel);
     }

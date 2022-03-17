@@ -16,7 +16,7 @@ public class CarController {
 
     public CarController(IGarageHolderView ui) {
         this.ui = ui;
-        carOrderManager = ManagerStore.getCarOrderManager();
+        carOrderManager = ManagerStore.getInstance().getCarOrderManager();
     }
 
     /**
