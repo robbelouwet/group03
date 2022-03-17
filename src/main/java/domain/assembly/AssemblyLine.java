@@ -4,7 +4,7 @@ import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
-
+import lombok.Getter;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -14,22 +14,27 @@ import java.util.ListIterator;
  * This Class also contains a {@code ProductionScheduler} who schedules the next {@code CarOrder} for the {@code AssemblyLine}.
  */
 public class AssemblyLine {
-    private LinkedList<WorkStation> workStations;
-    private final ProductionScheduler scheduler = ProductionScheduler.getInstance();
+    private final LinkedList<WorkStation> workStations;
+    @Getter
+    private final ProductionScheduler scheduler;
 
     /**
      * @param workStations The workstations that the {@code AssemblyLine} will contain, in the form of a {@code LinkedList}.
+     * @param scheduler The {@code ProductionScheduler} who provides following car orders.
      */
-    public AssemblyLine(LinkedList<WorkStation> workStations) {
-        // TODO: defensive programming?
+    public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler) {
+        this.scheduler = scheduler;
         this.workStations = workStations;
     }
 
+    public boolean advance(int timeSpent) {
+        if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
     /**
      * This method will move the {@code AssemblyLine} one step forward if it isn't blocked (all the workstations are free of work).
      * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
      *
      * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
+     * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
     public void advance(int timeSpent) {
         scheduler.recalculatePredictedEndTimes(timeSpent);
@@ -38,6 +43,8 @@ public class AssemblyLine {
             moveAllOrders();
             restartFirstWorkStation();
         }
+
+        return true;
     }
 
     private void restartFirstWorkStation() {
@@ -52,8 +59,9 @@ public class AssemblyLine {
 
     private void finishLastWorkStation() {
         WorkStation last = workStations.getLast();
-        last.finishCarOrder();
         last.updateEndTimeOrder(TimeManager.getCurrentTime());
+        if (last.getCarOrder() != null)
+            last.finishCarOrder();
     }
 
     /*
@@ -83,6 +91,10 @@ public class AssemblyLine {
         return new LinkedList<>(workStations);
     }
 
+    public List<WorkStation> getBusyWorkstations() {
+        return workStations.stream().filter(ws -> !ws.hasCompleted()).collect(Collectors.toList());
+    }
+
     private boolean hasAllCompleted() {
         for (WorkStation ws : workStations) {
             if (!ws.hasCompleted()) return false;
@@ -95,6 +107,9 @@ public class AssemblyLine {
      * @return true if the {@code CarOrder} is present in the {@code WorkStation}
      */
     public boolean isPresentInLastWorkstation(CarOrder o) {
-        return getWorkStations().getLast().getCarOrder().equals(o);
+        var order = getWorkStations().getLast().getCarOrder();
+        if (order == null || o == null)
+            return false;
+        return order.equals(o);
     }
 }

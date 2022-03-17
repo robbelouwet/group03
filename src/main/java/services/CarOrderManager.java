@@ -1,46 +1,41 @@
-package services.car;
+package services;
 
 
 import domain.car.CarModel;
 import domain.order.CarOrder;
 import domain.time.TimeManager;
-import lombok.Getter;
-import persistence.CarOrderCatalog;
-import persistence.CarRepository;
+import persistence.CarOrderRepository;
+import persistence.CarCatalog;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CarOrderManager {
-    @Getter
-    private static final CarOrderManager instance = new CarOrderManager();
-
-    private final CarRepository carRepository = new CarRepository();
-    private final CarOrderCatalog carOrderCatalog;
+    private final CarOrderRepository carRepository;
 
     private CarModel selectedModel;
 
-    public CarOrderManager() {
-        carOrderCatalog = CarOrderCatalog.getInstance();
+    public CarOrderManager(CarOrderRepository repository) {
+        this.carRepository = repository;
     }
 
     public List<CarOrder> getPendingOrders() {
-        return carOrderCatalog.getOrders().stream()
+        return carRepository.getOrders().stream()
                 .filter(o -> !o.isFinished())
                 .map(CarOrder::copy)
                 .collect(Collectors.toList());
     }
 
     public List<CarOrder> getFinishedOrders() {
-        return carOrderCatalog.getOrders().stream()
+        return carRepository.getOrders().stream()
                 .filter(CarOrder::isFinished)
                 .map(CarOrder::copy)
                 .collect(Collectors.toList());
     }
 
-    public List<CarModel> getCarModels() {
-        return carRepository.getModels();
+    public List<CarModel> getCarModels()  {
+        return CarCatalog.getModels();
     }
 
     /**
@@ -56,7 +51,7 @@ public class CarOrderManager {
         }
 
         CarOrder order = new CarOrder(TimeManager.getCurrentTime(), selectedModel, data);
-        carOrderCatalog.addOrder(order);
+        carRepository.addOrder(order);
         selectedModel = null;
         return order.copy();
     }

@@ -4,9 +4,10 @@ import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.time.DateTime;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class {@code WorkStation} contains assembly tasks that need to be performed on the current {@code CarOrder}.
@@ -15,14 +16,15 @@ import java.util.List;
 public class WorkStation {
     @Getter
     private final String name;
+    @Setter
     private CarOrder currentOrder;
     private final List<AssemblyTask> tasks;
 
     /**
      * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation}.
      */
-    public List<AssemblyTask> getTasks() {
-        return new ArrayList<>(tasks);
+    public List<AssemblyTask> getPendingTasks() {
+        return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
     }
 
     /**
@@ -46,7 +48,8 @@ public class WorkStation {
      * @see domain.order.CarOrder#isFinished()
      */
     public boolean hasCompleted() {
-        return currentOrder == null || currentOrder.isFinished();
+        return currentOrder == null
+                || tasks.stream().allMatch(AssemblyTask::isFinished);
     }
 
     /**
@@ -73,5 +76,10 @@ public class WorkStation {
             currentOrder.setStatus(OrderStatus.Finished);
             currentOrder = null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Workstation: [" + this.getName() + "]";
     }
 }

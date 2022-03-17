@@ -1,13 +1,13 @@
 package persistence;
 
-import domain.car.Car;
 import domain.car.CarModel;
 import domain.car.CarModelSpecification;
+import lombok.Getter;
 
 import java.util.*;
 
-public class CarRepository extends Repository<UUID, Car> implements ICarRepository {
-    public List<CarModel> getModels() {
+public class CarCatalog {
+    public static List<CarModel> getModels() {
         Map<String, List<String>> options = new HashMap<>();
 
         options.put("Body", List.of(new String[]{"sedan", "break"}));

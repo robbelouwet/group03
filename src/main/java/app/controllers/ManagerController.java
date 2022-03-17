@@ -3,9 +3,9 @@ package app.controllers;
 import app.ui.interfaces.IManagerView;
 import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
-import services.ManagerFactory;
-import services.assembly.AssemblyManager;
-import services.car.CarOrderManager;
+import services.AssemblyManager;
+import services.CarOrderManager;
+import services.ManagerStore;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
  * Class {@code ManagerController} is responsible for the communication between the UI and the Domain.
  */
 public class ManagerController {
-    private final AssemblyManager assemblyManager = ManagerFactory.getInstance().getAssemblyLineManager();
-    private final CarOrderManager carOrderManager = ManagerFactory.getInstance().getCarOrderManager();
+    private final AssemblyManager assemblyManager;
+    private final CarOrderManager carOrderManager;
     private final IManagerView ui;
 
     public ManagerController(IManagerView ui) {
         this.ui = ui;
+        this.assemblyManager = ManagerStore.getInstance().getAssemblyLineManager();
+        this.carOrderManager = ManagerStore.getInstance().getCarOrderManager();
     }
 
     /**
@@ -58,11 +60,9 @@ public class ManagerController {
      * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
      */
     public void advanceAssemblyLine(int timeSpent) {
-        /*boolean advanced = */
-        assemblyManager.advance(timeSpent);
-        /*if (advanced){
-            then show AL status after move
-        }*/
+        boolean success = assemblyManager.advance(timeSpent);
+        if (!success) ui.showErrorMessage("Assembly line is blocked!");
+
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         ui.showAssemblyLineStatusAfterMove(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
     }

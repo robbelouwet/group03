@@ -27,6 +27,8 @@ public interface IManagerView {
                       Map<String, List<String>> pendingTasks,
                       Map<String, List<String>> finishedTasks);
 
+    void showErrorMessage(String err);
+
     /**
      * Shows an overview of the assembly line status after it has been moved forward with one step.
      *

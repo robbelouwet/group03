@@ -5,7 +5,7 @@ import domain.order.CarOrder;
 import domain.time.DateTime;
 import domain.time.TimeManager;
 import lombok.Getter;
-import persistence.CarOrderCatalog;
+import persistence.CarOrderRepository;
 import persistence.CarOrderCatalogObserver;
 
 import java.util.Comparator;
@@ -13,17 +13,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductionScheduler implements CarOrderCatalogObserver {
-    @Getter
-    private static final ProductionScheduler instance = new ProductionScheduler();
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
     private static final long END_SHIFT = 22 * 60;  // Day ends at 22 o' clock
     private static final long DEFAULT_PRODUCTION_TIME = 3 * 60;  // An order takes 3 hours normally
 
-    private final CarOrderCatalog carOrderCatalog;
+    private final CarOrderRepository carOrderCatalog;
     private boolean firstSpotFree = true; // TODO not a fan of this, we need to think of a better solution
 
-    private ProductionScheduler() {
-        carOrderCatalog = CarOrderCatalog.getInstance();
+    public ProductionScheduler(CarOrderRepository carOrderRepository) {
+        this.carOrderCatalog = carOrderRepository;
         carOrderCatalog.registerListener(this);
     }
 
