@@ -27,6 +27,14 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
         return carOrderCatalog.getOrders().stream().filter(o -> o.getStatus().equals(OrderStatus.Pending)).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());
     }
 
+    private CarOrder getLastScheduledOrder() {
+        var orders = getOrderedListOfPendingOrders().stream().filter(o -> o.getEndTime() != null).collect(Collectors.toList());
+        if (orders.size() > 0) {
+            return orders.get(orders.size() - 1);
+        }
+        return null;
+    }
+
     /**
      * @return the next order in line
      */
@@ -70,11 +78,8 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
      */
     @Override
     public void carOrderAdded(CarOrder order) {
-        var orders = getOrderedListOfPendingOrders();
-        var scheduledOrders = orders.stream().filter(o -> o.getEndTime() != null).collect(Collectors.toList());
-        if (scheduledOrders.size() > 0) {
-            // The last == order, so we take the one before that
-            var lastPendingOrder = scheduledOrders.get(scheduledOrders.size() - 1);
+        var lastPendingOrder = getLastScheduledOrder();
+        if (lastPendingOrder != null) {
             order.setEndTime(calculatePredictedTimeBasedOnPreviousTime(lastPendingOrder.getEndTime()));
         } else {
             order.setEndTime(calculateEndTimeOfFirstOrder());
