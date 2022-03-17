@@ -27,25 +27,25 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
-        System.out.printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "": "Nothing");
+        ConsoleReader.getInstance().printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
         for (var order : pendingOrders) {
-            System.out.printf("\t%s\n", order);
+            ConsoleReader.getInstance().printf("\t%s\n", order);
         }
 
-        System.out.printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Nothing");
+        ConsoleReader.getInstance().printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Nothing");
         for (var order : simFinishedOrders) {
-            System.out.printf("\t%s\n", order);
+            ConsoleReader.getInstance().printf("\t%s\n", order);
         }
 
-        System.out.println("Pending tasks of workstations:");
+        ConsoleReader.getInstance().println("Pending tasks of workstations:");
         printTasks(pendingTasks);
 
-        System.out.println("Finished tasks of workstations:");
+        ConsoleReader.getInstance().println("Finished tasks of workstations:");
         printTasks(finishedTasks);
 
         String action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
         while (!(action.equals("yes") || action.equals("no"))) {
-            System.out.println("This is not a valid option.");
+            ConsoleReader.getInstance().println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
         }
         if (action.equals("yes")) {
@@ -61,9 +61,9 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
-        System.out.println("Assembly Line Status after the Move:");
+        ConsoleReader.getInstance().printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
         for (var order : pendingOrders) {
-            System.out.println(order);
+            ConsoleReader.getInstance().println(order);
         }
     }
 
@@ -76,7 +76,7 @@ public class ManagerTextView implements IManagerView {
                 result = Integer.parseInt(time);
                 correct = result >= 0;
             } catch (Exception e) {
-                System.out.println("That's not a valid number!");
+                ConsoleReader.getInstance().println("That's not a valid number!");
             }
         }
         return result;
@@ -84,9 +84,9 @@ public class ManagerTextView implements IManagerView {
 
     private void printTasks(Map<String, List<String>> list) {
         list.forEach((k, v) -> {
-            System.out.printf("\tWorkstation %s:\n", k);
+            ConsoleReader.getInstance().printf("\tWorkstation %s:\n", k);
             for (int i = 0; i < v.size(); i++) {
-                System.out.printf("\t\t%s\n", list.get(k).get(i));
+                ConsoleReader.getInstance().printf("\t\t%s\n", list.get(k).get(i));
             }
         });
     }
