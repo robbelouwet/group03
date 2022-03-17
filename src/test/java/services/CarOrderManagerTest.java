@@ -4,9 +4,7 @@ import domain.car.CarModel;
 import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
 import persistence.CarOrderRepository;
-
 import java.util.HashMap;
 import java.util.List;
 

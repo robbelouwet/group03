@@ -3,10 +3,10 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
-import domain.scheduler.ProductionScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,17 +24,19 @@ public class AssemblyManagerTest {
         when(aline.advance(anyInt())).thenReturn(true);
 
         // mock 2 tasks, with one finished
-        var task1 = new AssemblyTask("test1");
+        var task1 = new AssemblyTask("test1", List.of("Test action"));
         task1.finishTask();
-        var task2 = new AssemblyTask("test1");
+        var task2 = new AssemblyTask("test1", List.of("Test action"));
         task2.finishTask();
-        var testTasks = List.of(task1, task2, new AssemblyTask("test2"));
+        var testTasks = List.of(task1, task2, new AssemblyTask("test2", List.of("Test action")));
 
         // create workstation with above tasks
         var ws1 = mock(WorkStation.class);
-        when(ws1.getTasks()).thenReturn(testTasks);
+        when(ws1.getPendingTasks()).thenReturn(new ArrayList<>(testTasks));
+        when(ws1.getName()).thenReturn("WS1");
         var ws2 = mock(WorkStation.class);
-        when(ws2.getTasks()).thenReturn(testTasks);
+        when(ws2.getPendingTasks()).thenReturn(new ArrayList<>(testTasks));
+        when(ws2.getName()).thenReturn("WS2");
 
         // Create an AssemblyManager with mocked AssemblyLine
         assemblyManager = new AssemblyManager(aline);
@@ -51,7 +53,7 @@ public class AssemblyManagerTest {
     @Test
     void getPendingTasks() {
         // the flatMap squishes the 2-dimensional list of tasks into 1
-        var pendingTasks = assemblyManager.getPendingTasks()
+        var pendingTasks = assemblyManager.getPendingTasks().values()
                 .stream().flatMap(Collection::stream).toList();
 
         assertEquals(2, pendingTasks.size());
@@ -61,10 +63,10 @@ public class AssemblyManagerTest {
     @Test
     void getFinishedTasks() {
         // the flatMap squishes the 2-dimensional list of tasks into 1
-        var finishedTasks = assemblyManager.getFinishedTasks()
+        var finishedTasks = assemblyManager.getFinishedTasks().values()
                 .stream().flatMap(Collection::stream).toList();
 
-        assertEquals(4, finishedTasks.size());
+        assertEquals(4, finishedTasks. size());
         assertTrue(finishedTasks.stream().allMatch(AssemblyTask::isFinished));
     }
 }

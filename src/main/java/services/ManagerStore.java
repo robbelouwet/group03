@@ -17,6 +17,8 @@ public class ManagerStore {
     private AssemblyManager assemblyLineManager;
     @Getter
     private CarOrderManager carOrderManager;
+    @Getter
+    private MechanicManager mechanicManager;
 
     public void init() {
         init(new CarOrderRepository());
@@ -29,5 +31,6 @@ public class ManagerStore {
 
         assemblyLineManager = new AssemblyManager(scheduler);
         carOrderManager = new CarOrderManager(carOrderRepository);
+        mechanicManager = new MechanicManager();
     }
 }

@@ -6,16 +6,20 @@ import domain.time.DateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WorkStation {
     @Getter
-    private String name;
+    private final String name;
     @Setter
     private CarOrder currentOrder;
-    @Getter
+    // TODO: assign
     private final List<AssemblyTask> tasks;
+
+    public List<AssemblyTask> getPendingTasks() {
+        return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
+    }
 
     public WorkStation(String name, List<AssemblyTask> tasks) {
         this.name = name;
@@ -45,5 +49,10 @@ public class WorkStation {
         var order = currentOrder.copy();
         currentOrder = null;
         return order;
+    }
+
+    @Override
+    public String toString() {
+        return "Workstation: [" + this.getName() + "]";
     }
 }

@@ -5,6 +5,7 @@ import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ManagerTextView implements IManagerView {
@@ -28,15 +29,14 @@ public class ManagerTextView implements IManagerView {
     }
 
     @Override
-    public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, List<List<String>> pendingTasks, List<List<String>> finishedTasks) {
+    public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
         System.out.println("Current Assembly Line Status:");
         for (var order : pendingOrders) {
-            System.out.println(order);
+            System.out.printf("\t%s\n", order);
         }
-
         System.out.println("Future Assembly Line Status:");
         for (var order : simFinishedOrders) {
-            System.out.println(order);
+            System.out.printf("\t%s\n", order);
         }
 
         System.out.println("Pending tasks of workstations:");
@@ -61,11 +61,19 @@ public class ManagerTextView implements IManagerView {
         System.err.println(err);
     }
 
+    @Override
+    public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+        System.out.println("Assembly Line Status after the Move:");
+        for (var order : pendingOrders) {
+            System.out.println(order);
+        }
+    }
+
     private int askTimeSpent() {
         boolean correct = false;
         int result = 0;
         while (!correct) {
-            String time = ConsoleReader.getInstance().ask("Time spent? [positive number]");
+            String time = ConsoleReader.getInstance().ask("Time spent in minutes?");
             try {
                 result = Integer.parseInt(time);
                 correct = result >= 0;
@@ -76,13 +84,12 @@ public class ManagerTextView implements IManagerView {
         return result;
     }
 
-    private void printTasks(List<List<String>> list) {
-        for (int i = 0; i < list.size(); i++) {
-            // TODO: Refactor to Map<String, List<String>> because workstation has a name not an index
-            System.out.printf("Workstation %d:\n", i);
-            for (int j = 0; j < list.get(i).size(); j++) {
-                System.out.printf("\t%s\n", list.get(i).get(j));
+    private void printTasks(Map<String, List<String>> list) {
+        list.forEach((k, v) -> {
+            System.out.printf("\tWorkstation %s:\n", k);
+            for (int i = 0; i < v.size(); i++) {
+                System.out.printf("\t\t%s\n", list.get(k).get(i));
             }
-        }
+        });
     }
 }

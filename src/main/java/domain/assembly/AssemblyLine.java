@@ -1,5 +1,6 @@
 package domain.assembly;
 
+import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.time.TimeManager;
@@ -69,11 +70,11 @@ public class AssemblyLine {
     }
 
     public LinkedList<WorkStation> getWorkStations() {
-        return workStations;
+        return new LinkedList<>(workStations);
     }
 
-    public List<WorkStation> getAvailableWorkStations() {
-        return workStations.stream().filter(WorkStation::hasCompleted).collect(Collectors.toList());
+    public List<WorkStation> getBusyWorkstations() {
+        return workStations.stream().filter(ws -> !ws.hasCompleted()).collect(Collectors.toList());
     }
 
     private boolean hasAllCompleted() {
@@ -81,5 +82,12 @@ public class AssemblyLine {
             if (!ws.hasCompleted()) return false;
         }
         return true;
+    }
+
+    public boolean orderMatchWithLastWorkStation(CarOrder o) {
+        var order = getWorkStations().getLast().getCarOrder();
+        if (order == null || o == null)
+            return false;
+        return order.equals(o);
     }
 }

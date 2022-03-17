@@ -15,6 +15,7 @@ import services.ManagerStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -69,12 +70,21 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, List<List<String>> pendingTasks, List<List<String>> finishedTasks) {
+            public void showOverview(List<String> pendingOrders,
+                                     List<String> simFinishedOrders,
+                                     Map<String, List<String>> pendingTasks,
+                                     Map<String, List<String>> finishedTasks) {
+
             }
 
             @Override
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
+            }
+
+            @Override
+            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+
             }
         };
 
@@ -86,7 +96,7 @@ public class AdvanceIntegrationTest {
 
             // TODO: call the CarMechanicView instead of calling the AssemblyLine directly, this is not end-to-end otherwise!
             var ws = ManagerStore.getInstance().getAssemblyLineManager().getAssemblyLine().getWorkStations();
-            ws.forEach(w -> w.getTasks().forEach(AssemblyTask::finishTask));
+            ws.forEach(w -> w.getPendingTasks().forEach(AssemblyTask::finishTask));
         }
 
         // verify we have 0 pending orders
@@ -114,12 +124,21 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, List<List<String>> pendingTasks, List<List<String>> finishedTasks) {
+            public void showOverview(List<String> pendingOrders,
+                                     List<String> simFinishedOrders,
+                                     Map<String, List<String>> pendingTasks,
+                                     Map<String, List<String>> finishedTasks) {
+
             }
 
             @Override
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
+            }
+
+            @Override
+            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+
             }
         };
 
