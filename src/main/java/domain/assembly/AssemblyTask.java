@@ -2,12 +2,14 @@ package domain.assembly;
 
 import lombok.Getter;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class {@code AssemblyTask} is the representation of a
  * task that needs to be performed on a {@code CarOrder} on the {@code AssemblyLine}.
  */
-import java.util.List;
-
 public class AssemblyTask {
     @Getter
     private boolean finished;
@@ -26,6 +28,12 @@ public class AssemblyTask {
         this.actions = actions;
     }
 
+    private AssemblyTask(String name, List<String> actions, boolean finished) {
+        this.name = name;
+        this.finished = finished;
+        this.actions = new ArrayList<>(actions);  // Make a copy
+    }
+
     public void finishTask() {
         finished = true;
     }
@@ -37,5 +45,9 @@ public class AssemblyTask {
 
     public String getTaskInformation() {
         return this.toString();
+    }
+
+    public AssemblyTask copy() {
+        return new AssemblyTask(name, actions, finished);
     }
 }

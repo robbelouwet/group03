@@ -36,6 +36,16 @@ public class WorkStation {
         this.tasks = tasks;
     }
 
+    private WorkStation(String name, List<AssemblyTask> tasks, CarOrder currentOrder) {
+        this.name = name;
+        if (currentOrder != null) {
+            this.currentOrder = currentOrder.copy();
+        } else {
+            this.currentOrder = null;
+        }
+        this.tasks = tasks.stream().map(AssemblyTask::copy).collect(Collectors.toList());
+    }
+
     /**
      * @return {@code CarOrder} The current {@code CarOrder} on which assembly tasks are performed.
      */
@@ -79,6 +89,10 @@ public class WorkStation {
             return order;
         }
         return null;
+    }
+
+    public WorkStation copy() {
+        return new WorkStation(name, tasks, currentOrder);
     }
 
     @Override
