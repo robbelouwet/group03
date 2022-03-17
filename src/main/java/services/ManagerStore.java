@@ -32,5 +32,6 @@ public class ManagerStore {
         assemblyLineManager = new AssemblyManager(scheduler);
         carOrderManager = new CarOrderManager(carOrderRepository);
         mechanicManager = new MechanicManager();
+        instance = this;
     }
 }

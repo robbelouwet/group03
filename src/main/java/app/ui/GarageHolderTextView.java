@@ -41,8 +41,7 @@ public class GarageHolderTextView implements IGarageHolderView {
         }
     }
 
-    @Override
-    public boolean isModelName(String name, List<String> models) {
+    private boolean isModelName(String name, List<String> models) {
         return models.stream().anyMatch(m -> m.equals(name));
     }
 
@@ -61,8 +60,8 @@ public class GarageHolderTextView implements IGarageHolderView {
         controller.selectModel(carModel);
     }
 
-    @Override
-    public boolean isValue(String value, List<String> values) {
+
+    private boolean isValue(String value, List<String> values) {
         return values.stream().anyMatch(v -> v.equals(value));
     }
 

@@ -20,6 +20,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     public ProductionScheduler(CarOrderRepository carOrderRepository) {
         this.carOrderCatalog = carOrderRepository;
         carOrderCatalog.registerListener(this);
+        TimeManager.reset();
     }
 
     private List<CarOrder> getOrderedListOfPendingOrders() {
@@ -70,9 +71,10 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     @Override
     public void carOrderAdded(CarOrder order) {
         var orders = getOrderedListOfPendingOrders();
-        if (orders.size() > 1) {
+        var scheduledOrders = orders.stream().filter(o -> o.getEndTime() != null).collect(Collectors.toList());
+        if (scheduledOrders.size() > 0) {
             // The last == order, so we take the one before that
-            var lastPendingOrder = orders.get(orders.size() - 2);
+            var lastPendingOrder = scheduledOrders.get(scheduledOrders.size() - 1);
             order.setEndTime(calculatePredictedTimeBasedOnPreviousTime(lastPendingOrder.getEndTime()));
         } else {
             order.setEndTime(calculateEndTimeOfFirstOrder());
