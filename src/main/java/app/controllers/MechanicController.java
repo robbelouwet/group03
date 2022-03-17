@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.ui.interfaces.ICarMechanicView;
 import services.CarOrderManager;
+import services.ManagerStore;
 
 public class MechanicController {
     private final CarOrderManager carOrderManager;
@@ -9,6 +10,6 @@ public class MechanicController {
 
     public MechanicController(ICarMechanicView view) {
         this.view = view;
-        carOrderManager = new CarOrderManager();
+        carOrderManager = ManagerStore.getCarOrderManager();
     }
 }

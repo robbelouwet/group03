@@ -4,8 +4,8 @@ import domain.car.CarModel;
 import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import persistence.CarCatalog;
 import persistence.CarOrderRepository;
-import persistence.PersistenceFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,20 +28,17 @@ class CarOrderManagerTest {
         when(mockedOrder1.copy()).thenReturn(mockedOrder1);
         when(mockedOrder2.copy()).thenReturn(mockedOrder2);
 
-        // mock the factories
-        var mockedPFactory = mock(PersistenceFactory.class);
-        var mockedCatalog = mock(CarOrderRepository.class);
-        when(mockedPFactory.getCarOrderCatalog()).thenReturn(mockedCatalog);
-        when(mockedCatalog.getOrders()).thenReturn(List.of(mockedOrder1, mockedOrder2));
+        // Mock an OrderRepository
+        var mockedRepo = mock(CarOrderRepository.class);
+        when(mockedRepo.getOrders()).thenReturn(List.of(mockedOrder1, mockedOrder2));
 
-        // inject the mocked/testing instances of the factories
-        PersistenceFactory.setInstance(mockedPFactory);
-        ManagerFactory.setInstance(new ManagerFactory());
+        // create testing instance of the ManagerStore
+        ManagerStore.init(mockedRepo);
     }
 
     @Test
     void getPendingOrders() {
-        var pendingOrders = ManagerFactory.getInstance().getCarOrderManager().getPendingOrders();
+        var pendingOrders = ManagerStore.getCarOrderManager().getPendingOrders();
 
         assertEquals(1, pendingOrders.size());
         assertTrue(pendingOrders.stream().noneMatch(CarOrder::isFinished));
@@ -49,7 +46,7 @@ class CarOrderManagerTest {
 
     @Test
     void getFinishedOrders() {
-        var pendingOrders = ManagerFactory.getInstance().getCarOrderManager().getFinishedOrders();
+        var pendingOrders = ManagerStore.getCarOrderManager().getFinishedOrders();
 
         assertEquals(1, pendingOrders.size());
         assertTrue(pendingOrders.stream().allMatch(CarOrder::isFinished));
@@ -59,8 +56,8 @@ class CarOrderManagerTest {
     void submitCarOrder() {
         var mockedModel = mock(CarModel.class);
         when(mockedModel.isValidInputData(anyMap())).thenReturn(true);
-        ManagerFactory.getInstance().getCarOrderManager().selectModel(mockedModel);
-        var order = ManagerFactory.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>());
+        ManagerStore.getCarOrderManager().selectModel(mockedModel);
+        var order = ManagerStore.getCarOrderManager().submitCarOrder(new HashMap<>());
 
         assertNotNull(order);
     }
@@ -68,8 +65,8 @@ class CarOrderManagerTest {
     @Test
     void selectModel() {
         var mockedModel = mock(CarModel.class);
-        ManagerFactory.getInstance().getCarOrderManager().selectModel(mockedModel);
-        var selectedModel = ManagerFactory.getInstance().getCarOrderManager().getSelectedModel();
+        ManagerStore.getCarOrderManager().selectModel(mockedModel);
+        var selectedModel = ManagerStore.getCarOrderManager().getSelectedModel();
 
         assertNotNull(selectedModel);
     }

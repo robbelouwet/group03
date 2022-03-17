@@ -4,6 +4,8 @@ import app.ui.interfaces.IGarageHolderView;
 import domain.car.CarModel;
 import domain.order.CarOrder;
 import services.CarOrderManager;
+import services.ManagerStore;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,7 +16,7 @@ public class CarController {
 
     public CarController(IGarageHolderView ui) {
         this.ui = ui;
-        carOrderManager = new CarOrderManager();
+        carOrderManager = ManagerStore.getCarOrderManager();
     }
 
     /**

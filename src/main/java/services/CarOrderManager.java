@@ -17,9 +17,9 @@ public class CarOrderManager {
 
     private CarModel selectedModel;
 
-    public CarOrderManager() {
+    public CarOrderManager(CarOrderRepository repository) {
         carCatalog = CarCatalog.getInstance();
-        carRepository = new CarOrderRepository();
+        this.carRepository = repository;
     }
 
     public List<CarOrder> getPendingOrders() {

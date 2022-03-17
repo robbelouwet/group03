@@ -3,6 +3,7 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.scheduler.ProductionScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class AssemblyManagerTest {
         var ws2 = mock(WorkStation.class);
         when(ws2.getTasks()).thenReturn(testTasks);
 
-        assemblyManager = new AssemblyManager();
+        assemblyManager = new AssemblyManager(mock(ProductionScheduler.class));
 
         when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
     }

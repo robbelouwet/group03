@@ -7,8 +7,7 @@ import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.PersistenceFactory;
-import services.ManagerFactory;
+import services.ManagerStore;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class AdvanceIntegrationTest {
     public void reset() {
         // First re-initialize the persistence factory, THEN the manager factory
         PersistenceFactory.setInstance(new PersistenceFactory());
-        ManagerFactory.setInstance(new ManagerFactory());
+        ManagerStore.setInstance(new ManagerStore());
     }
 
     @BeforeEach
@@ -38,8 +37,8 @@ public class AdvanceIntegrationTest {
         // create 3 car orders from 1 model
         var model = PersistenceFactory.getInstance().getCarRepository().getModels().get(0);
         for (int i = 0; i < 3; i++) {
-            ManagerFactory.getInstance().getCarOrderManager().selectModel(model);
-            ManagerFactory.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>() {{
+            ManagerStore.getInstance().getCarOrderManager().selectModel(model);
+            ManagerStore.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>() {{
                 put("Body", "break");
                 put("Color", "white");
                 put("Engine", "performance");
@@ -84,7 +83,7 @@ public class AdvanceIntegrationTest {
             mgrView.confirmMove(60);
 
             // TODO: call the CarMechanicView instead of calling the AssemblyLine directly, this is not end-to-end otherwise!
-            var ws = ManagerFactory.getInstance().getAssemblyLineManager().getAssemblyLine().getWorkStations();
+            var ws = ManagerStore.getInstance().getAssemblyLineManager().getAssemblyLine().getWorkStations();
             ws.forEach(w -> w.getTasks().forEach(AssemblyTask::finishTask));
         }
 
@@ -100,7 +99,7 @@ public class AdvanceIntegrationTest {
     @Test
     public void alternateFlowTest() {
         // advance once
-        ManagerFactory.getInstance().getAssemblyLineManager().advance(60);
+        ManagerStore.getInstance().getAssemblyLineManager().advance(60);
 
         IManagerView mgrView = new IManagerView() {
             @Override

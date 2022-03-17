@@ -3,24 +3,24 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.scheduler.ProductionScheduler;
 import lombok.Getter;
 import persistence.DataSeeder;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class AssemblyManager {
     @Getter
     private final AssemblyLine assemblyLine;
-    @Getter
-    private final CarOrderManager carOrderManager;
 
-    public AssemblyManager() {
-        // TODO, a better way to do this
-        assemblyLine = DataSeeder.defaultAssemblyLine();
-        carOrderManager = new CarOrderManager();
+    public AssemblyManager(ProductionScheduler scheduler) {
+        assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
     }
+
+
 
     public boolean advance(int timeSpent) {
         return assemblyLine.advance(timeSpent);

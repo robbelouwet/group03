@@ -5,6 +5,8 @@ import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import services.AssemblyManager;
 import services.CarOrderManager;
+import services.ManagerStore;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +17,8 @@ public class ManagerController {
 
     public ManagerController(IManagerView ui) {
         this.ui = ui;
-        assemblyManager = new AssemblyManager();
-        carOrderManager = assemblyManager.getCarOrderManager();
+        this.assemblyManager = ManagerStore.getAssemblyLineManager();
+        this.carOrderManager = ManagerStore.getCarOrderManager();
     }
 
     public void showMainMenu() {

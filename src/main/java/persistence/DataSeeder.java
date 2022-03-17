@@ -1,6 +1,5 @@
 package persistence;
 
-import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 
@@ -9,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DataSeeder {
-    public static AssemblyLine defaultAssemblyLine() {
+    public static LinkedList<WorkStation> defaultAssemblyLine() {
         AssemblyTask task1 = new AssemblyTask("Assembly car body");
         AssemblyTask task2 = new AssemblyTask("Paint car");
         AssemblyTask task3 = new AssemblyTask("Insert engine");
@@ -25,7 +24,7 @@ public class DataSeeder {
         WorkStation ws3 = new WorkStation("Accessories Post",
                 new ArrayList<>(List.of(task5, task6, task7)));
 
-        return new AssemblyLine(new LinkedList<>(List.of(ws1, ws2, ws3)));
+        return new LinkedList<>(List.of(ws1, ws2, ws3));
 
     }
 }

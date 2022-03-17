@@ -3,13 +3,11 @@ package app.controllers;
 import app.ui.interfaces.IManagerView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.PersistenceFactory;
 import services.AssemblyManager;
-import services.ManagerFactory;
+import services.ManagerStore;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ManagerControllerTest {
@@ -20,14 +18,14 @@ public class ManagerControllerTest {
     public void setup() {
         // first mock the ManagerFactory and its AssemblyLineManager
         // in order to mock AssemblyLineManager's advance method and isolate the controller's behaviour
-        var mockedFactory = mock(ManagerFactory.class);
+        var mockedFactory = mock(ManagerStore.class);
         var mockedAssemblyManager = mock(AssemblyManager.class);
         when(mockedFactory.getAssemblyLineManager()).thenReturn(mockedAssemblyManager);
         when(mockedAssemblyManager.advance(anyInt())).thenReturn(true); // change this to false to see the exception being thrown
 
         // re-initialize the persistence factory, THEN the manager factory
         PersistenceFactory.setInstance(new PersistenceFactory());
-        ManagerFactory.setInstance(mockedFactory);
+        ManagerStore.setInstance(mockedFactory);
 
         mgrView = new IManagerView() {
             @Override

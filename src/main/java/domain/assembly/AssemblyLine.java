@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 public class AssemblyLine {
     private final LinkedList<WorkStation> workStations;
     @Getter
-    private final ProductionScheduler scheduler = new ProductionScheduler();
+    private final ProductionScheduler scheduler;
 
-    public AssemblyLine(LinkedList<WorkStation> workStations) {
+    public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler) {
+        this.scheduler = scheduler;
         this.workStations = workStations;
     }
 

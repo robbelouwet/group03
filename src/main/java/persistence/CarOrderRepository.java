@@ -4,16 +4,26 @@ import domain.order.CarOrder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class that is responsible for keeping track of all car orders in our application
  */
 public class CarOrderRepository {
-    private final List<CarOrder> orders = new ArrayList<>();
+    private final List<CarOrder> orders;
     private final List<CarOrderCatalogObserver> listeners = new ArrayList<>();
     private static CarOrderRepository instance;
 
     public CarOrderRepository() {
+        orders = new ArrayList<>();
+    }
+
+    private CarOrderRepository(List<CarOrder> orders) {
+        this.orders = orders.stream().map(CarOrder::copy).collect(Collectors.toList());
+    }
+
+    public CarOrderRepository copy() {
+        return new CarOrderRepository(orders);
     }
 
     /**
