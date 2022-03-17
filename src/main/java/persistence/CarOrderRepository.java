@@ -11,8 +11,9 @@ import java.util.List;
 public class CarOrderRepository {
     private final List<CarOrder> orders = new ArrayList<>();
     private final List<CarOrderCatalogObserver> listeners = new ArrayList<>();
+    private static CarOrderRepository instance;
 
-    CarOrderRepository() {
+    public CarOrderRepository() {
     }
 
     /**
@@ -57,5 +58,10 @@ public class CarOrderRepository {
     public void unregisterListener(CarOrderCatalogObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.remove(listener);
+    }
+
+    public static CarOrderRepository getInstance() {
+        if (instance == null) instance = new CarOrderRepository();
+        return instance;
     }
 }

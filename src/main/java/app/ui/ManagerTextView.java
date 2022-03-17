@@ -3,7 +3,6 @@ package app.ui;
 import app.controllers.ManagerController;
 import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
-import services.ManagerFactory;
 
 import java.util.List;
 import java.util.Scanner;

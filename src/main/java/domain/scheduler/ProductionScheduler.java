@@ -6,7 +6,6 @@ import domain.time.DateTime;
 import domain.time.TimeManager;
 import lombok.Getter;
 import persistence.CarOrderRepository;
-import persistence.PersistenceFactory;
 import persistence.CarOrderCatalogObserver;
 
 import java.util.Comparator;
@@ -24,7 +23,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private boolean firstSpotFree = true; // TODO not a fan of this, we need to think of a better solution
 
     public ProductionScheduler() {
-        carOrderCatalog = PersistenceFactory.getInstance().getCarOrderCatalog();
+        carOrderCatalog = CarOrderRepository.getInstance();
         carOrderCatalog.registerListener(this);
     }
 

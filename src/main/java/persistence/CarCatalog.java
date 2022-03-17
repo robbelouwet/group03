@@ -2,10 +2,18 @@ package persistence;
 
 import domain.car.CarModel;
 import domain.car.CarModelSpecification;
+import lombok.Getter;
 
 import java.util.*;
 
 public class CarCatalog {
+
+    private static CarCatalog instance;
+    public static CarCatalog getInstance() {
+        if (instance == null) instance = new CarCatalog();
+        return instance;
+    }
+
     CarCatalog() {
     }
 

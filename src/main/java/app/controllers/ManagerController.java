@@ -5,18 +5,18 @@ import domain.assembly.AssemblyTask;
 import domain.order.CarOrder;
 import services.AssemblyManager;
 import services.CarOrderManager;
-import services.ManagerFactory;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ManagerController {
-    private final AssemblyManager assemblyManager = ManagerFactory.getInstance().getAssemblyLineManager();
-    private final CarOrderManager carOrderManager = ManagerFactory.getInstance().getCarOrderManager();
+    private final AssemblyManager assemblyManager;
+    private final CarOrderManager carOrderManager;
     private final IManagerView ui;
 
     public ManagerController(IManagerView ui) {
         this.ui = ui;
+        assemblyManager = new AssemblyManager();
+        carOrderManager = assemblyManager.getCarOrderManager();
     }
 
     public void showMainMenu() {

@@ -35,7 +35,7 @@ public class AssemblyManagerTest {
         var ws2 = mock(WorkStation.class);
         when(ws2.getTasks()).thenReturn(testTasks);
 
-        assemblyManager = new AssemblyManager(alin);
+        assemblyManager = new AssemblyManager();
 
         when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
     }

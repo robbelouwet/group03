@@ -4,6 +4,7 @@ import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import lombok.Getter;
+import persistence.DataSeeder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +13,13 @@ import java.util.function.Predicate;
 public class AssemblyManager {
     @Getter
     private final AssemblyLine assemblyLine;
+    @Getter
+    private final CarOrderManager carOrderManager;
 
-    AssemblyManager(AssemblyLine aline) {
-        assemblyLine = aline;
+    public AssemblyManager() {
+        // TODO, a better way to do this
+        assemblyLine = DataSeeder.defaultAssemblyLine();
+        carOrderManager = new CarOrderManager();
     }
 
     public boolean advance(int timeSpent) {
