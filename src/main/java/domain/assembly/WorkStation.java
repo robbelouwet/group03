@@ -25,6 +25,12 @@ public class WorkStation {
         this.tasks = tasks;
     }
 
+    private WorkStation(String name, List<AssemblyTask> tasks, CarOrder currentOrder) {
+        this.name = name;
+        this.currentOrder = currentOrder.copy();
+        this.tasks = tasks.stream().map(AssemblyTask::copy).collect(Collectors.toList());
+    }
+
     public CarOrder getCarOrder() {
         return currentOrder;
     }
@@ -47,6 +53,10 @@ public class WorkStation {
         var order = currentOrder.copy();
         currentOrder = null;
         return order;
+    }
+
+    public WorkStation copy() {
+        return new WorkStation(name, tasks, currentOrder);
     }
 
     @Override
