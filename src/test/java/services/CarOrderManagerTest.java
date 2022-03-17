@@ -31,12 +31,14 @@ class CarOrderManagerTest {
         when(mockedRepo.getOrders()).thenReturn(List.of(mockedOrder1, mockedOrder2));
 
         // create testing instance of the ManagerStore
+        when(mockedRepo.copy()).thenReturn(mockedRepo);
         ManagerStore.getInstance().init(mockedRepo);
     }
 
     @Test
     void getPendingOrders() {
-        var pendingOrders = ManagerStore.getInstance().getCarOrderManager().getPendingOrders();
+        var manager = ManagerStore.getInstance().getCarOrderManager();
+        var pendingOrders = manager.getPendingOrders();
 
         assertEquals(1, pendingOrders.size());
         assertTrue(pendingOrders.stream().noneMatch(CarOrder::isFinished));

@@ -4,6 +4,7 @@ import app.ui.CarMechanicTextView;
 import app.ui.GarageHolderTextView;
 import app.ui.ManagerTextView;
 import app.ui.interfaces.IAppView;
+import app.utils.ConsoleReader;
 
 public class AppController {
     private final IAppView appView;
@@ -25,7 +26,7 @@ public class AppController {
             case "garage holder" -> new GarageHolderTextView();
             case "mechanic" -> new CarMechanicTextView();
             case "quit" -> quit = true;
-            default -> System.out.println("Sorry, don't know that role");
+            default -> ConsoleReader.getInstance().println("Sorry, don't know that role");
         }
         if (quit) return;
         loop();

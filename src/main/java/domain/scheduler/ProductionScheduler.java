@@ -14,17 +14,17 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private static final long END_SHIFT = 22 * 60;  // Day ends at 22 o' clock
     private static final long DEFAULT_PRODUCTION_TIME = 3 * 60;  // An order takes 3 hours normally
 
-    private final CarOrderRepository carOrderCatalog;
+    private final CarOrderRepository carOrderRepository;
     private boolean firstSpotFree = true;
 
     public ProductionScheduler(CarOrderRepository carOrderRepository) {
-        this.carOrderCatalog = carOrderRepository;
-        carOrderCatalog.registerListener(this);
+        this.carOrderRepository = carOrderRepository;
+        this.carOrderRepository.registerListener(this);
         TimeManager.reset();
     }
 
     private List<CarOrder> getOrderedListOfPendingOrders() {
-        return carOrderCatalog.getOrders().stream().filter(o -> o.getStatus().equals(OrderStatus.Pending)).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());
+        return carOrderRepository.getOrders().stream().filter(o -> o.getStatus().equals(OrderStatus.Pending)).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());
     }
 
     private CarOrder getLastScheduledOrder() {

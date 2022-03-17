@@ -64,7 +64,6 @@ class ProductionSchedulerTest {
 
     @Test
     void recalculatePredictedEndTimes() {
-        System.out.println(TimeManager.getCurrentTime());
         scheduler.recalculatePredictedEndTimes(30);
         assertEquals(new DateTime(0, 10, 0), orders.get(0).getEndTime());
         assertEquals(new DateTime(0, 11, 0), orders.get(1).getEndTime());
