@@ -4,7 +4,6 @@ import app.controllers.MechanicController;
 import app.ui.interfaces.ICarMechanicView;
 import app.utils.ConsoleReader;
 import domain.assembly.AssemblyTask;
-import domain.assembly.WorkStation;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,21 +24,26 @@ public class CarMechanicTextView implements ICarMechanicView {
     }
 
     @Override
-    public void showWorkStations(List<WorkStation> availableWorkstations) {
+    public void showWorkStations(List<String> availableWorkstations) {
         System.out.println("Available workstations:");
-        for (WorkStation ws : availableWorkstations) {
-            System.out.println("-" + ws);
+        for (String ws : availableWorkstations) {
+            System.out.println("- Workstation [" + ws + "]");
         }
 
         String action = ConsoleReader.getInstance().ask("Select a workstation by typing its name: | Cancel [cancel]: ");
-        while (!(WorkStation.isWorkstationName(action, availableWorkstations) || action.equals("cancel"))) {
+        while (!(isWorkStation(action, availableWorkstations) || action.equals("cancel"))) {
             System.out.println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask("Select a workstation by typing its name: | Cancel [cancel]: ");
         }
-        if (!action.equals("cancel")) {
-            WorkStation selectedWorkStation = WorkStation.getWorkStationByName(action, availableWorkstations);
+        if (isWorkStation(action, availableWorkstations)) {
+            String finalSelectedWorkstation = action;
+            String selectedWorkStation = availableWorkstations.stream().filter(ws -> ws.equals(finalSelectedWorkstation)).findAny().orElseThrow();
             controller.selectWorkStation(selectedWorkStation);
         }
+    }
+
+    private boolean isWorkStation(String name, List<String> workStations) {
+        return workStations.stream().anyMatch(ws -> ws.equals(name));
     }
 
     @Override

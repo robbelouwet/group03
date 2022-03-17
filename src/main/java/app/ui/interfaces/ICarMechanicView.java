@@ -6,7 +6,7 @@ import domain.assembly.WorkStation;
 import java.util.List;
 
 public interface ICarMechanicView {
-    void showWorkStations(List<WorkStation> availableWorkstations);
+    void showWorkStations(List<String> availableWorkstations);
 
     void showAvailableTasks(List<AssemblyTask> workStationTasks);
 

@@ -6,6 +6,7 @@ import domain.assembly.WorkStation;
 import services.assembly.AssemblyManager;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MechanicController {
     private final AssemblyManager assemblyManager = AssemblyManager.getInstance();
@@ -19,12 +20,13 @@ public class MechanicController {
 
     public void showMainMenu() {
         List<WorkStation> availableWorkstations =  assemblyManager.getAvailableWorkStations();
-        view.showWorkStations(availableWorkstations);
+        view.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
     }
 
-    public void selectWorkStation(WorkStation workStation){
-        currentWorkStation = workStation;
-        view.showAvailableTasks(workStation.getTasks());
+    public void selectWorkStation(String workStationName){
+        var selectedWorkStation =  assemblyManager.getAvailableWorkStations().stream().filter(ws -> ws.getName().equals(workStationName)).findAny().orElseThrow();
+        currentWorkStation = selectedWorkStation;
+        view.showAvailableTasks(selectedWorkStation.getTasks());
     }
 
     public void selectTask(AssemblyTask assemblyTask){
