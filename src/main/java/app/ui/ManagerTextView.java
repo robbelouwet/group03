@@ -6,20 +6,17 @@ import app.utils.ConsoleReader;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class ManagerTextView implements IManagerView {
     private final ManagerController managerController;
-    private final Scanner scanner;
 
     public ManagerTextView() {
         managerController = new ManagerController(this);
-        this.scanner = new Scanner(System.in);
         initialize();
     }
 
     private void initialize() {
-        System.out.println("Hi manager!");
+        ConsoleReader.getInstance().println("Hi manager!");
         managerController.showMainMenu();
     }
 
@@ -64,9 +61,9 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
-        System.out.printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
+        System.out.println("Assembly Line Status after the Move:");
         for (var order : pendingOrders) {
-            System.out.printf("\t%s\n", order);
+            System.out.println(order);
         }
     }
 
@@ -87,7 +84,7 @@ public class ManagerTextView implements IManagerView {
 
     private void printTasks(Map<String, List<String>> list) {
         list.forEach((k, v) -> {
-            System.out.printf("\tWorkstation %s: %s\n", k, v.size() > 0 ? "" : "Nothing");
+            System.out.printf("\tWorkstation %s:\n", k);
             for (int i = 0; i < v.size(); i++) {
                 System.out.printf("\t\t%s\n", list.get(k).get(i));
             }

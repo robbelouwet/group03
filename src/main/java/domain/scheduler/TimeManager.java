@@ -18,4 +18,8 @@ public class TimeManager {
     static void addTime(long minutes) {
         currentTime = currentTime.addTime(minutes);
     }
+
+    static void reset() {
+        currentTime = new DateTime(60 * 6);
+    }
 }

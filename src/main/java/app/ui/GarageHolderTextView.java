@@ -8,7 +8,6 @@ import domain.scheduler.DateTime;
 import java.util.*;
 
 public class GarageHolderTextView implements IGarageHolderView {
-    // TODO obviously this class needs some work, I just made this for testing
     private final CarController controller;
 
     public GarageHolderTextView() {
@@ -17,23 +16,23 @@ public class GarageHolderTextView implements IGarageHolderView {
     }
 
     private void initialize() {
-        System.out.println("Hi garage holder!");
+        ConsoleReader.getInstance().println("Hi garage holder!");
         controller.showMainMenu();
     }
 
     @Override
     public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
-        System.out.println("Pending orders:");
+        ConsoleReader.getInstance().println("Pending orders:");
         for (var order : pendingOrders) {
-            System.out.println(order);
+            ConsoleReader.getInstance().println(order);
         }
-        System.out.println("Finished orders:");
+        ConsoleReader.getInstance().println("Finished orders:");
         for (var order : finishedOrders) {
-            System.out.println(order);
+            ConsoleReader.getInstance().println(order);
         }
         String action = ConsoleReader.getInstance().ask("Make an order [order] | Cancel [cancel]: ");
         while (!(action.equals("order") || action.equals("cancel"))) {
-            System.out.println("This is not a valid option.");
+            ConsoleReader.getInstance().println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask("Make an order [order] | Cancel [cancel]: ");
         }
         if (action.equals("order")) {
@@ -41,16 +40,15 @@ public class GarageHolderTextView implements IGarageHolderView {
         }
     }
 
-    @Override
-    public boolean isModelName(String name, List<String> models) {
+    private boolean isModelName(String name, List<String> models) {
         return models.stream().anyMatch(m -> m.equals(name));
     }
 
     @Override
     public void showCarModels(List<String> models) {
-        System.out.println("Carmodel options:");
+        ConsoleReader.getInstance().println("Carmodel options:");
         for (var model : models) {
-            System.out.println(model);
+            ConsoleReader.getInstance().println(model);
         }
         String model = ConsoleReader.getInstance().ask(("Type the name of a model to select it: "));
         while (!isModelName(model, models)) {
@@ -61,19 +59,19 @@ public class GarageHolderTextView implements IGarageHolderView {
         controller.selectModel(carModel);
     }
 
-    @Override
-    public boolean isValue(String value, List<String> values) {
+
+    private boolean isValue(String value, List<String> values) {
         return values.stream().anyMatch(v -> v.equals(value));
     }
 
     @Override
     public void showCarForm(Map<String, List<String>> options) {
-        System.out.println("Make a selection for each option, or type [cancel]");
+        ConsoleReader.getInstance().println("Make a selection for each option, or type [cancel]");
         Map<String, String> selection = new HashMap<>();
         for (var key : options.keySet()) {
-            System.out.println("Option: " + key);
+            ConsoleReader.getInstance().println("Option: " + key);
             for (var value : options.get(key)) {
-                System.out.println(value);
+                ConsoleReader.getInstance().println(value);
             }
             String value = ConsoleReader.getInstance().ask("Select a value: ");
             if (value.equals("cancel")) {
@@ -81,7 +79,7 @@ public class GarageHolderTextView implements IGarageHolderView {
                 return;
             }
             while (!isValue(value, options.get(key))) {
-                System.out.print("Try again: ");
+                ConsoleReader.getInstance().print("Try again: ");
                 value = ConsoleReader.getInstance().ask("Try again: ");
                 if (value.equals("cancel")) {
                     controller.showMainMenu();
@@ -92,7 +90,7 @@ public class GarageHolderTextView implements IGarageHolderView {
         }
         var confirm = ConsoleReader.getInstance().ask("Confirm order? [confirm] | [cancel]: ");
         while (!(confirm.equals("confirm") || confirm.equals("cancel"))) {
-            System.out.print("Try again: ");
+            ConsoleReader.getInstance().print("Try again: ");
         }
         if (confirm.equals("confirm")) {
             controller.submitCarOrder(selection);
@@ -103,7 +101,7 @@ public class GarageHolderTextView implements IGarageHolderView {
 
     @Override
     public void showPredictedEndTime(DateTime endTime) {
-        System.out.println("Predicted end time: " + endTime);
+        ConsoleReader.getInstance().println("Predicted end time: " + endTime);
         controller.showMainMenu();
     }
 }
