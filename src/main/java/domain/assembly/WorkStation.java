@@ -5,7 +5,6 @@ import domain.order.OrderStatus;
 import domain.time.DateTime;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,11 @@ public class WorkStation {
 
     private WorkStation(String name, List<AssemblyTask> tasks, CarOrder currentOrder) {
         this.name = name;
-        this.currentOrder = currentOrder.copy();
+        if (currentOrder != null) {
+            this.currentOrder = currentOrder.copy();
+        } else {
+            this.currentOrder = null;
+        }
         this.tasks = tasks.stream().map(AssemblyTask::copy).collect(Collectors.toList());
     }
 
