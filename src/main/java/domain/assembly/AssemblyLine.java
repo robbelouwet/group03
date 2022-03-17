@@ -5,8 +5,11 @@ import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
 import lombok.Getter;
+
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyLine} contains multiple workstations and is responsible for them.
@@ -20,15 +23,13 @@ public class AssemblyLine {
 
     /**
      * @param workStations The workstations that the {@code AssemblyLine} will contain, in the form of a {@code LinkedList}.
-     * @param scheduler The {@code ProductionScheduler} who provides following car orders.
+     * @param scheduler    The {@code ProductionScheduler} who provides following car orders.
      */
     public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler) {
         this.scheduler = scheduler;
         this.workStations = workStations;
     }
 
-    public boolean advance(int timeSpent) {
-        if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
     /**
      * This method will move the {@code AssemblyLine} one step forward if it isn't blocked (all the workstations are free of work).
      * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
@@ -36,7 +37,8 @@ public class AssemblyLine {
      * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
      * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
-    public void advance(int timeSpent) {
+    public boolean advance(int timeSpent) {
+        if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
         scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
             finishLastWorkStation();

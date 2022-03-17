@@ -71,11 +71,14 @@ public class WorkStation {
     /**
      * This method sets the current car order on finished if there is one present.
      */
-    public void finishCarOrder() {
+    public CarOrder finishCarOrder() {
         if (currentOrder != null) {
             currentOrder.setStatus(OrderStatus.Finished);
+            var order = currentOrder.copy();
             currentOrder = null;
+            return order;
         }
+        return null;
     }
 
     @Override

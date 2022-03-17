@@ -34,6 +34,7 @@ public class ManagerController {
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(carOrderManager.getPendingOrders());
         Map<String, List<String>> pendingTasks = convertToStringList(assemblyManager.getPendingTasks());
+        // TODO: finished tasks is not correct
         Map<String, List<String>> finishedTasks = convertToStringList(assemblyManager.getFinishedTasks());
         ui.showOverview(
                 pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()),
