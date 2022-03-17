@@ -18,5 +18,4 @@ public class TimeManager {
     public static void addTime(long minutes) {
         currentTime = currentTime.addTime(minutes);
     }
-
 }

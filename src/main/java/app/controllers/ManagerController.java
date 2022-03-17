@@ -28,6 +28,7 @@ public class ManagerController {
      * Provides the UI with the pending & finished tasks and orders of the assembly line.
      */
     public void showMainMenu() {
+        // TODO: pendingOrders -> onAssemblyLineOrders
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(carOrderManager.getPendingOrders());
         Map<String, List<String>> pendingTasks = convertToStringList(assemblyManager.getPendingTasks());
