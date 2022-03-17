@@ -30,11 +30,12 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
-        System.out.println("Current Assembly Line Status:");
+        System.out.printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "": "Nothing");
         for (var order : pendingOrders) {
             System.out.printf("\t%s\n", order);
         }
-        System.out.println("Future Assembly Line Status:");
+
+        System.out.printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Nothing");
         for (var order : simFinishedOrders) {
             System.out.printf("\t%s\n", order);
         }
@@ -63,9 +64,9 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
-        System.out.println("Assembly Line Status after the Move:");
+        System.out.printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
         for (var order : pendingOrders) {
-            System.out.println(order);
+            System.out.printf("\t%s\n", order);
         }
     }
 
@@ -86,7 +87,7 @@ public class ManagerTextView implements IManagerView {
 
     private void printTasks(Map<String, List<String>> list) {
         list.forEach((k, v) -> {
-            System.out.printf("\tWorkstation %s:\n", k);
+            System.out.printf("\tWorkstation %s: %s\n", k, v.size() > 0 ? "" : "Nothing");
             for (int i = 0; i < v.size(); i++) {
                 System.out.printf("\t\t%s\n", list.get(k).get(i));
             }

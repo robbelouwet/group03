@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.ui.interfaces.IManagerView;
 import domain.assembly.AssemblyTask;
+import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 import services.AssemblyManager;
 import services.CarOrderManager;
@@ -30,14 +31,13 @@ public class ManagerController {
      * Provides the UI with the pending & finished tasks and orders of the assembly line.
      */
     public void showMainMenu() {
-        // TODO: pendingOrders -> onAssemblyLineOrders
-        List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
-        List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(carOrderManager.getPendingOrders());
+        List<CarOrder> currentOrdersOnAssemblyLine = assemblyManager.getOrdersOnAssemblyLine();
+        List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(currentOrdersOnAssemblyLine);
         Map<String, List<String>> pendingTasks = convertToStringList(assemblyManager.getPendingTasks());
         // TODO: finished tasks is not correct
         Map<String, List<String>> finishedTasks = convertToStringList(assemblyManager.getFinishedTasks());
         ui.showOverview(
-                pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()),
+                currentOrdersOnAssemblyLine.stream().map(CarOrder::toString).collect(Collectors.toList()),
                 simFinishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()),
                 pendingTasks,
                 finishedTasks
@@ -45,12 +45,12 @@ public class ManagerController {
     }
 
     /**
-     * This method converts the Map<String, List<AssemblyTask>> to Map<String, List<String>>
+     * This method converts the Map<WorkStation, List<AssemblyTask>> to Map<String, List<String>>
      * This is because the view can not know of domain elements
      */
-    private Map<String, List<String>> convertToStringList(Map<String, List<AssemblyTask>> pendingTasks) {
+    private Map<String, List<String>> convertToStringList(Map<WorkStation, List<AssemblyTask>> pendingTasks) {
         Map<String, List<String>> tasks = new HashMap<>();
-        pendingTasks.forEach((k, v) -> tasks.put(k, v.stream().map(AssemblyTask::toString).collect(Collectors.toList())));
+        pendingTasks.forEach((k, v) -> tasks.put(k.getName(), v.stream().map(AssemblyTask::toString).collect(Collectors.toList())));
         return tasks;
     }
 

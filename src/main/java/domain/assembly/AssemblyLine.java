@@ -41,12 +41,17 @@ public class AssemblyLine {
         if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
         scheduler.recalculatePredictedEndTimes(timeSpent);
         if (hasAllCompleted()) {
+            resetAllTasksOfWorkStations();
             finishLastWorkStation();
             moveAllOrders();
             restartFirstWorkStation();
         }
 
         return true;
+    }
+
+    private void resetAllTasksOfWorkStations() {
+        workStations.forEach(WorkStation::resetAllTasks);
     }
 
     private void restartFirstWorkStation() {
@@ -75,14 +80,11 @@ public class AssemblyLine {
     private void moveAllOrders() {
         int size = workStations.size();
         ListIterator<WorkStation> it = workStations.listIterator(size);
+        var current = it.previous();
         while (it.hasPrevious()) {
-            var current = it.previous();
-            if (it.hasPrevious()) {
-                var previous = it.previous();
-                current.updateCurrentOrder(previous.getCarOrder());
-                // Reset the pointer
-                it.next();
-            }
+            var previous = it.previous();
+            current.updateCurrentOrder(previous.getCarOrder());
+            current = previous;
         }
     }
 

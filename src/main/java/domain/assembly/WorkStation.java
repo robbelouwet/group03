@@ -21,10 +21,24 @@ public class WorkStation {
     private final List<AssemblyTask> tasks;
 
     /**
-     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation}.
+     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation} that still need to be done.
      */
     public List<AssemblyTask> getPendingTasks() {
         return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
+    }
+
+    /**
+     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation} and are finished.
+     */
+    public List<AssemblyTask> getAllTasks() {
+        return tasks;
+    }
+
+    /**
+     * This method will reset all the assembly tasks of a workstation back to not finished.
+     */
+    public void resetAllTasks(){
+        tasks.forEach(AssemblyTask::resetTask);
     }
 
     /**
@@ -58,8 +72,8 @@ public class WorkStation {
      * @see domain.order.CarOrder#isFinished()
      */
     public boolean hasCompleted() {
-        return currentOrder == null
-                || tasks.stream().allMatch(AssemblyTask::isFinished);
+        System.out.println(name + currentOrder);
+        return currentOrder == null || tasks.stream().allMatch(AssemblyTask::isFinished);
     }
 
     /**

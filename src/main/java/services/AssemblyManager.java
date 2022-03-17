@@ -44,7 +44,7 @@ public class AssemblyManager {
      * This means that the collection holds the pending assembly tasks per workstation.
      */
     // TODO: Map<WorkStation, List<AssemblyTask>>
-    public Map<String, List<AssemblyTask>> getPendingTasks() {
+    public Map<WorkStation, List<AssemblyTask>> getPendingTasks() {
         return getFilteredTasks(t -> !t.isFinished());
     }
 
@@ -54,24 +54,24 @@ public class AssemblyManager {
      * @return {@link Map} collection that contains {@code WorkStation} as a key and a {@code List&#60;AssemblyTask&#62;} as a value.
      * This means that the collection holds the finished assembly tasks per workstation.
      */
-    public Map<String, List<AssemblyTask>> getFinishedTasks() {
+    public Map<WorkStation, List<AssemblyTask>> getFinishedTasks() {
         return getFilteredTasks(AssemblyTask::isFinished);
     }
 
-    private Map<String, List<AssemblyTask>> getFilteredTasks(Predicate<AssemblyTask> predicate) {
-        Map<String, List<AssemblyTask>> pendingTasks = new HashMap<>();
+    private Map<WorkStation, List<AssemblyTask>> getFilteredTasks(Predicate<AssemblyTask> predicate) {
+        Map<WorkStation, List<AssemblyTask>> pendingTasks = new HashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getPendingTasks().stream().filter(predicate).toList());
-            pendingTasks.put(ws.getName(), pTasks);
+            List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).toList());
+            pendingTasks.put(ws, pTasks);
         }
         return pendingTasks;
     }
 
-    private Map<String, List<AssemblyTask>> getTasksByFinished(boolean isFinished) {
-        Map<String, List<AssemblyTask>> pendingTasks = new HashMap<>();
+    private Map<WorkStation, List<AssemblyTask>> getTasksByFinished(boolean isFinished) {
+        Map<WorkStation, List<AssemblyTask>> pendingTasks = new HashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
             List<AssemblyTask> pTasks = new ArrayList<>(ws.getPendingTasks().stream().filter(t -> isFinished).toList());
-            pendingTasks.put(ws.getName(), pTasks);
+            pendingTasks.put(ws, pTasks);
         }
         return pendingTasks;
     }
@@ -82,12 +82,21 @@ public class AssemblyManager {
      *
      * @param pendingOrders All car orders that still need to be processed on the assembly line.
      * @return {@code List&#60;CarOrder&#62;} All car orders that still need to be processed on the
-     *          assembly line without the car orders that would be finished after the assembly line moves one step forward.
+     * assembly line without the car orders that would be finished after the assembly line moves one step forward.
      */
     public List<CarOrder> getSimulatedOrders(List<CarOrder> pendingOrders) {
         return pendingOrders.stream()
                 .filter(o -> !assemblyLine.isPresentInLastWorkstation(o))
                 .collect(Collectors.toList());
+    }
+
+    public List<CarOrder> getOrdersOnAssemblyLine() {
+        List<CarOrder> orders = new ArrayList<>();
+        assemblyLine.getWorkStations().forEach(w -> {
+            var o = w.getCarOrder();
+            if (o != null) orders.add(o);
+        });
+        return orders;
     }
 
     public List<WorkStation> getBusyWorkStations() {
