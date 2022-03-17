@@ -16,14 +16,6 @@ public class WorkStation {
     // TODO: assign
     private List<AssemblyTask> tasks;
 
-    public static boolean isWorkstationName(String name, List<WorkStation> workStations) {
-        return workStations.stream().anyMatch(ws -> ws.getName().equals(name));
-    }
-
-    public static WorkStation getWorkStationByName(String name, List<WorkStation> workStations) {
-        return workStations.stream().filter(ws -> ws.getName().equals(name)).findAny().orElseThrow();
-    }
-
 
     public List<AssemblyTask> getTasks() {
         return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
