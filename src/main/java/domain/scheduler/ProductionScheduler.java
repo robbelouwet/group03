@@ -2,9 +2,6 @@ package domain.scheduler;
 
 import domain.order.OrderStatus;
 import domain.order.CarOrder;
-import domain.time.DateTime;
-import domain.time.TimeManager;
-import lombok.Getter;
 import persistence.CarOrderRepository;
 import persistence.CarOrderCatalogObserver;
 
@@ -18,7 +15,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private static final long DEFAULT_PRODUCTION_TIME = 3 * 60;  // An order takes 3 hours normally
 
     private final CarOrderRepository carOrderCatalog;
-    private boolean firstSpotFree = true; // TODO not a fan of this, we need to think of a better solution
+    private boolean firstSpotFree = true;
 
     public ProductionScheduler(CarOrderRepository carOrderRepository) {
         this.carOrderCatalog = carOrderRepository;
