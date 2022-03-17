@@ -8,7 +8,7 @@ import java.util.List;
 public interface ICarMechanicView {
     void showWorkStations(List<String> availableWorkstations);
 
-    void showAvailableTasks(List<AssemblyTask> workStationTasks);
+    void showAvailableTasks(List<String> workStationTasks);
 
     void showTaskInfo(String info, List<String> actions);
 

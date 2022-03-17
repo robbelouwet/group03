@@ -24,23 +24,22 @@ public class MechanicController {
     }
 
     public void selectWorkStation(String workStationName){
-        var selectedWorkStation =  assemblyManager.getAvailableWorkStations().stream().filter(ws -> ws.getName().equals(workStationName)).findAny().orElseThrow();
-        currentWorkStation = selectedWorkStation;
-        view.showAvailableTasks(selectedWorkStation.getTasks());
+        currentWorkStation = assemblyManager.getAvailableWorkStations().stream().filter(ws -> ws.getName().equals(workStationName)).findAny().orElseThrow();
+        view.showAvailableTasks(currentWorkStation.getTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
     }
 
-    public void selectTask(AssemblyTask assemblyTask){
-        currentTask = assemblyTask;
-        view.showTaskInfo(assemblyTask.getTaskInformation(), assemblyTask.getActions());
+    public void selectTask(String assemblyTaskName){
+        currentTask = currentWorkStation.getTasks().stream().filter(at -> at.getName().equals(assemblyTaskName)).findAny().orElseThrow();
+        view.showTaskInfo(currentTask.getTaskInformation(), currentTask.getActions());
     }
 
     public void finishTask(){
         currentTask.finishTask();
-        view.showAvailableTasks(currentWorkStation.getTasks());
+        view.showAvailableTasks(currentWorkStation.getTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
     }
 
 
-
-
-
+    public boolean isTaskName(String name) {
+        return currentWorkStation.getTasks().stream().anyMatch(at -> at.getName().equals(name));
+    }
 }

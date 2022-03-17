@@ -3,7 +3,6 @@ package app.ui;
 import app.controllers.MechanicController;
 import app.ui.interfaces.ICarMechanicView;
 import app.utils.ConsoleReader;
-import domain.assembly.AssemblyTask;
 
 import java.util.List;
 import java.util.Scanner;
@@ -47,24 +46,27 @@ public class CarMechanicTextView implements ICarMechanicView {
     }
 
     @Override
-    public void showAvailableTasks(List<AssemblyTask> workStationTasks) {
+    public void showAvailableTasks(List<String> workStationTasks) {
         System.out.println("Available workstation tasks:");
-        for (AssemblyTask at : workStationTasks) {
+        for (String at : workStationTasks) {
             System.out.println("-" + at);
         }
 
         String action = ConsoleReader.getInstance().ask("Select a task by typing its name: | Cancel [cancel]: ");
-        while (!(AssemblyTask.isTaskName(action, workStationTasks) || action.equals("cancel"))) {
+        while (!(isTaskName(action) || action.equals("cancel"))) {
             System.out.println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask("Select a task by typing its name: | Cancel [cancel]: ");
         }
 
-        if (!action.equals("cancel")) {
-            AssemblyTask selectedTask = AssemblyTask.getAssemblyTaskByName(action, workStationTasks);
-            controller.selectTask(selectedTask);
+        if (isTaskName(action)) {
+            controller.selectTask(action);
         } else {
             controller.showMainMenu();
         }
+    }
+
+    private boolean isTaskName(String name) {
+        return controller.isTaskName(name);
     }
 
     @Override
