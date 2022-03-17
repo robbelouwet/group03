@@ -86,6 +86,7 @@ public class AssemblyLine {
             current.updateCurrentOrder(previous.getCarOrder());
             current = previous;
         }
+        workStations.getFirst().updateCurrentOrder(null);
     }
 
     /**

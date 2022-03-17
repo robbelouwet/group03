@@ -59,18 +59,9 @@ public class AssemblyManager {
     }
 
     private Map<WorkStation, List<AssemblyTask>> getFilteredTasks(Predicate<AssemblyTask> predicate) {
-        Map<WorkStation, List<AssemblyTask>> pendingTasks = new HashMap<>();
+        Map<WorkStation, List<AssemblyTask>> pendingTasks = new LinkedHashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
             List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).toList());
-            pendingTasks.put(ws, pTasks);
-        }
-        return pendingTasks;
-    }
-
-    private Map<WorkStation, List<AssemblyTask>> getTasksByFinished(boolean isFinished) {
-        Map<WorkStation, List<AssemblyTask>> pendingTasks = new HashMap<>();
-        for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getPendingTasks().stream().filter(t -> isFinished).toList());
             pendingTasks.put(ws, pTasks);
         }
         return pendingTasks;

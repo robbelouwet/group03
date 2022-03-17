@@ -8,7 +8,7 @@ import services.AssemblyManager;
 import services.CarOrderManager;
 import services.ManagerStore;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,7 +34,6 @@ public class ManagerController {
         List<CarOrder> currentOrdersOnAssemblyLine = assemblyManager.getOrdersOnAssemblyLine();
         List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(currentOrdersOnAssemblyLine);
         Map<String, List<String>> pendingTasks = convertToStringList(assemblyManager.getPendingTasks());
-        // TODO: finished tasks is not correct
         Map<String, List<String>> finishedTasks = convertToStringList(assemblyManager.getFinishedTasks());
         ui.showOverview(
                 currentOrdersOnAssemblyLine.stream().map(CarOrder::toString).collect(Collectors.toList()),
@@ -49,7 +48,7 @@ public class ManagerController {
      * This is because the view can not know of domain elements
      */
     private Map<String, List<String>> convertToStringList(Map<WorkStation, List<AssemblyTask>> pendingTasks) {
-        Map<String, List<String>> tasks = new HashMap<>();
+        Map<String, List<String>> tasks = new LinkedHashMap<>();
         pendingTasks.forEach((k, v) -> tasks.put(k.getName(), v.stream().map(AssemblyTask::toString).collect(Collectors.toList())));
         return tasks;
     }

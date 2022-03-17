@@ -4,7 +4,6 @@ import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 public class WorkStation {
     @Getter
     private final String name;
-    @Setter
     private CarOrder currentOrder;
     private final List<AssemblyTask> tasks;
 
@@ -72,7 +70,6 @@ public class WorkStation {
      * @see domain.order.CarOrder#isFinished()
      */
     public boolean hasCompleted() {
-        System.out.println(name + currentOrder);
         return currentOrder == null || tasks.stream().allMatch(AssemblyTask::isFinished);
     }
 
