@@ -22,26 +22,16 @@ public class OrderCarIntegrationTest {
             public String ask(String str) {
                 return switch (number++) {
                     case 0 -> "garage holder";
-                    case 1 -> "order";
-                    case 2 -> "Ford Fiesta";
-                    case 3 -> "manual";
-                    case 4 -> "comfort";
-                    case 5 -> "red";
-                    case 6 -> "6 speed manual";
-                    case 7 -> "sedan";
-                    case 8 -> "standard";
-                    case 9 -> "leather black";
-                    case 10 -> "confirm";
-                    case 11 -> "order";
-                    case 12 -> "Ford Fiesta";
-                    case 13 -> "manual";
-                    case 14 -> "comfort";
-                    case 15 -> "red";
-                    case 16 -> "6 speed manual";
-                    case 17 -> "sedan";
-                    case 18 -> "standard";
-                    case 19 -> "leather black";
-                    case 20 -> "confirm";
+                    case 1, 11 -> "order";
+                    case 2, 12 -> "Ford Fiesta";
+                    case 3, 13 -> "manual";
+                    case 4, 14 -> "comfort";
+                    case 5, 15 -> "red";
+                    case 6, 16 -> "6 speed manual";
+                    case 7, 17 -> "sedan";
+                    case 8, 18 -> "standard";
+                    case 9, 19 -> "leather black";
+                    case 10, 20 -> "confirm";
                     case 21 -> "cancel";
                     default -> "quit";
                 };
