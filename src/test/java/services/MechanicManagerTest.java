@@ -1,21 +1,24 @@
 package services;
 
+import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.order.CarOrder;
+import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import persistence.CarCatalog;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MechanicManagerTest {
     private MechanicManager mechanicManager;
+    private WorkStation workStation;
 
     @BeforeEach
     public void setup() {
-        mechanicManager = new MechanicManager();
         var task1 = new AssemblyTask("task1", List.of("action1.1", "action1.2"));
         var task2 = new AssemblyTask("task2", List.of("action2.1"));
         task2.finishTask();
@@ -23,10 +26,22 @@ public class MechanicManagerTest {
         var tasksWS1 = List.of(task1, task2, task3);
 
         var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
+        workStation = mockedWorkStation1;
+        var model = CarCatalog.getModels().get(0);
+        var order = new CarOrder(new DateTime(2), model, new HashMap<>() {{
+            put("Body", "break");
+            put("Color", "white");
+            put("Engine", "performance");
+            put("Gearbox", "5 speed automatic");
+            put("Seats", "vinyl grey");
+            put("Airco", "automatic");
+            put("Wheels", "sports");
+        }});
+        workStation.updateCurrentOrder(order);
 
-
-        mechanicManager.setCurrentWorkStation(mockedWorkStation1);
-        mechanicManager.setSelectedTask(task1);
+        mechanicManager = new MechanicManager(new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1)), null));
+        mechanicManager.selectWorkStation(mockedWorkStation1.getName());
+        mechanicManager.selectTask(task1.getName());
 
     }
 
@@ -41,23 +56,20 @@ public class MechanicManagerTest {
     void selectTask_givenInValidTaskNameAndHasCurrentWorkStation() {
         assertThrows(NoSuchElementException.class, () -> mechanicManager.selectTask("invalidTaskName"));
     }
+
     @Test
     void selectTask_givenValidTaskNameAndHasNoCurrentWorkStation() {
-        mechanicManager.setCurrentWorkStation(null);
-        IllegalStateException exception =  assertThrows(IllegalStateException.class, () -> mechanicManager.selectTask("task1"));
-        assertEquals(exception.getMessage(), "There is no current workstation selected.");
-    }
-
-
-    @Test
-    void finishTask_whenSelectedTaskIsNotYetFinished() {
-        // task2 is already finished
+        var task1 = new AssemblyTask("task1", List.of("action1.1", "action1.2"));
         var task2 = new AssemblyTask("task2", List.of("action2.1"));
         task2.finishTask();
-        mechanicManager.setSelectedTask(task2);
-        assertTrue(mechanicManager.getSelectedTask().isFinished());
-        mechanicManager.finishTask();
-        assertTrue(mechanicManager.getSelectedTask().isFinished());
+        var task3 = new AssemblyTask("task3", List.of("action3.1", "action3.2"));
+        var tasksWS1 = List.of(task1, task2, task3);
+
+        var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
+
+        mechanicManager = new MechanicManager(new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1)), null));
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> mechanicManager.selectTask("task1"));
+        assertEquals(exception.getMessage(), "There is no current workstation selected.");
     }
 
     @Test
@@ -69,12 +81,11 @@ public class MechanicManagerTest {
 
     @Test
     void finishTask_whenNoSelectedTask() {
-        mechanicManager.setSelectedTask(null);
-        IllegalStateException exception =  assertThrows(IllegalStateException.class, () -> mechanicManager.finishTask());
+        mechanicManager = new MechanicManager(new AssemblyLine(new LinkedList<>(List.of(workStation)), null));
+        mechanicManager.selectWorkStation(workStation.getName());
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> mechanicManager.finishTask());
         assertEquals(exception.getMessage(), "There is no selected task.");
-
     }
-
 
     @Test
     void getTaskNames_returnsListWithNamesOfUnfinishedTasks() {
@@ -82,13 +93,21 @@ public class MechanicManagerTest {
 
         var task1 = new AssemblyTask("task1", List.of("action1.1", "action1.2"));
         var task3 = new AssemblyTask("task3", List.of("action3.1", "action3.2"));
-        assertEquals(taskNames, List.of(task1.toString(),task3.toString()));
+        assertEquals(taskNames, List.of(task1.toString(), task3.toString()));
     }
 
     @Test
     void getTaskNames_throwsIllegalStateException_whenNoCurrentWorkstation() {
-        mechanicManager.setCurrentWorkStation(null);
-        IllegalStateException exception =  assertThrows(IllegalStateException.class, () -> mechanicManager.getTaskNames());
+        var task1 = new AssemblyTask("task1", List.of("action1.1", "action1.2"));
+        var task2 = new AssemblyTask("task2", List.of("action2.1"));
+        task2.finishTask();
+        var task3 = new AssemblyTask("task3", List.of("action3.1", "action3.2"));
+        var tasksWS1 = List.of(task1, task2, task3);
+
+        var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
+
+        mechanicManager = new MechanicManager(new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1)), null));
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> mechanicManager.getTaskNames());
         assertEquals(exception.getMessage(), "There is no current workstation selected.");
     }
 
@@ -107,8 +126,16 @@ public class MechanicManagerTest {
 
     @Test
     void isValidTask_throwsIllegalStateException_whenNoCurrentWorkstation() {
-        mechanicManager.setCurrentWorkStation(null);
-        IllegalStateException exception =  assertThrows(IllegalStateException.class, () -> mechanicManager.isValidTask("task1"));
+        var task1 = new AssemblyTask("task1", List.of("action1.1", "action1.2"));
+        var task2 = new AssemblyTask("task2", List.of("action2.1"));
+        task2.finishTask();
+        var task3 = new AssemblyTask("task3", List.of("action3.1", "action3.2"));
+        var tasksWS1 = List.of(task1, task2, task3);
+
+        var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
+
+        mechanicManager = new MechanicManager(new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1)), null));
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> mechanicManager.isValidTask("task1"));
         assertEquals(exception.getMessage(), "There is no current workstation selected.");
     }
 

@@ -45,8 +45,8 @@ public class MechanicController {
         var ws = assemblyManager.getBusyWorkStations().stream()
                 .filter(w -> w.getName().equals(workStationName))
                 .findAny().orElseThrow();
-        mechanicManager.setCurrentWorkStation(ws);
-        ui.showAvailableTasks(mechanicManager.getCurrentWorkStation().getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
+        mechanicManager.selectWorkStation(ws.getName());
+        ui.showAvailableTasks(ws.getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
     }
 
     /**
@@ -67,7 +67,6 @@ public class MechanicController {
         mechanicManager.finishTask();
         ui.showAvailableTasks(mechanicManager.getTaskNames());
     }
-
 
     /**
      * Checks if given name is a valid task's name.

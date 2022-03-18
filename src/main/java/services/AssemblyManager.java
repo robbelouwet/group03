@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyManager} is responsible for the {@code AssemblyLine}.
@@ -20,10 +21,6 @@ import java.util.function.Predicate;
  */
 public class AssemblyManager {
     private final AssemblyLine assemblyLine;
-
-    public AssemblyManager(ProductionScheduler scheduler) {
-        assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
-    }
 
     public AssemblyManager(AssemblyLine aline) {
         assemblyLine = aline;
@@ -62,9 +59,9 @@ public class AssemblyManager {
         Map<WorkStation, List<AssemblyTask>> pendingTasks = new LinkedHashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
             if (ws.getCarOrder() != null) {
-                List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).toList());
+                List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).map(AssemblyTask::copy).toList());
                 if (pTasks.size() > 0) {
-                    pendingTasks.put(ws, pTasks);
+                    pendingTasks.put(ws.copy(), pTasks);
                 }
             }
         }
@@ -92,14 +89,14 @@ public class AssemblyManager {
         Map<WorkStation, CarOrder> ordersOnAssembly = new LinkedHashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
             if (ws.getCarOrder() != null) {
-                ordersOnAssembly.put(ws, ws.getCarOrder());
+                ordersOnAssembly.put(ws.copy(), ws.getCarOrder().copy());
             }
         }
         return ordersOnAssembly;
     }
 
     public List<WorkStation> getBusyWorkStations() {
-        return assemblyLine.getBusyWorkstations();
+        return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
     }
 
 }

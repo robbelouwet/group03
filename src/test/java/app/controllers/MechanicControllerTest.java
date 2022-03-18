@@ -4,12 +4,16 @@ import app.ui.interfaces.ICarMechanicView;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.order.CarOrder;
+import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import persistence.CarCatalog;
 import services.AssemblyManager;
 import services.ManagerStore;
 import services.MechanicManager;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,12 +30,6 @@ public class MechanicControllerTest {
     @BeforeEach
     public void setup() {
         managerStore = mock(ManagerStore.class);
-        var mockedAssemblyManager = mock(AssemblyManager.class);
-        when(managerStore.getAssemblyLineManager()).thenReturn(mockedAssemblyManager);
-        var mockedMechanicManager = mock(MechanicManager.class);
-        when(managerStore.getMechanicManager()).thenReturn(mockedMechanicManager);
-
-        var mockedAssemblyLine = mock(AssemblyLine.class);
 
         var task1 = new AssemblyTask("task1", List.of("action1.1", "action1.2"));
         var task2 = new AssemblyTask("task2", List.of("action2.1"));
@@ -46,15 +44,25 @@ public class MechanicControllerTest {
 
         var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
         var mockedWorkStation2 = new WorkStation("mockedWorkStation2", tasksWS2);
+        var model = CarCatalog.getModels().get(0);
 
-        when(mockedAssemblyManager.getBusyWorkStations()).thenReturn(new LinkedList<>(List.of(mockedWorkStation1, mockedWorkStation2)));
+        var order = new CarOrder(new DateTime(2), model, new HashMap<>() {{
+            put("Body", "break");
+            put("Color", "white");
+            put("Engine", "performance");
+            put("Gearbox", "5 speed automatic");
+            put("Seats", "vinyl grey");
+            put("Airco", "automatic");
+            put("Wheels", "sports");
+        }});
+        mockedWorkStation1.updateCurrentOrder(order);
+        mockedWorkStation2.updateCurrentOrder(order);
+        var mockedAssemblyLine = new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1, mockedWorkStation2)), null);
 
-
-        doCallRealMethod().when(mockedMechanicManager).setCurrentWorkStation(any());
-        doCallRealMethod().when(mockedMechanicManager).getCurrentWorkStation();
-        doCallRealMethod().when(mockedMechanicManager).selectTask(any());
-        doCallRealMethod().when(mockedMechanicManager).finishTask();
-        doCallRealMethod().when(mockedMechanicManager).getTaskNames();
+        var mockedMechanicManager = new MechanicManager(mockedAssemblyLine);
+        when(managerStore.getMechanicManager()).thenReturn(mockedMechanicManager);
+        var mockedAssemblyManager = new AssemblyManager(mockedAssemblyLine);
+        when(managerStore.getAssemblyLineManager()).thenReturn(mockedAssemblyManager);
 
         controllerStore = new ControllerStore(managerStore);
     }
@@ -211,6 +219,7 @@ public class MechanicControllerTest {
         };
 
         controller.setUi(view);
+        System.out.println(managerStore.getAssemblyLineManager().getBusyWorkStations().size());
         controller.selectWorkStation("mockedWorkStation2");
     }
 

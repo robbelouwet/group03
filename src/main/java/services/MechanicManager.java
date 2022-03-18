@@ -1,5 +1,6 @@
 package services;
 
+import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import lombok.Getter;
@@ -13,15 +14,26 @@ import java.util.stream.Collectors;
  * (i.e. the current work station and the selected task).
  */
 public class MechanicManager {
-    @Setter @Getter
     private WorkStation currentWorkStation;
-    @Getter @Setter
     private AssemblyTask selectedTask;
+    private final  AssemblyLine assemblyLine;
+
+    public MechanicManager(AssemblyLine assemblyLine) {
+        this.assemblyLine = assemblyLine;
+    }
+
+    public void selectWorkStation(String name) {
+        this.currentWorkStation = assemblyLine.getBusyWorkstations().stream().filter(w -> w.getName().equals(name)).findAny().orElseThrow();
+    }
 
     public AssemblyTask selectTask(String assemblyTaskName) {
         if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
         selectedTask = currentWorkStation.getPendingTasks().stream().filter(at -> at.getName().equals(assemblyTaskName)).findAny().orElseThrow();
-        return selectedTask;
+        return selectedTask.copy();
+    }
+
+    public AssemblyTask getSelectedTask() {
+        return selectedTask.copy();
     }
 
     public void finishTask() {
