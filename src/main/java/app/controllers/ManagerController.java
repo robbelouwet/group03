@@ -5,7 +5,7 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 import services.AssemblyManager;
-import services.ManagerStore;
+import services.CarOrderManager;
 
 import java.util.LinkedHashMap;
 import java.util.List;

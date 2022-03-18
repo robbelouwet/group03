@@ -68,11 +68,12 @@ public class AdvanceIntegrationTest {
         assertEquals(0, sizeFinished);
         assertTrue(allFinished.stream().allMatch(CarOrder::isFinished));
 
+        var controller = controllerStore.getManagerController();
         // now mock an IManagerView
         IManagerView mgrView = new IManagerView() {
             @Override
             public void confirmMove(int timeSpent) {
-                (new ManagerController(this)).advanceAssemblyLine(timeSpent);
+                controller.advanceAssemblyLine(timeSpent);
             }
 
             @Override
@@ -93,6 +94,7 @@ public class AdvanceIntegrationTest {
 
             }
         };
+        controller.setUi(mgrView);
 
         // now 'advance & clear' the assembly line 6 times
         // pre:     3 pending orders | empty assembly line | 0 finished orders
@@ -150,13 +152,11 @@ public class AdvanceIntegrationTest {
                                      Map<String, String> simFinishedOrders,
                                      Map<String, List<String>> pendingTasks,
                                      Map<String, List<String>> finishedTasks) {
-            public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
-
             }
 
             @Override
             public void showErrorMessage(String err) {
-                throw new IllegalStateException("Assembly line is blocked!");
+                throw new RuntimeException("Assembly line is blocked!");
             }
 
             @Override
@@ -164,10 +164,12 @@ public class AdvanceIntegrationTest {
 
             }
         };
+
         var controller = controllerStore.getManagerController();
         controller.setUi(view);
         // trigger and catch an error message in the view, because the assembly line is blocked at that first workstation
         Throwable e = assertThrows(RuntimeException.class, () -> controller.advanceAssemblyLine(60));
+
         assertEquals("Assembly line is blocked!", e.getMessage());
     }
 

@@ -173,39 +173,39 @@ public class PerformTasksIntegrationTest {
                 // so only the first workstation will be available, no prints after
                 assertTrue(prints <= 99);
                 switch (prints++) {
-                    case 73 -> assertEquals("Available workstations:", l);
-                    case 74 -> assertEquals("- Workstation [Car Body Post]", l);
+                    case 69 -> assertEquals("Available workstations:", l);
+                    case 70 -> assertEquals("- Workstation [Car Body Post]", l);
                     // Car Body Post
-                    case 75 -> assertEquals("Available workstation tasks:", l);
-                    case 76 -> assertEquals("-Task [Assembly car body]: is pending", l);
-                    case 77 -> assertEquals("-Task [Paint car]: is pending", l);
+                    case 71 -> assertEquals("Available workstation tasks:", l);
+                    case 72 -> assertEquals("-Task [Assembly car body]: is pending", l);
+                    case 73 -> assertEquals("-Task [Paint car]: is pending", l);
                     // Assembly car body
-                    case 78 -> assertEquals("Task [Assembly car body]: is pending", l);
-                    case 79 -> assertEquals("Actions to complete this task:", l);
-                    case 80 -> assertEquals("-Lift the body shell onto the chassis frame.", l);
-                    case 81 -> assertEquals("-Bolt the shell and the frame together.", l);
+                    case 74 -> assertEquals("Task [Assembly car body]: is pending", l);
+                    case 75 -> assertEquals("Actions to complete this task:", l);
+                    case 76 -> assertEquals("-Lift the body shell onto the chassis frame.", l);
+                    case 77 -> assertEquals("-Bolt the shell and the frame together.", l);
                     // finish
+                    case 78 -> assertEquals("Available workstation tasks:", l);
+                    case 79 -> assertEquals("-Task [Paint car]: is pending", l);
+                    // cancel (to see if workstation is still available)
+                    case 80 -> assertEquals("Available workstations:", l);
+                    case 81 -> assertEquals("- Workstation [Car Body Post]", l);
+                    // Car Body Post
                     case 82 -> assertEquals("Available workstation tasks:", l);
                     case 83 -> assertEquals("-Task [Paint car]: is pending", l);
-                    // cancel (to see if workstation is still available)
-                    case 84 -> assertEquals("Available workstations:", l);
-                    case 85 -> assertEquals("- Workstation [Car Body Post]", l);
-                    // Car Body Post
-                    case 86 -> assertEquals("Available workstation tasks:", l);
-                    case 87 -> assertEquals("-Task [Paint car]: is pending", l);
                     // Paint car
-                    case 88 -> assertEquals("Task [Paint car]: is pending", l);
-                    case 89 -> assertEquals("Actions to complete this task:", l);
-                    case 90 -> assertEquals("-Make sure the car is clean, remove dust  if not.", l);
-                    case 91 -> assertEquals("-Sand the body.", l);
-                    case 92 -> assertEquals("-Clean it.", l);
-                    case 93 -> assertEquals("-Tape the surfaces.", l);
-                    case 94 -> assertEquals("-Paint the car.", l);
+                    case 84 -> assertEquals("Task [Paint car]: is pending", l);
+                    case 85 -> assertEquals("Actions to complete this task:", l);
+                    case 86 -> assertEquals("-Make sure the car is clean, remove dust  if not.", l);
+                    case 87 -> assertEquals("-Sand the body.", l);
+                    case 88 -> assertEquals("-Clean it.", l);
+                    case 89 -> assertEquals("-Tape the surfaces.", l);
+                    case 90 -> assertEquals("-Paint the car.", l);
                     // finish
-                    case 95 -> assertEquals("Available workstation tasks:", l);
+                    case 91 -> assertEquals("Available workstation tasks:", l);
                     // no more tasks, next print is
                     // cancel
-                    case 96 -> assertEquals("Available workstations:", l);
+                    case 92 -> assertEquals("Available workstations:", l);
                     // no more available workstations, this will be the last print, so print <= 99
 
                 }
