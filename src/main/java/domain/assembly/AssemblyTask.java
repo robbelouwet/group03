@@ -38,6 +38,10 @@ public class AssemblyTask {
         finished = true;
     }
 
+    public void resetTask(){
+        finished = false;
+    }
+
     @Override
     public String toString() {
         return String.format("Task [%s]: is %s", name, finished ? "finished" : "pending");
