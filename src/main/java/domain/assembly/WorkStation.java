@@ -4,7 +4,6 @@ import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,15 +15,28 @@ import java.util.stream.Collectors;
 public class WorkStation {
     @Getter
     private final String name;
-    @Setter
     private CarOrder currentOrder;
     private final List<AssemblyTask> tasks;
 
     /**
-     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation}.
+     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation} that still need to be done.
      */
     public List<AssemblyTask> getPendingTasks() {
         return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
+    }
+
+    /**
+     * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation} and are finished.
+     */
+    public List<AssemblyTask> getAllTasks() {
+        return tasks;
+    }
+
+    /**
+     * This method will reset all the assembly tasks of a workstation back to not finished.
+     */
+    public void resetAllTasks(){
+        tasks.forEach(AssemblyTask::resetTask);
     }
 
     /**
@@ -58,8 +70,7 @@ public class WorkStation {
      * @see domain.order.CarOrder#isFinished()
      */
     public boolean hasCompleted() {
-        return currentOrder == null
-                || tasks.stream().allMatch(AssemblyTask::isFinished);
+        return currentOrder == null || tasks.stream().allMatch(AssemblyTask::isFinished);
     }
 
     /**

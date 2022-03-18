@@ -3,7 +3,6 @@ package app.controllers;
 import app.ui.interfaces.IManagerView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarOrderCatalogObserver;
 import services.AssemblyManager;
 import services.CarOrderManager;
 import services.ManagerStore;

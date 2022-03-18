@@ -28,11 +28,12 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
-        ConsoleReader.getInstance().println("Current Assembly Line Status:");
+        ConsoleReader.getInstance().printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
         for (var order : pendingOrders) {
             ConsoleReader.getInstance().printf("\t%s\n", order);
         }
-        ConsoleReader.getInstance().println("Future Assembly Line Status:");
+
+        ConsoleReader.getInstance().printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Nothing");
         for (var order : simFinishedOrders) {
             ConsoleReader.getInstance().printf("\t%s\n", order);
         }
@@ -61,7 +62,7 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
-        ConsoleReader.getInstance().println("Assembly Line Status after the Move:");
+        ConsoleReader.getInstance().printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
         for (var order : pendingOrders) {
             ConsoleReader.getInstance().println(order);
         }

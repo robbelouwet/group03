@@ -3,27 +3,261 @@ package app;
 import app.ui.AppTextView;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
+import app.utils.IConsoleReader;
 import org.junit.jupiter.api.Test;
+import services.ManagerStore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PerformTasksIntegrationTest {
-    private final IAppView view;
-    private final ConsoleReader mockedReader;
+    @Test
+    public void uiTest_withTwoOrdersMade_NothingOnTheAssemblyLine() {
+        ManagerStore.getInstance().init();
 
-    public PerformTasksIntegrationTest() {
-        view = new AppTextView();
+        ConsoleReader.setInstance(new IConsoleReader() {
+            int number = 0;
+            int prints = 0;
 
-        ConsoleReader mReader = mock(ConsoleReader.class);
-        ConsoleReader.setInstance(mReader);
-        mockedReader = mReader;
+            @Override
+            public String ask(String str) {
+                List<String> inputs = new ArrayList<>();
+
+                // garage holder logs in, places two orders, logs out
+                inputs.add("garage holder");
+                inputs.addAll(getInputsBasicOrder());
+                inputs.addAll(getInputsBasicOrder());
+                inputs.add("cancel");
+
+                // mechanic logs in, logs out
+                inputs.add("mechanic");
+                inputs.add("cancel");
+
+                inputs.add("quit");
+
+                if (number >= inputs.size()) {
+                    return "quit";
+                }
+
+                return inputs.get(number++);
+            }
+
+            @Override
+            public void println(String l) {
+                // nothing on assemblyLine yet, so no print after "Available workstations:"
+                assertTrue(prints <= 67);
+                switch (prints++) {
+                    case 32, 63 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:0, status=Pending}", l);
+                    case 64 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:0, status=Pending}", l);
+                    case 67 -> assertEquals("Available workstations:", l);
+                }
+            }
+
+            @Override
+            public void print(String s) {
+            }
+
+            @Override
+            public void printf(String format, Object obj) {
+
+            }
+        });
+        var view = new AppTextView();
+        view.start();
     }
 
     @Test
-    public void advanceTest() {
-        when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("mechanic");
-        when(mockedReader.ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]")).thenReturn("quit");
+    public void uiTest_withTwoOrdersMade_AdvancedOnce() {
+        ManagerStore.getInstance().init();
+
+        ConsoleReader.setInstance(new IConsoleReader() {
+            int number = 0;
+            int prints = 0;
+
+            @Override
+            public String ask(String str) {
+                List<String> inputs = new ArrayList<>();
+
+                // garage holder logs in, places two orders, logs out
+                inputs.add("garage holder");
+                inputs.addAll(getInputsBasicOrder());
+                inputs.addAll(getInputsBasicOrder());
+                inputs.add("cancel");
+
+                // manager logs in, advances the assembly line, logs out
+                inputs.add("manager");
+                inputs.addAll(getInputsAdvance());
+                inputs.add("cancel");
+
+                // mechanic logs in, logs out
+                inputs.add("mechanic");
+                inputs.add("cancel");
+
+                inputs.add("quit");
+
+                if (number >= inputs.size()) {
+                    return "quit";
+                }
+
+                return inputs.get(number++);
+            }
+
+            @Override
+            public void println(String l) {
+                // manager moved the assemblyLine ONCE,
+                // so only the first workstation will be available, no prints after
+                assertTrue(prints <= 77);
+                switch (prints++) {
+                    case 32, 63 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:0, status=Pending}", l);
+                    case 64 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:0, status=Pending}", l);
+                    case 72 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:30, status=OnAssemblyLine}", l);
+                    case 73 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:30, status=Pending}", l);
+                    case 76 -> assertEquals("Available workstations:", l);
+                    case 77 -> assertEquals("- Workstation [Car Body Post]", l);
+                }
+            }
+
+            @Override
+            public void print(String s) {
+            }
+
+            @Override
+            public void printf(String format, Object obj) {
+
+            }
+        });
+        var view = new AppTextView();
         view.start();
+    }
+
+    @Test
+    public void uiTest_withTwoOrdersMade_AdvancedOnce_CompleteTasks() {
+        ManagerStore.getInstance().init();
+
+        ConsoleReader.setInstance(new IConsoleReader() {
+            int number = 0;
+            int prints = 0;
+
+            @Override
+            public String ask(String str) {
+                List<String> inputs = new ArrayList<>();
+
+                // garage holder logs in, places two orders, logs out
+                inputs.add("garage holder");
+                inputs.addAll(getInputsBasicOrder());
+                inputs.addAll(getInputsBasicOrder());
+                inputs.add("cancel");
+
+                // manager logs in, advances the assembly line, logs out
+                inputs.add("manager");
+                inputs.addAll(getInputsAdvance());
+                inputs.add("cancel");
+
+                // mechanic logs in, finishes tasks, logs out
+                inputs.add("mechanic");
+                inputs.add("Car Body Post"); // see 2 tasks
+                inputs.add("Assembly car body"); // see actions for task
+                inputs.add("finish"); // see only second task
+
+                inputs.add("cancel"); // workstation should still be available
+                inputs.add("Car Body Post"); // see 1 tasks
+                inputs.add("Paint car");
+                inputs.add("finish"); // no more tasks
+                inputs.add("cancel"); // no more available work stations
+                inputs.add("cancel");
+
+                inputs.add("quit");
+
+                if (number >= inputs.size()) {
+                    return "quit";
+                }
+
+                return inputs.get(number++);
+            }
+
+            @Override
+            public void println(String l) {
+                // manager moved the assemblyLine ONCE,
+                // so only the first workstation will be available, no prints after
+                assertTrue(prints <= 99);
+                switch (prints++) {
+                    case 76 -> assertEquals("Available workstations:", l);
+                    case 77 -> assertEquals("- Workstation [Car Body Post]", l);
+                    // Car Body Post
+                    case 78 -> assertEquals("Available workstation tasks:", l);
+                    case 79 -> assertEquals("-Task [Assembly car body]: is pending", l);
+                    case 80 -> assertEquals("-Task [Paint car]: is pending", l);
+                    // Assembly car body
+                    case 81 -> assertEquals("Task [Assembly car body]: is pending",l);
+                    case 82 -> assertEquals("Actions to complete this task:", l);
+                    case 83 -> assertEquals("-Lift the body shell onto the chassis frame.", l);
+                    case 84 -> assertEquals("-Bolt the shell and the frame together.", l);
+                    // finish
+                    case 85 -> assertEquals("Available workstation tasks:", l);
+                    case 86 -> assertEquals("-Task [Paint car]: is pending", l);
+                    // cancel (to see if workstation is still available)
+                    case 87 -> assertEquals("Available workstations:", l);
+                    case 88 -> assertEquals("- Workstation [Car Body Post]", l);
+                    // Car Body Post
+                    case 89 -> assertEquals("Available workstation tasks:", l);
+                    case 90 -> assertEquals("-Task [Paint car]: is pending", l);
+                    // Paint car
+                    case 91 -> assertEquals("Task [Paint car]: is pending",l);
+                    case 92 -> assertEquals("Actions to complete this task:",l);
+                    case 93 -> assertEquals("-Make sure the car is clean, remove dust  if not.",l);
+                    case 94 -> assertEquals("-Sand the body.",l);
+                    case 95 -> assertEquals("-Clean it.",l);
+                    case 96 -> assertEquals("-Tape the surfaces.",l);
+                    case 97 -> assertEquals("-Paint the car.",l);
+                    // finish
+                    case 98 -> assertEquals("Available workstation tasks:",l);
+                    // no more tasks, next print is
+                    // cancel
+                    case 99 -> assertEquals("Available workstations:",l);
+                    // no more available workstations, this will be the last print, so print <= 99
+
+                }
+            }
+
+            @Override
+            public void print(String s) {
+            }
+
+            @Override
+            public void printf(String format, Object obj) {
+
+            }
+        });
+        var view = new AppTextView();
+        view.start();
+    }
+
+
+    private List<String> getInputsBasicOrder() {
+        return Arrays.asList(
+                "order",
+                "Ford Fiesta",
+                "manual",
+                "comfort",
+                "red",
+                "6 speed manual",
+                "sedan",
+                "standard",
+                "leather black",
+                "confirm"
+        );
+    }
+
+
+    private List<String> getInputsAdvance() {
+        return Arrays.asList(
+                "yes",
+                "30"
+        );
     }
 }
