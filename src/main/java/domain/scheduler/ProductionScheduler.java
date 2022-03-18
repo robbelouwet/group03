@@ -63,8 +63,6 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private DateTime calculateEndTimeOfFirstOrder() {
         var currentTime = TimeManager.getCurrentTime();
 
-        // TODO rethink this, because if there is an order on the first spot, we need to add 60 otherwise we don't
-
         // Is there time to put another order on the belt in 60 minutes?
         if (currentTime.getMinutes() + (firstSpotFree ? 0 : 60) + DEFAULT_PRODUCTION_TIME <= END_SHIFT) {
             return currentTime.addTime((firstSpotFree ? 0 : 60) + DEFAULT_PRODUCTION_TIME);
