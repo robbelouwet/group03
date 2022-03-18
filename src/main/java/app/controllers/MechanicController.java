@@ -69,7 +69,7 @@ public class MechanicController {
     /**
      * Checks if given name is a valid task's name.
      * @param name The string that needs to be validated.
-     * @return if given name is a valid task's name=;
+     * @return true if given name is a valid task's name.
      */
     public boolean isTaskName(String name) {
         return mechanicManager.isValidTask(name);
