@@ -85,19 +85,6 @@ public class AssemblyManager {
         return getOrdersOnAssemblyLine(copy);
     }
 
-    private Map<WorkStation, CarOrder> mapWorkstationsToTheNext(Map<WorkStation, CarOrder> orders){
-        Map<WorkStation, CarOrder> mappedOrders = new LinkedHashMap<>();
-        orders.forEach((k, v) -> {
-            var wss = assemblyLine.getWorkStations();
-            for (int i = 0; i < wss.size(); i++) {
-                if (wss.get(i).equals(k) && i + 1 < wss.size()){
-                    mappedOrders.put(wss.get(i+1), v);
-                }
-            }
-        });
-        return mappedOrders;
-    }
-
     public Map<WorkStation, CarOrder> getOrdersOnAssemblyLine() {
         return getOrdersOnAssemblyLine(assemblyLine);
     }
