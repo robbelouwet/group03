@@ -19,19 +19,23 @@ public class MechanicManager {
     private AssemblyTask selectedTask;
 
     public AssemblyTask selectTask(String assemblyTaskName) {
+        if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
         selectedTask = currentWorkStation.getPendingTasks().stream().filter(at -> at.getName().equals(assemblyTaskName)).findAny().orElseThrow();
         return selectedTask;
     }
 
     public void finishTask() {
+        if (selectedTask == null) throw new IllegalStateException("There is no selected task.");
         selectedTask.finishTask();
     }
 
     public List<String> getTaskNames() {
+        if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
         return currentWorkStation.getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList());
     }
 
     public boolean isValidTask(String name) {
+        if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
         return currentWorkStation.getPendingTasks().stream().anyMatch(at -> at.getName().equals(name));
     }
 }
