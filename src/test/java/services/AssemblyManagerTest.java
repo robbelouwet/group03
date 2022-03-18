@@ -21,7 +21,7 @@ public class AssemblyManagerTest {
     public void setup() {
         // mock an AssemblyManager
         var aline = mock(AssemblyLine.class);
-        when(aline.advance(anyInt())).thenReturn(true);
+        when(aline.advance(anyInt(), false)).thenReturn(true);
 
         // mock 2 tasks, with one finished
         var task1 = new AssemblyTask("test1", List.of("Test action"));
@@ -40,7 +40,7 @@ public class AssemblyManagerTest {
 
         // Create an AssemblyManager with mocked AssemblyLine
         assemblyManager = new AssemblyManager(aline);
-        when(aline.advance(anyInt())).thenReturn(true);
+        when(aline.advance(anyInt(), false)).thenReturn(true);
 
         when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
     }

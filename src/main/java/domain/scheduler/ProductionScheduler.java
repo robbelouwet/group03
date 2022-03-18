@@ -117,4 +117,8 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     public void firstSpotTaken() {
         firstSpotFree = false;
     }
+
+    public ProductionScheduler copy(){
+        return new ProductionScheduler(carOrderRepository.copy());
+    }
 }

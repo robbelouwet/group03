@@ -22,8 +22,8 @@ public interface IManagerView {
      * @param pendingTasks      All assembly tasks that still need to be done in the workstations.
      * @param finishedTasks     All assembly tasks that are finished in the workstations.
      */
-    void showOverview(List<String> pendingOrders,
-                      List<String> simFinishedOrders,
+    void showOverview(Map<String, String> pendingOrders,
+                      Map<String, String> simFinishedOrders,
                       Map<String, List<String>> pendingTasks,
                       Map<String, List<String>> finishedTasks);
 
@@ -34,5 +34,5 @@ public interface IManagerView {
      *
      * @param pendingOrders All car orders that still need to be processed on the assembly line.
      */
-    void showAssemblyLineStatusAfterMove(List<String> pendingOrders);
+    void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders);
 }

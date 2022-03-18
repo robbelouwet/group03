@@ -70,8 +70,8 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showOverview(List<String> pendingOrders,
-                                     List<String> simFinishedOrders,
+            public void showOverview(Map<String, String> pendingOrders,
+                                     Map<String, String> simFinishedOrders,
                                      Map<String, List<String>> pendingTasks,
                                      Map<String, List<String>> finishedTasks) {
 
@@ -83,7 +83,7 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
 
             }
         };
@@ -124,8 +124,8 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showOverview(List<String> pendingOrders,
-                                     List<String> simFinishedOrders,
+            public void showOverview(Map<String, String> pendingOrders,
+                                     Map<String, String> simFinishedOrders,
                                      Map<String, List<String>> pendingTasks,
                                      Map<String, List<String>> finishedTasks) {
 
@@ -137,7 +137,7 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
 
             }
         };
