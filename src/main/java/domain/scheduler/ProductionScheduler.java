@@ -20,6 +20,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     public ProductionScheduler(CarOrderRepository carOrderRepository) {
         this.carOrderRepository = carOrderRepository;
         this.carOrderRepository.registerListener(this);
+        recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
         TimeManager.reset();
     }
 

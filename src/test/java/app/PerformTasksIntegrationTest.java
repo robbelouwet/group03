@@ -1,25 +1,19 @@
 package app;
 
 import app.ui.AppTextView;
-import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
 import app.utils.IConsoleReader;
 import org.junit.jupiter.api.Test;
-import services.ManagerStore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class PerformTasksIntegrationTest {
     @Test
     public void uiTest_withTwoOrdersMade_NothingOnTheAssemblyLine() {
-        ManagerStore.getInstance().init();
-
         ConsoleReader.setInstance(new IConsoleReader() {
             int number = 0;
             int prints = 0;
@@ -73,14 +67,13 @@ public class PerformTasksIntegrationTest {
 
     @Test
     public void uiTest_withTwoOrdersMade_AdvancedOnce() {
-        ManagerStore.getInstance().init();
-
         ConsoleReader.setInstance(new IConsoleReader() {
             int number = 0;
             int prints = 0;
 
             @Override
             public String ask(String str) {
+
                 List<String> inputs = new ArrayList<>();
 
                 // garage holder logs in, places two orders, logs out
@@ -92,7 +85,6 @@ public class PerformTasksIntegrationTest {
                 // manager logs in, advances the assembly line, logs out
                 inputs.add("manager");
                 inputs.addAll(getInputsAdvance());
-                inputs.add("cancel");
 
                 // mechanic logs in, logs out
                 inputs.add("mechanic");
@@ -103,7 +95,6 @@ public class PerformTasksIntegrationTest {
                 if (number >= inputs.size()) {
                     return "quit";
                 }
-
                 return inputs.get(number++);
             }
 
@@ -115,10 +106,8 @@ public class PerformTasksIntegrationTest {
                 switch (prints++) {
                     case 32, 63 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:0, status=Pending}", l);
                     case 64 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:0, status=Pending}", l);
-                    case 72 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:30, status=OnAssemblyLine}", l);
-                    case 73 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:30, status=Pending}", l);
-                    case 76 -> assertEquals("Available workstations:", l);
-                    case 77 -> assertEquals("- Workstation [Car Body Post]", l);
+                    case 76, 72 -> assertEquals("Available workstations:", l);
+                    case 77, 73 -> assertEquals("- Workstation [Car Body Post]", l);
                 }
             }
 
@@ -137,8 +126,6 @@ public class PerformTasksIntegrationTest {
 
     @Test
     public void uiTest_withTwoOrdersMade_AdvancedOnce_CompleteTasks() {
-        ManagerStore.getInstance().init();
-
         ConsoleReader.setInstance(new IConsoleReader() {
             int number = 0;
             int prints = 0;
@@ -186,39 +173,39 @@ public class PerformTasksIntegrationTest {
                 // so only the first workstation will be available, no prints after
                 assertTrue(prints <= 99);
                 switch (prints++) {
-                    case 76 -> assertEquals("Available workstations:", l);
-                    case 77 -> assertEquals("- Workstation [Car Body Post]", l);
+                    case 69 -> assertEquals("Available workstations:", l);
+                    case 70 -> assertEquals("- Workstation [Car Body Post]", l);
                     // Car Body Post
-                    case 78 -> assertEquals("Available workstation tasks:", l);
-                    case 79 -> assertEquals("-Task [Assembly car body]: is pending", l);
-                    case 80 -> assertEquals("-Task [Paint car]: is pending", l);
+                    case 71 -> assertEquals("Available workstation tasks:", l);
+                    case 72 -> assertEquals("-Task [Assembly car body]: is pending", l);
+                    case 73 -> assertEquals("-Task [Paint car]: is pending", l);
                     // Assembly car body
-                    case 81 -> assertEquals("Task [Assembly car body]: is pending",l);
-                    case 82 -> assertEquals("Actions to complete this task:", l);
-                    case 83 -> assertEquals("-Lift the body shell onto the chassis frame.", l);
-                    case 84 -> assertEquals("-Bolt the shell and the frame together.", l);
+                    case 74 -> assertEquals("Task [Assembly car body]: is pending", l);
+                    case 75 -> assertEquals("Actions to complete this task:", l);
+                    case 76 -> assertEquals("-Lift the body shell onto the chassis frame.", l);
+                    case 77 -> assertEquals("-Bolt the shell and the frame together.", l);
                     // finish
-                    case 85 -> assertEquals("Available workstation tasks:", l);
-                    case 86 -> assertEquals("-Task [Paint car]: is pending", l);
+                    case 78 -> assertEquals("Available workstation tasks:", l);
+                    case 79 -> assertEquals("-Task [Paint car]: is pending", l);
                     // cancel (to see if workstation is still available)
-                    case 87 -> assertEquals("Available workstations:", l);
-                    case 88 -> assertEquals("- Workstation [Car Body Post]", l);
+                    case 80 -> assertEquals("Available workstations:", l);
+                    case 81 -> assertEquals("- Workstation [Car Body Post]", l);
                     // Car Body Post
-                    case 89 -> assertEquals("Available workstation tasks:", l);
-                    case 90 -> assertEquals("-Task [Paint car]: is pending", l);
+                    case 82 -> assertEquals("Available workstation tasks:", l);
+                    case 83 -> assertEquals("-Task [Paint car]: is pending", l);
                     // Paint car
-                    case 91 -> assertEquals("Task [Paint car]: is pending",l);
-                    case 92 -> assertEquals("Actions to complete this task:",l);
-                    case 93 -> assertEquals("-Make sure the car is clean, remove dust  if not.",l);
-                    case 94 -> assertEquals("-Sand the body.",l);
-                    case 95 -> assertEquals("-Clean it.",l);
-                    case 96 -> assertEquals("-Tape the surfaces.",l);
-                    case 97 -> assertEquals("-Paint the car.",l);
+                    case 84 -> assertEquals("Task [Paint car]: is pending", l);
+                    case 85 -> assertEquals("Actions to complete this task:", l);
+                    case 86 -> assertEquals("-Make sure the car is clean, remove dust  if not.", l);
+                    case 87 -> assertEquals("-Sand the body.", l);
+                    case 88 -> assertEquals("-Clean it.", l);
+                    case 89 -> assertEquals("-Tape the surfaces.", l);
+                    case 90 -> assertEquals("-Paint the car.", l);
                     // finish
-                    case 98 -> assertEquals("Available workstation tasks:",l);
+                    case 91 -> assertEquals("Available workstation tasks:", l);
                     // no more tasks, next print is
                     // cancel
-                    case 99 -> assertEquals("Available workstations:",l);
+                    case 92 -> assertEquals("Available workstations:", l);
                     // no more available workstations, this will be the last print, so print <= 99
 
                 }

@@ -9,8 +9,9 @@ import java.util.List;
 public class CarMechanicTextView implements ICarMechanicView {
     private final MechanicController controller;
 
-    public CarMechanicTextView() {
-        this.controller = new MechanicController(this);
+    public CarMechanicTextView(MechanicController controller) {
+        this.controller = controller;
+        controller.setUi(this);
         initialize();
     }
 

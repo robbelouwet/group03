@@ -3,6 +3,7 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,52 +22,34 @@ public class AssemblyManagerTest {
     public void setup() {
         // mock an AssemblyManager
         var aline = mock(AssemblyLine.class);
-        when(aline.advance(anyInt(), false)).thenReturn(true);
+        when(aline.advance(anyInt(), anyBoolean())).thenReturn(true);
 
         // mock 2 tasks, with one finished
         var task1 = new AssemblyTask("test1", List.of("Test action"));
         task1.finishTask();
         var task2 = new AssemblyTask("test1", List.of("Test action"));
         task2.finishTask();
-        var testTasks = List.of(task1, task2, new AssemblyTask("test2", List.of("Test action")));
+        var task3 = new AssemblyTask("test2", List.of("Test action"));
+        var testTasks = List.of(task1, task2, task3);
 
         // create workstation with above tasks
         var ws1 = mock(WorkStation.class);
-        when(ws1.getPendingTasks()).thenReturn(new ArrayList<>(testTasks));
+        when(ws1.getPendingTasks()).thenReturn(List.of());
         when(ws1.getName()).thenReturn("WS1");
         var ws2 = mock(WorkStation.class);
-        when(ws2.getPendingTasks()).thenReturn(new ArrayList<>(testTasks));
+        when(ws2.getPendingTasks()).thenReturn(List.of(task3));
         when(ws2.getName()).thenReturn("WS2");
 
         // Create an AssemblyManager with mocked AssemblyLine
         assemblyManager = new AssemblyManager(aline);
-        when(aline.advance(anyInt(), false)).thenReturn(true);
+        when(aline.advance(anyInt(), anyBoolean())).thenReturn(true);
+        when(aline.getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
 
-        when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
+        // when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
     }
 
     @Test
     void advance() {
         assertTrue(assemblyManager.advance(60));
-    }
-
-    @Test
-    void getPendingTasks() {
-        // the flatMap squishes the 2-dimensional list of tasks into 1
-        var pendingTasks = assemblyManager.getPendingTasks().values()
-                .stream().flatMap(Collection::stream).toList();
-
-        assertEquals(2, pendingTasks.size());
-        assertTrue(pendingTasks.stream().noneMatch(AssemblyTask::isFinished));
-    }
-
-    @Test
-    void getFinishedTasks() {
-        // the flatMap squishes the 2-dimensional list of tasks into 1
-        var finishedTasks = assemblyManager.getFinishedTasks().values()
-                .stream().flatMap(Collection::stream).toList();
-
-        assertEquals(4, finishedTasks. size());
-        assertTrue(finishedTasks.stream().allMatch(AssemblyTask::isFinished));
     }
 }

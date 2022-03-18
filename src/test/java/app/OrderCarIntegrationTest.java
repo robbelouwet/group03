@@ -13,8 +13,6 @@ import static org.mockito.Mockito.mock;
 public class OrderCarIntegrationTest {
     @Test
     public void uiTest() {
-        ManagerStore.getInstance().init();
-
         ConsoleReader.setInstance(new IConsoleReader() {
             int number = 0;
             int prints = 0;

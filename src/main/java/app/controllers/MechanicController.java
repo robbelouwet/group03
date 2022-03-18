@@ -14,14 +14,17 @@ import java.util.stream.Collectors;
  * Class {@code MechanicController} is responsible for the communication between the UI and the Domain.
  */
 public class MechanicController {
-    private final ICarMechanicView view;
+    private ICarMechanicView ui;
     private final MechanicManager mechanicManager;
     private final AssemblyManager assemblyManager;
 
-    public MechanicController(ICarMechanicView view) {
-        this.view = view;
-        mechanicManager = ManagerStore.getInstance().getMechanicManager();
-        assemblyManager = ManagerStore.getInstance().getAssemblyLineManager();
+    MechanicController(MechanicManager mechanicManager, AssemblyManager assemblyManager) {
+        this.mechanicManager = mechanicManager;
+        this.assemblyManager = assemblyManager;
+    }
+
+    public void setUi(ICarMechanicView ui) {
+        this.ui = ui;
     }
 
     /**
@@ -29,7 +32,7 @@ public class MechanicController {
      */
     public void showMainMenu() {
         List<WorkStation> availableWorkstations = assemblyManager.getBusyWorkStations();
-        view.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
+        ui.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
     }
 
     /**
@@ -43,7 +46,7 @@ public class MechanicController {
                 .filter(w -> w.getName().equals(workStationName))
                 .findAny().orElseThrow();
         mechanicManager.setCurrentWorkStation(ws);
-        view.showAvailableTasks(mechanicManager.getCurrentWorkStation().getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
+        ui.showAvailableTasks(mechanicManager.getCurrentWorkStation().getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
     }
 
     /**
@@ -53,7 +56,7 @@ public class MechanicController {
      */
     public void selectTask(String assemblyTaskName){
         var task = mechanicManager.selectTask(assemblyTaskName);
-        view.showTaskInfo(task.getTaskInformation(), task.getActions());
+        ui.showTaskInfo(task.getTaskInformation(), task.getActions());
     }
 
     /**
@@ -62,7 +65,7 @@ public class MechanicController {
      */
     public void finishTask(){
         mechanicManager.finishTask();
-        view.showAvailableTasks(mechanicManager.getTaskNames());
+        ui.showAvailableTasks(mechanicManager.getTaskNames());
     }
 
 

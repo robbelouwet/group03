@@ -10,8 +10,9 @@ import java.util.*;
 public class GarageHolderTextView implements IGarageHolderView {
     private final CarController controller;
 
-    public GarageHolderTextView() {
-        controller = new CarController(this);
+    public GarageHolderTextView(CarController controller) {
+        this.controller = controller;
+        controller.setUi(this);
         initialize();
     }
 

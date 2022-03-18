@@ -20,15 +20,16 @@ import static org.mockito.Mockito.*;
 
 
 public class MechanicControllerTest {
+    ManagerStore managerStore;
+    ControllerStore controllerStore;
 
     @BeforeEach
     public void setup() {
-        var mockedManagerStore = mock(ManagerStore.class);
-        ManagerStore.setInstance(mockedManagerStore);
+        managerStore = mock(ManagerStore.class);
         var mockedAssemblyManager = mock(AssemblyManager.class);
-        when(mockedManagerStore.getAssemblyLineManager()).thenReturn(mockedAssemblyManager);
+        when(managerStore.getAssemblyLineManager()).thenReturn(mockedAssemblyManager);
         var mockedMechanicManager = mock(MechanicManager.class);
-        when(mockedManagerStore.getMechanicManager()).thenReturn(mockedMechanicManager);
+        when(managerStore.getMechanicManager()).thenReturn(mockedMechanicManager);
 
         var mockedAssemblyLine = mock(AssemblyLine.class);
 
@@ -55,7 +56,7 @@ public class MechanicControllerTest {
         doCallRealMethod().when(mockedMechanicManager).finishTask();
         doCallRealMethod().when(mockedMechanicManager).getTaskNames();
 
-
+        controllerStore = new ControllerStore(managerStore);
     }
 
     @Test
@@ -81,7 +82,8 @@ public class MechanicControllerTest {
             }
         };
 
-        var controller = new MechanicController(view);
+        var controller = controllerStore.getMechanicController();
+        controller.setUi(view);
         controller.showMainMenu();
     }
 
@@ -109,7 +111,8 @@ public class MechanicControllerTest {
             }
         };
 
-        var controller = new MechanicController(view);
+        var controller = controllerStore.getMechanicController();
+        controller.setUi(view);
         controller.selectWorkStation("mockedWorkStation2");
     }
 
@@ -131,15 +134,16 @@ public class MechanicControllerTest {
             }
         };
 
-        var controller = new MechanicController(view);
+        var controller = controllerStore.getMechanicController();
+        controller.setUi(view);
         assertThrows(NoSuchElementException.class, () -> controller.selectWorkStation("invalidWorkStationName"));
     }
 
     @Test
     void selectTask() {
-        var view = new ICarMechanicView() {
-            final MechanicController controller = new MechanicController(this);
+        var controller = controllerStore.getMechanicController();
 
+        var view = new ICarMechanicView() {
             @Override
             public void showWorkStations(List<String> availableWorkstations) {
             }
@@ -156,14 +160,15 @@ public class MechanicControllerTest {
             }
         };
 
-        view.controller.selectWorkStation("mockedWorkStation2");
+        controller.setUi(view);
+        controller.selectWorkStation("mockedWorkStation2");
     }
 
     @Test
     void selectTask_givenInvalidTaskName() {
-        var view = new ICarMechanicView() {
-            final MechanicController controller = new MechanicController(this);
+        var controller = controllerStore.getMechanicController();
 
+        var view = new ICarMechanicView() {
             @Override
             public void showWorkStations(List<String> availableWorkstations) {
             }
@@ -180,14 +185,15 @@ public class MechanicControllerTest {
             }
         };
 
-        view.controller.selectWorkStation("mockedWorkStation2");
+        controller.setUi(view);
+        controller.selectWorkStation("mockedWorkStation2");
     }
 
     @Test
     void selectTask_givenFinishedTaskName() {
-        var view = new ICarMechanicView() {
-            final MechanicController controller = new MechanicController(this);
+        var controller = controllerStore.getMechanicController();
 
+        var view = new ICarMechanicView() {
             @Override
             public void showWorkStations(List<String> availableWorkstations) {
             }
@@ -204,13 +210,15 @@ public class MechanicControllerTest {
             }
         };
 
-        view.controller.selectWorkStation("mockedWorkStation2");
+        controller.setUi(view);
+        controller.selectWorkStation("mockedWorkStation2");
     }
 
     @Test
     void finishTask() {
+        var controller = controllerStore.getMechanicController();
+
         var view = new ICarMechanicView() {
-            final MechanicController controller = new MechanicController(this);
             private boolean taskFinished = false;
 
             @Override
@@ -236,7 +244,8 @@ public class MechanicControllerTest {
             }
         };
 
-        view.controller.selectWorkStation("mockedWorkStation2");
-        view.controller.selectTask("task3");
+        controller.setUi(view);
+        controller.selectWorkStation("mockedWorkStation2");
+        controller.selectTask("task3");
     }
 }

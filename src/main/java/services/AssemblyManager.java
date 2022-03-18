@@ -19,7 +19,6 @@ import java.util.function.Predicate;
  * It can tell the assembly line to advance, and retrieve car orders & assembly tasks.
  */
 public class AssemblyManager {
-    @Getter
     private final AssemblyLine assemblyLine;
 
     public AssemblyManager(ProductionScheduler scheduler) {

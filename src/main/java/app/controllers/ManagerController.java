@@ -5,7 +5,7 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 import services.AssemblyManager;
-import services.ManagerStore;
+import services.CarOrderManager;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,11 +17,16 @@ import java.util.stream.Collectors;
  */
 public class ManagerController {
     private final AssemblyManager assemblyManager;
-    private final IManagerView ui;
+    private final CarOrderManager carOrderManager;
+    private IManagerView ui;
 
-    public ManagerController(IManagerView ui) {
+    ManagerController(AssemblyManager assemblyManager, CarOrderManager carOrderManager) {
+        this.assemblyManager = assemblyManager;
+        this.carOrderManager = carOrderManager;
+    }
+
+    public void setUi(IManagerView ui) {
         this.ui = ui;
-        this.assemblyManager = ManagerStore.getInstance().getAssemblyLineManager();
     }
 
     /**
