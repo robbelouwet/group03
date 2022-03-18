@@ -32,7 +32,7 @@ public class MechanicController {
      */
     public void showMainMenu() {
         List<WorkStation> availableWorkstations = assemblyManager.getBusyWorkStations();
-        view.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
+        ui.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
     }
 
     /**

@@ -21,6 +21,7 @@ public class AppController {
         String role = appView.showMenu();
 
         boolean quit = false;
+
         switch (role) {
             case "manager" -> appView.showManager();
             case "garage holder" -> appView.showGarageHolder();
