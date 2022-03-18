@@ -60,7 +60,7 @@ public class CarOrder {
 
     @Override
     public String toString() {
-        return "Order (" + model.getName() + "): " + "startTime=" + startTime + ", endTime=" + endTime + ", status=" + status + '}';
+        return "Order (" + model.getName() + "): " + "startTime=" + startTime + ", endTime=" + (OrderStatus.OnAssemblyLine == status ? "Soon" : endTime) + ", status=" + status + '}';
     }
 
     /**

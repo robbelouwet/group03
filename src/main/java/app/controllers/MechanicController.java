@@ -16,11 +16,9 @@ import java.util.stream.Collectors;
 public class MechanicController {
     private ICarMechanicView ui;
     private final MechanicManager mechanicManager;
-    private final AssemblyManager assemblyManager;
 
-    MechanicController(MechanicManager mechanicManager, AssemblyManager assemblyManager) {
+    MechanicController(MechanicManager mechanicManager) {
         this.mechanicManager = mechanicManager;
-        this.assemblyManager = assemblyManager;
     }
 
     public void setUi(ICarMechanicView ui) {
@@ -31,7 +29,7 @@ public class MechanicController {
      * Provides the UI with the names of the workstations where work can be done, and triggers the UI to show them.
      */
     public void showMainMenu() {
-        List<WorkStation> availableWorkstations = assemblyManager.getBusyWorkStations();
+        List<WorkStation> availableWorkstations = mechanicManager.getBusyWorkStations();
         ui.showWorkStations(availableWorkstations.stream().map(WorkStation::getName).collect(Collectors.toList()));
     }
 

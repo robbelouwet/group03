@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class MechanicManager {
     private WorkStation currentWorkStation;
     private AssemblyTask selectedTask;
-    private final  AssemblyLine assemblyLine;
+    private final AssemblyLine assemblyLine;
 
     public MechanicManager(AssemblyLine assemblyLine) {
         this.assemblyLine = assemblyLine;
@@ -24,6 +24,7 @@ public class MechanicManager {
 
     /**
      * Select a workstation with its name
+     *
      * @param name the name of the workstation to select
      */
     public void selectWorkStation(String name) {
@@ -41,6 +42,7 @@ public class MechanicManager {
     /**
      * Select a task based on its name within the select workstation
      * Throws an exception if there is no workstation selected or the name is not found within the tasks
+     *
      * @param assemblyTaskName the name of the task
      * @return a copy of the selected task
      */
@@ -75,10 +77,15 @@ public class MechanicManager {
 
     /**
      * Check if the input string is the name of a task of the currently selected workstation
+     *
      * @param name the name of the task
      */
     public boolean isValidTask(String name) {
         if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
         return currentWorkStation.getPendingTasks().stream().anyMatch(at -> at.getName().equals(name));
+    }
+
+    public List<WorkStation> getBusyWorkStations() {
+        return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
     }
 }
