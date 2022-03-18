@@ -112,7 +112,7 @@ public class AdvanceIntegrationTest {
                         man.finishTask();
                     }
                 };
-                man.setCurrentWorkStation(workStation);
+                man.selectWorkStation(workStation.getName());
                 workStation.getPendingTasks().forEach(func);
             }
         };
