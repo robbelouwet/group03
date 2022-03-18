@@ -42,10 +42,8 @@ public class MechanicController {
      * @param workStationName The name of the workstation that was selected.
      */
     public void selectWorkStation(String workStationName){
-        var ws = assemblyManager.getBusyWorkStations().stream()
-                .filter(w -> w.getName().equals(workStationName))
-                .findAny().orElseThrow();
-        mechanicManager.selectWorkStation(ws.getName());
+        mechanicManager.selectWorkStation(workStationName);
+        var ws = mechanicManager.getCurrentWorkStation();
         ui.showAvailableTasks(ws.getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
     }
 
