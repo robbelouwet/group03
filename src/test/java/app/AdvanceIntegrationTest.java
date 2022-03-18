@@ -68,6 +68,32 @@ public class AdvanceIntegrationTest {
         assertEquals(0, sizeFinished);
         assertTrue(allFinished.stream().allMatch(CarOrder::isFinished));
 
+        // now mock an IManagerView
+        IManagerView mgrView = new IManagerView() {
+            @Override
+            public void confirmMove(int timeSpent) {
+                (new ManagerController(this)).advanceAssemblyLine(timeSpent);
+            }
+
+            @Override
+            public void showOverview(Map<String, String> pendingOrders,
+                                     Map<String, String> simFinishedOrders,
+                                     Map<String, List<String>> pendingTasks,
+                                     Map<String, List<String>> finishedTasks) {
+
+            }
+
+            @Override
+            public void showErrorMessage(String err) {
+                throw new RuntimeException("Assembly line is blocked!");
+            }
+
+            @Override
+            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
+
+            }
+        };
+
         // now 'advance & clear' the assembly line 6 times
         // pre:     3 pending orders | empty assembly line | 0 finished orders
         // post:    0 pending orders | empty assembly line | 3 finished orders
@@ -120,6 +146,10 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
+            public void showOverview(Map<String, String> pendingOrders,
+                                     Map<String, String> simFinishedOrders,
+                                     Map<String, List<String>> pendingTasks,
+                                     Map<String, List<String>> finishedTasks) {
             public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
 
             }
@@ -130,7 +160,7 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
 
             }
         };

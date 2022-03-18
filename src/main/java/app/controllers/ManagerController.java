@@ -5,7 +5,6 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 import services.AssemblyManager;
-import services.CarOrderManager;
 import services.ManagerStore;
 
 import java.util.LinkedHashMap;
@@ -34,16 +33,23 @@ public class ManagerController {
      * Provides the UI with the pending & finished tasks and orders of the assembly line.
      */
     public void showMainMenu() {
-        List<CarOrder> currentOrdersOnAssemblyLine = assemblyManager.getOrdersOnAssemblyLine();
-        List<CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders(currentOrdersOnAssemblyLine);
+        var ordersOnAssembly = assemblyManager.getOrdersOnAssemblyLine();
+        Map<String, String> currentOrdersOnAssemblyLine = convertToStringMap(ordersOnAssembly);
+        Map<String, String> simFinishedOrders = convertToStringMap(assemblyManager.getSimulatedOrders());
         Map<String, List<String>> pendingTasks = convertToStringList(assemblyManager.getPendingTasks());
         Map<String, List<String>> finishedTasks = convertToStringList(assemblyManager.getFinishedTasks());
         ui.showOverview(
-                currentOrdersOnAssemblyLine.stream().map(CarOrder::toString).collect(Collectors.toList()),
-                simFinishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()),
+                currentOrdersOnAssemblyLine,
+                simFinishedOrders,
                 pendingTasks,
                 finishedTasks
         );
+    }
+
+    private Map<String, String> convertToStringMap(Map<WorkStation, CarOrder> orders){
+        Map<String, String> convertedOrders = new LinkedHashMap<>();
+        orders.forEach((k, v) -> convertedOrders.put(k.getName(), v.toString()));
+        return convertedOrders;
     }
 
     /**
@@ -66,7 +72,8 @@ public class ManagerController {
         boolean success = assemblyManager.advance(timeSpent);
         if (!success) ui.showErrorMessage("Assembly line is blocked!");
 
-        List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
-        ui.showAssemblyLineStatusAfterMove(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
+        var ordersOnAssembly = assemblyManager.getOrdersOnAssemblyLine();
+        Map<String, String> currentOrdersOnAssemblyLine = convertToStringMap(ordersOnAssembly);
+        ui.showAssemblyLineStatusAfterMove(currentOrdersOnAssemblyLine);
     }
 }

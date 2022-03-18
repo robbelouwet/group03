@@ -1,6 +1,5 @@
 package domain.assembly;
 
-import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
@@ -35,19 +34,27 @@ public class AssemblyLine {
      * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
      *
      * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
+     * @param simulation When true, the {@code AssemblyLine} will simulate the advance, if not: it will move one step forward in the real-life application.
      * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
-    public boolean advance(int timeSpent) {
-        if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
-        scheduler.recalculatePredictedEndTimes(timeSpent);
-        if (hasAllCompleted()) {
-            resetAllTasksOfWorkStations();
-            finishLastWorkStation();
-            moveAllOrders();
-            restartFirstWorkStation();
+    public boolean advance(int timeSpent, boolean simulation) {
+        if (simulation){
+            advance();
+        } else {
+            if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
+            scheduler.recalculatePredictedEndTimes(timeSpent);
+            if (hasAllCompleted()) {
+                advance();
+            }
         }
-
         return true;
+    }
+
+    private void advance(){
+        resetAllTasksOfWorkStations();
+        finishLastWorkStation();
+        moveAllOrders();
+        restartFirstWorkStation();
     }
 
     private void resetAllTasksOfWorkStations() {
@@ -96,6 +103,9 @@ public class AssemblyLine {
         return new LinkedList<>(workStations);
     }
 
+    /**
+     * @return {@code LinkedList&#60;WorkStation&#62;} All workstations that are occupied with a car order and assembly tasks.
+     */
     public List<WorkStation> getBusyWorkstations() {
         return workStations.stream().filter(ws -> !ws.hasCompleted()).collect(Collectors.toList());
     }
@@ -107,14 +117,9 @@ public class AssemblyLine {
         return true;
     }
 
-    /**
-     * @param o The {@code CarOrder} that needs to be checked if it is present in a specific {@code WorkStation}
-     * @return true if the {@code CarOrder} is present in the {@code WorkStation}
-     */
-    public boolean isPresentInLastWorkstation(CarOrder o) {
-        var order = getWorkStations().getLast().getCarOrder();
-        if (order == null || o == null)
-            return false;
-        return order.equals(o);
+    public AssemblyLine copy(){
+        LinkedList<WorkStation> copyWorkStations = new LinkedList<>();
+        workStations.forEach(w -> copyWorkStations.add(w.copy()));
+        return new AssemblyLine(new LinkedList<>(copyWorkStations), scheduler.copy());
     }
 }

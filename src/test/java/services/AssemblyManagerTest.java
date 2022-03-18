@@ -22,7 +22,7 @@ public class AssemblyManagerTest {
     public void setup() {
         // mock an AssemblyManager
         var aline = mock(AssemblyLine.class);
-        when(aline.advance(anyInt())).thenReturn(true);
+        when(aline.advance(anyInt(), false)).thenReturn(true);
 
         // mock 2 tasks, with one finished
         var task1 = new AssemblyTask("test1", List.of("Test action"));
@@ -41,6 +41,7 @@ public class AssemblyManagerTest {
 
         // Create an AssemblyManager with mocked AssemblyLine
         assemblyManager = new AssemblyManager(aline);
+        when(aline.advance(anyInt(), false)).thenReturn(true);
         when(aline.advance(anyInt())).thenReturn(true);
         when(aline.getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
 
@@ -52,7 +53,7 @@ public class AssemblyManagerTest {
         assertTrue(assemblyManager.advance(60));
     }
 
-    //@Test TODO fix this test
+    @Test
     void getPendingTasks() {
         // the flatMap squishes the 2-dimensional list of tasks into 1
         var pendingTasks = assemblyManager.getPendingTasks().values()
@@ -62,7 +63,7 @@ public class AssemblyManagerTest {
         assertTrue(pendingTasks.stream().noneMatch(AssemblyTask::isFinished));
     }
 
-    //@Test TODO fix this test
+    @Test
     void getFinishedTasks() {
         // the flatMap squishes the 2-dimensional list of tasks into 1
         var finishedTasks = assemblyManager.getFinishedTasks().values()

@@ -8,9 +8,11 @@ import domain.scheduler.ProductionScheduler;
 import lombok.Getter;
 import persistence.DataSeeder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyManager} is responsible for the {@code AssemblyLine}.
@@ -33,7 +35,7 @@ public class AssemblyManager {
      * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
      */
     public boolean advance(int timeSpent) {
-        return assemblyLine.advance(timeSpent);
+        return assemblyLine.advance(timeSpent, false);
     }
 
     /**
@@ -42,7 +44,6 @@ public class AssemblyManager {
      * @return {@link Map} collection that contains {@code WorkStation} as a key and a {@code List&#60;AssemblyTask&#62;} as a value.
      * This means that the collection holds the pending assembly tasks per workstation.
      */
-    // TODO: Map<WorkStation, List<AssemblyTask>>
     public Map<WorkStation, List<AssemblyTask>> getPendingTasks() {
         return getFilteredTasks(t -> !t.isFinished());
     }
@@ -60,8 +61,12 @@ public class AssemblyManager {
     private Map<WorkStation, List<AssemblyTask>> getFilteredTasks(Predicate<AssemblyTask> predicate) {
         Map<WorkStation, List<AssemblyTask>> pendingTasks = new LinkedHashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
-            List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).toList());
-            pendingTasks.put(ws, pTasks);
+            if (ws.getCarOrder() != null) {
+                List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).toList());
+                if (pTasks.size() > 0) {
+                    pendingTasks.put(ws, pTasks);
+                }
+            }
         }
         return pendingTasks;
     }
@@ -70,23 +75,27 @@ public class AssemblyManager {
      * This method retrieves the new pending orders after the assembly line WOULD have moved.
      * This means that this is a best-case scenario and will retrieve all the pending orders but the {@code CarOrder} of the last workstation.
      *
-     * @param pendingOrders All car orders that still need to be processed on the assembly line.
      * @return {@code List&#60;CarOrder&#62;} All car orders that still need to be processed on the
      * assembly line without the car orders that would be finished after the assembly line moves one step forward.
      */
-    public List<CarOrder> getSimulatedOrders(List<CarOrder> pendingOrders) {
-        return pendingOrders.stream()
-                .filter(o -> !assemblyLine.isPresentInLastWorkstation(o))
-                .collect(Collectors.toList());
+    public Map<WorkStation, CarOrder> getSimulatedOrders() {
+        AssemblyLine copy = assemblyLine.copy();
+        copy.advance(0, true);
+        return getOrdersOnAssemblyLine(copy);
     }
 
-    public List<CarOrder> getOrdersOnAssemblyLine() {
-        List<CarOrder> orders = new ArrayList<>();
-        assemblyLine.getWorkStations().forEach(w -> {
-            var o = w.getCarOrder();
-            if (o != null) orders.add(o);
-        });
-        return orders;
+    public Map<WorkStation, CarOrder> getOrdersOnAssemblyLine() {
+        return getOrdersOnAssemblyLine(assemblyLine);
+    }
+
+    private Map<WorkStation, CarOrder> getOrdersOnAssemblyLine(AssemblyLine assemblyLine) {
+        Map<WorkStation, CarOrder> ordersOnAssembly = new LinkedHashMap<>();
+        for (WorkStation ws : assemblyLine.getWorkStations()) {
+            if (ws.getCarOrder() != null) {
+                ordersOnAssembly.put(ws, ws.getCarOrder());
+            }
+        }
+        return ordersOnAssembly;
     }
 
     public List<WorkStation> getBusyWorkStations() {

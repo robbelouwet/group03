@@ -19,7 +19,7 @@ public class ManagerControllerTest {
 
     @BeforeEach
     public void setup() {
-         // change this to false to see the exception being thrown
+        // change this to false to see the exception being thrown
         var mockedStore = mock(ManagerStore.class);
         var mockedAManager = mock(AssemblyManager.class);
         when(mockedAManager.advance(anyInt())).thenReturn(true);
@@ -37,8 +37,8 @@ public class ManagerControllerTest {
             }
 
             @Override
-            public void showOverview(List<String> pendingOrders,
-                                     List<String> simFinishedOrders,
+            public void showOverview(Map<String, String> pendingOrders,
+                                     Map<String, String> simFinishedOrders,
                                      Map<String, List<String>> pendingTasks,
                                      Map<String, List<String>> finishedTasks) {
 
@@ -50,7 +50,7 @@ public class ManagerControllerTest {
             }
 
             @Override
-            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
+            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
 
             }
         };

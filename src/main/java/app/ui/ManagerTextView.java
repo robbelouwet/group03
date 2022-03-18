@@ -27,21 +27,17 @@ public class ManagerTextView implements IManagerView {
     }
 
     @Override
-    public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
-        ConsoleReader.getInstance().printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
-        for (var order : pendingOrders) {
-            ConsoleReader.getInstance().printf("\t%s\n", order);
-        }
+    public void showOverview(Map<String, String> pendingOrders, Map<String, String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
+        ConsoleReader.getInstance().printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "" : "Empty");
+        printOrders(pendingOrders);
 
-        ConsoleReader.getInstance().printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Nothing");
-        for (var order : simFinishedOrders) {
-            ConsoleReader.getInstance().printf("\t%s\n", order);
-        }
+        ConsoleReader.getInstance().printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Empty");
+        printOrders(simFinishedOrders);
 
-        ConsoleReader.getInstance().println("Pending tasks of workstations:");
+        ConsoleReader.getInstance().printf("Pending tasks of workstations: %s\n", pendingTasks.size() > 0 ? "" : "Nothing");
         printTasks(pendingTasks);
 
-        ConsoleReader.getInstance().println("Finished tasks of workstations:");
+        ConsoleReader.getInstance().printf("Finished tasks of workstations: %s\n", finishedTasks.size() > 0 ? "" : "Nothing");
         printTasks(finishedTasks);
 
         String action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
@@ -61,11 +57,9 @@ public class ManagerTextView implements IManagerView {
     }
 
     @Override
-    public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
-        ConsoleReader.getInstance().printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Nothing");
-        for (var order : pendingOrders) {
-            ConsoleReader.getInstance().println(order);
-        }
+    public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
+        ConsoleReader.getInstance().printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Empty");
+        printOrders(pendingOrders);
     }
 
     private int askTimeSpent() {
@@ -81,6 +75,13 @@ public class ManagerTextView implements IManagerView {
             }
         }
         return result;
+    }
+
+    private void printOrders(Map<String, String> list) {
+        list.forEach((k, v) -> {
+            ConsoleReader.getInstance().printf("\tWorkstation %s: ", k);
+            ConsoleReader.getInstance().printf("%s\n", list.get(k));
+        });
     }
 
     private void printTasks(Map<String, List<String>> list) {
