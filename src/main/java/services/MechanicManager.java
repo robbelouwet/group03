@@ -8,6 +8,10 @@ import lombok.Setter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A class that is responsible for keeping track of the current state of the mechanic using the system,
+ * (i.e. the current work station and the selected task).
+ */
 public class MechanicManager {
     @Setter @Getter
     private WorkStation currentWorkStation;
