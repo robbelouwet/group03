@@ -4,11 +4,10 @@ import domain.scheduler.ProductionScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +26,6 @@ public class AssemblyLineTest {
 
     @Test
     void advance() {
-        assertTrue(assemblyLine.advance(60));
+        assertTrue(assemblyLine.advance(60, false));
     }
 }
