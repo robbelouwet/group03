@@ -22,9 +22,9 @@ public class AppController {
 
         boolean quit = false;
         switch (role) {
-            case "manager" -> new ManagerTextView();
-            case "garage holder" -> new GarageHolderTextView();
-            case "mechanic" -> new CarMechanicTextView();
+            case "manager" -> appView.showManager();
+            case "garage holder" -> appView.showGarageHolder();
+            case "mechanic" -> appView.showMechanic();
             case "quit" -> quit = true;
             default -> ConsoleReader.getInstance().println("Sorry, don't know that role");
         }

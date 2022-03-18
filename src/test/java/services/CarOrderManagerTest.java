@@ -2,9 +2,14 @@ package services;
 
 import domain.car.CarModel;
 import domain.order.CarOrder;
+import domain.order.OrderStatus;
+import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import persistence.CarCatalog;
 import persistence.CarOrderRepository;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CarOrderManagerTest {
+    private ManagerStore managerStore;
 
     /**
      * This method 'resets the state of our domain'
@@ -19,25 +25,34 @@ class CarOrderManagerTest {
     @BeforeEach
     public void reset() {
         // mock a finished and not-finished order
-        var mockedOrder1 = mock(CarOrder.class);
-        var mockedOrder2 = mock(CarOrder.class);
-        when(mockedOrder1.isFinished()).thenReturn(false);
-        when(mockedOrder2.isFinished()).thenReturn(true);
-        when(mockedOrder1.copy()).thenReturn(mockedOrder1);
-        when(mockedOrder2.copy()).thenReturn(mockedOrder2);
+        List<CarOrder> orders = new ArrayList<>();
+        var model = CarCatalog.getModels().get(0);
+
+        for (int i = 0; i < 2; i++) {
+            orders.add(new CarOrder(new DateTime(2), model, new HashMap<>() {{
+                put("Body", "break");
+                put("Color", "white");
+                put("Engine", "performance");
+                put("Gearbox", "5 speed automatic");
+                put("Seats", "vinyl grey");
+                put("Airco", "automatic");
+                put("Wheels", "sports");
+            }}));
+        }
+        orders.get(0).setStatus(OrderStatus.Finished);
 
         // Mock an OrderRepository
         var mockedRepo = mock(CarOrderRepository.class);
-        when(mockedRepo.getOrders()).thenReturn(List.of(mockedOrder1, mockedOrder2));
+        when(mockedRepo.getOrders()).thenReturn(orders);
 
         // create testing instance of the ManagerStore
         when(mockedRepo.copy()).thenReturn(mockedRepo);
-        ManagerStore.getInstance().init(mockedRepo);
+        managerStore = new ManagerStore(mockedRepo);
     }
 
     @Test
     void getPendingOrders() {
-        var manager = ManagerStore.getInstance().getCarOrderManager();
+        var manager = managerStore.getCarOrderManager();
         var pendingOrders = manager.getPendingOrders();
 
         assertEquals(1, pendingOrders.size());
@@ -46,7 +61,7 @@ class CarOrderManagerTest {
 
     @Test
     void getFinishedOrders() {
-        var pendingOrders = ManagerStore.getInstance().getCarOrderManager().getFinishedOrders();
+        var pendingOrders = managerStore.getCarOrderManager().getFinishedOrders();
 
         assertEquals(1, pendingOrders.size());
         assertTrue(pendingOrders.stream().allMatch(CarOrder::isFinished));
@@ -56,8 +71,8 @@ class CarOrderManagerTest {
     void submitCarOrder() {
         var mockedModel = mock(CarModel.class);
         when(mockedModel.isValidInputData(anyMap())).thenReturn(true);
-        ManagerStore.getInstance().getCarOrderManager().selectModel(mockedModel);
-        var order = ManagerStore.getInstance().getCarOrderManager().submitCarOrder(new HashMap<>());
+        managerStore.getCarOrderManager().selectModel(mockedModel);
+        var order = managerStore.getCarOrderManager().submitCarOrder(new HashMap<>());
 
         assertNotNull(order);
     }
@@ -65,8 +80,8 @@ class CarOrderManagerTest {
     @Test
     void selectModel() {
         var mockedModel = mock(CarModel.class);
-        ManagerStore.getInstance().getCarOrderManager().selectModel(mockedModel);
-        var selectedModel = ManagerStore.getInstance().getCarOrderManager().getSelectedModel();
+        managerStore.getCarOrderManager().selectModel(mockedModel);
+        var selectedModel = managerStore.getCarOrderManager().getSelectedModel();
 
         assertNotNull(selectedModel);
     }

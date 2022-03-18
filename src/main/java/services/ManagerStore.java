@@ -2,29 +2,21 @@ package services;
 
 import domain.scheduler.ProductionScheduler;
 import lombok.Getter;
-import lombok.Setter;
 import persistence.CarOrderRepository;
 
 public class ManagerStore {
-    @Getter @Setter
-    private static ManagerStore instance = new ManagerStore();
+    @Getter
+    private final AssemblyManager assemblyLineManager;
+    @Getter
+    private final CarOrderManager carOrderManager;
+    @Getter
+    private final MechanicManager mechanicManager;
 
-    /**
-     * TODO:
-     * Setter can only be called from test package
-     */
-    @Getter
-    private AssemblyManager assemblyLineManager;
-    @Getter
-    private CarOrderManager carOrderManager;
-    @Getter
-    private MechanicManager mechanicManager;
-
-    public void init() {
-        init(new CarOrderRepository());
+    public ManagerStore() {
+        this(new CarOrderRepository());
     }
 
-    public void init(CarOrderRepository repository) {
+    public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
 
         var scheduler = new ProductionScheduler(carOrderRepository);
@@ -32,6 +24,5 @@ public class ManagerStore {
         assemblyLineManager = new AssemblyManager(scheduler);
         carOrderManager = new CarOrderManager(carOrderRepository);
         mechanicManager = new MechanicManager();
-        instance = this;
     }
 }

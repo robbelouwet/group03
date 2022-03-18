@@ -18,6 +18,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CarControllerTest {
+    private CarController controller;
     @BeforeEach
     public void setup() {
         var model = CarCatalog.getModels().get(0);
@@ -46,8 +47,9 @@ public class CarControllerTest {
             order.setStatus(OrderStatus.Finished);
             orders.add(order);
         }
-
-        ManagerStore.getInstance().init(new CarOrderRepository(orders));
+        var managerStore = new ManagerStore(new CarOrderRepository(orders));
+        var controllerStore = new ControllerStore(managerStore);
+        controller = controllerStore.getCarController();
     }
 
     @Test
@@ -75,7 +77,7 @@ public class CarControllerTest {
 
             }
         };
-        var controller = new CarController(view);
+        controller.setUi(view);
         controller.showMainMenu();
     }
 
@@ -103,15 +105,13 @@ public class CarControllerTest {
 
             }
         };
-        var controller = new CarController(view);
+        controller.setUi(view);
         controller.showModels();
     }
 
     @Test
     void submitOrder() {
         var view = new IGarageHolderView() {
-            final CarController controller = new CarController(this);
-
             @Override
             public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
                 assertEquals(4, pendingOrders.size());
@@ -138,6 +138,7 @@ public class CarControllerTest {
                 controller.showMainMenu();
             }
         };
-        view.controller.showModels();
+        controller.setUi(view);
+        controller.showModels();
     }
 }

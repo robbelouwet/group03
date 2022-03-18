@@ -3,6 +3,7 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.order.CarOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,12 +38,14 @@ public class AssemblyManagerTest {
         var ws2 = mock(WorkStation.class);
         when(ws2.getPendingTasks()).thenReturn(new ArrayList<>(testTasks));
         when(ws2.getName()).thenReturn("WS2");
+        var mockOrder = mock(CarOrder.class);
 
         // Create an AssemblyManager with mocked AssemblyLine
         assemblyManager = new AssemblyManager(aline);
         when(aline.advance(anyInt())).thenReturn(true);
+        when(aline.getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
 
-        when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
+        // when(assemblyManager.getAssemblyLine().getWorkStations()).thenReturn(new LinkedList<>(List.of(ws1, ws2)));
     }
 
     @Test

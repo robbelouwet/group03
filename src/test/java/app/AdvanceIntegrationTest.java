@@ -1,9 +1,10 @@
 package app;
 
-import app.controllers.ManagerController;
+import app.controllers.ControllerStore;
 import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
 import domain.assembly.AssemblyTask;
+import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,6 +29,9 @@ public class AdvanceIntegrationTest {
         ConsoleReader mReader = mock(ConsoleReader.class);
         ConsoleReader.setInstance(mReader);
     }
+
+    private ManagerStore managerStore;
+    private ControllerStore controllerStore;
 
     @BeforeEach
     public void setup() {
@@ -45,68 +50,59 @@ public class AdvanceIntegrationTest {
             }}));
         }
 
-        ManagerStore.getInstance().init(new CarOrderRepository(orders));
+        managerStore = new ManagerStore(new CarOrderRepository(orders));
+        controllerStore = new ControllerStore(managerStore);
     }
 
     @Test
     public void mainScenarioTest() {
         // verify we have 3 pending orders
-        var allPending = ManagerStore.getInstance().getCarOrderManager().getPendingOrders();
+        var allPending = managerStore.getCarOrderManager().getPendingOrders();
         var sizePending = allPending.size();
         assertEquals(3, sizePending);
         assertTrue(allPending.stream().noneMatch(CarOrder::isFinished));
 
         // and 0 finished orders
-        var allFinished = ManagerStore.getInstance().getCarOrderManager().getFinishedOrders();
+        var allFinished = managerStore.getCarOrderManager().getFinishedOrders();
         var sizeFinished = allFinished.size();
         assertEquals(0, sizeFinished);
         assertTrue(allFinished.stream().allMatch(CarOrder::isFinished));
 
-        // now mock an IManagerView
-        IManagerView mgrView = new IManagerView() {
-            @Override
-            public void confirmMove(int timeSpent) {
-                (new ManagerController(this)).advanceAssemblyLine(timeSpent);
-            }
-
-            @Override
-            public void showOverview(List<String> pendingOrders,
-                                     List<String> simFinishedOrders,
-                                     Map<String, List<String>> pendingTasks,
-                                     Map<String, List<String>> finishedTasks) {
-
-            }
-
-            @Override
-            public void showErrorMessage(String err) {
-                throw new RuntimeException("Assembly line is blocked!");
-            }
-
-            @Override
-            public void showAssemblyLineStatusAfterMove(List<String> pendingOrders) {
-
-            }
-        };
-
         // now 'advance & clear' the assembly line 6 times
         // pre:     3 pending orders | empty assembly line | 0 finished orders
         // post:    0 pending orders | empty assembly line | 3 finished orders
-        for (int i = 0; i < 6; i++) {
-            mgrView.confirmMove(60);
+        var man = managerStore.getMechanicManager();
 
-            // TODO: call the CarMechanicView instead of calling the AssemblyLine directly, this is not end-to-end otherwise!
-            var ws = ManagerStore.getInstance().getAssemblyLineManager().getAssemblyLine().getWorkStations();
-            ws.forEach(w -> w.getPendingTasks().forEach(AssemblyTask::finishTask));
+        var func = new Consumer<WorkStation>() {
+            @Override
+            public void accept(WorkStation workStation) {
+                var func = new Consumer<AssemblyTask>() {
+
+                    @Override
+                    public void accept(AssemblyTask s) {
+                        man.selectTask(s.getName());
+                        man.finishTask();
+                    }
+                };
+                man.setCurrentWorkStation(workStation);
+                workStation.getPendingTasks().forEach(func);
+            }
+        };
+        for (int i = 0; i < 6; i++) {
+            managerStore.getAssemblyLineManager().advance(60);
+
+            var ws = managerStore.getAssemblyLineManager().getBusyWorkStations();
+            ws.forEach(func);
         }
 
         // verify we have 0 pending orders
-        var allPendingAfter = ManagerStore.getInstance().getCarOrderManager().getPendingOrders();
+        var allPendingAfter = managerStore.getCarOrderManager().getPendingOrders();
         var sizePendingAfter = allPendingAfter.size();
         assertEquals(0, sizePendingAfter);
         assertTrue(allPendingAfter.stream().noneMatch(CarOrder::isFinished));
 
         // and 3 finished orders
-        var allFinishedAfter = ManagerStore.getInstance().getCarOrderManager().getFinishedOrders();
+        var allFinishedAfter = managerStore.getCarOrderManager().getFinishedOrders();
         var sizeFinishedAfter = allFinishedAfter.size();
         assertEquals(3, sizeFinishedAfter);
         assertTrue(allFinishedAfter.stream().allMatch(CarOrder::isFinished));
@@ -115,25 +111,22 @@ public class AdvanceIntegrationTest {
     @Test
     public void alternateFlowTest() {
         // advance once
-        ManagerStore.getInstance().getAssemblyLineManager().advance(60);
+        managerStore.getAssemblyLineManager().advance(60);
 
-        IManagerView mgrView = new IManagerView() {
+        var view = new IManagerView() {
             @Override
             public void confirmMove(int timeSpent) {
-                (new ManagerController(this)).advanceAssemblyLine(timeSpent);
+
             }
 
             @Override
-            public void showOverview(List<String> pendingOrders,
-                                     List<String> simFinishedOrders,
-                                     Map<String, List<String>> pendingTasks,
-                                     Map<String, List<String>> finishedTasks) {
+            public void showOverview(List<String> pendingOrders, List<String> simFinishedOrders, Map<String, List<String>> pendingTasks, Map<String, List<String>> finishedTasks) {
 
             }
 
             @Override
             public void showErrorMessage(String err) {
-                throw new RuntimeException("Assembly line is blocked!");
+                throw new IllegalStateException("Assembly line is blocked!");
             }
 
             @Override
@@ -141,10 +134,10 @@ public class AdvanceIntegrationTest {
 
             }
         };
-
-
+        var controller = controllerStore.getManagerController();
+        controller.setUi(view);
         // trigger and catch an error message in the view, because the assembly line is blocked at that first workstation
-        Throwable e = assertThrows(RuntimeException.class, () -> mgrView.confirmMove(60));
+        Throwable e = assertThrows(RuntimeException.class, () -> controller.advanceAssemblyLine(60));
         assertEquals("Assembly line is blocked!", e.getMessage());
     }
 

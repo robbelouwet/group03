@@ -10,8 +10,9 @@ import java.util.Map;
 public class ManagerTextView implements IManagerView {
     private final ManagerController managerController;
 
-    public ManagerTextView() {
-        managerController = new ManagerController(this);
+    public ManagerTextView(ManagerController controller) {
+        managerController = controller;
+        managerController.setUi(this);
         initialize();
     }
 

@@ -22,7 +22,6 @@ public class ManagerControllerTest {
     public void setup() {
          // change this to false to see the exception being thrown
         var mockedStore = mock(ManagerStore.class);
-        ManagerStore.setInstance(mockedStore);
         var mockedAManager = mock(AssemblyManager.class);
         when(mockedAManager.advance(anyInt())).thenReturn(true);
         var mockedCOManager = mock(CarOrderManager.class);
@@ -30,10 +29,12 @@ public class ManagerControllerTest {
         when(mockedStore.getAssemblyLineManager()).thenReturn(mockedAManager);
         when(mockedStore.getCarOrderManager()).thenReturn(mockedCOManager);
 
+        var controllerStore = new ControllerStore(mockedStore);
+
         mgrView = new IManagerView() {
             @Override
             public void confirmMove(int timeSpent) {
-                (new ManagerController(this)).advanceAssemblyLine(timeSpent);
+                controllerStore.getManagerController().advanceAssemblyLine(timeSpent);
             }
 
             @Override
@@ -55,8 +56,8 @@ public class ManagerControllerTest {
             }
         };
 
-        mgrController = new ManagerController(mgrView);
-
+        mgrController = controllerStore.getManagerController();
+        mgrController.setUi(mgrView);
     }
 
     @Test

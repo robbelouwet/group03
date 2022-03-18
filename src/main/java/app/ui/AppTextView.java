@@ -1,6 +1,7 @@
 package app.ui;
 
 import app.controllers.AppController;
+import app.controllers.ControllerStore;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
 import services.ManagerStore;
@@ -8,6 +9,7 @@ import services.ManagerStore;
 public class AppTextView implements IAppView {
 
     private final AppController appController;
+    private final ControllerStore controllerStore = new ControllerStore();
 
     public AppTextView() {
         appController = new AppController(this);
@@ -22,7 +24,21 @@ public class AppTextView implements IAppView {
 
     @Override
     public void start() {
-
         appController.initialize();
+    }
+
+    @Override
+    public void showMechanic() {
+        new CarMechanicTextView(controllerStore.getMechanicController());
+    }
+
+    @Override
+    public void showGarageHolder() {
+        new GarageHolderTextView(controllerStore.getCarController());
+    }
+
+    @Override
+    public void showManager() {
+        new ManagerTextView(controllerStore.getManagerController());
     }
 }
