@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import java.util.Scanner;
 
+/**
+ * A default implementation of IConsoleReader that actually uses the console
+ */
 public class ConsoleReader implements IConsoleReader {
     @Getter
     @Setter // setter to inject a mock when testing

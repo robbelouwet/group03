@@ -65,7 +65,7 @@ public class AssemblyLine {
         WorkStation first = workStations.getFirst();
         var nextOrder = scheduler.getNextOrder();
         if (nextOrder != null) {
-            scheduler.firstSpotTaken();  // TODO rethink this, but we need some way for the scheduler to know if the first spot is free
+            scheduler.firstSpotTaken();
             nextOrder.setStatus(OrderStatus.OnAssemblyLine);
             first.updateCurrentOrder(nextOrder);
         }

@@ -14,13 +14,12 @@ public class AssemblyTask {
     @Getter
     private boolean finished;
     @Getter
-    private String name;
+    private final String name;
     @Getter
-    private List<String> actions;
+    private final List<String> actions;
 
     /**
      * @param name The name of the {@code AssemblyTask} that needs to be performed at a {@code WorkStation}
-     *             // TODO
      */
     public AssemblyTask(String name, List<String> actions) {
         this.name = name;

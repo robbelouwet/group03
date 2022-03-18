@@ -17,7 +17,6 @@ public class AppTextView implements IAppView {
 
     @Override
     public String showMenu() {
-        // TODO: show the menu
         // is he a mechanic, manager or garage holder?
         return ConsoleReader.getInstance().ask("Who are you? [manager] | [garage holder] | [mechanic] | [quit]");
     }
