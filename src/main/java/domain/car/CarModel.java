@@ -14,16 +14,21 @@ public class CarModel {
     @Getter
     private final CarModelSpecification modelSpecification;
 
+    @Getter
+    private final long expectedMinutesPerWorkStation;
+
     /**
      * @param name          The name of a {@code CarModel}
      * @param specification All possible options you can choose to mount on a {@code CarModel}
      */
-    public CarModel(String name, CarModelSpecification specification) {
+    public CarModel(String name, CarModelSpecification specification, long expectedMinutesPerWorkStation) {
         this.name = name;
         this.modelSpecification = specification;
+        this.expectedMinutesPerWorkStation = expectedMinutesPerWorkStation;
     }
 
     public boolean isValidInputData(Map<String, String> data) {
         return modelSpecification.isValidInputData(data);
     }
+
 }

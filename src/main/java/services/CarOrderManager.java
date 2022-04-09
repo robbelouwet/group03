@@ -50,7 +50,7 @@ public class CarOrderManager {
             throw new IllegalStateException("There was no model selected!");
         }
 
-        CarOrder order = new CarOrder(TimeManager.getCurrentTime(), selectedModel, data);
+        CarOrder order = new CarOrder(selectedModel, data);
         carRepository.addOrder(order);
         selectedModel = null;
         return order.copy();

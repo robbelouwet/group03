@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductionSchedulerTest {
+    // TODO this entire test needs to be rewritten
     CarOrderRepository repo;
     ProductionScheduler scheduler;
     List<CarOrder> orders = new ArrayList<>();
@@ -21,7 +20,7 @@ class ProductionSchedulerTest {
     @BeforeEach
     void setup() {
         repo =  new CarOrderRepository();
-        scheduler = new ProductionScheduler(repo);
+        scheduler = ProductionScheduler.of(repo, "FIFO");
 
         for (int i = 0; i < 3; i++) {
             orders.add(new CarOrder(new DateTime(2), CarCatalog.getModels().get(0), new HashMap<>() {{
@@ -36,7 +35,6 @@ class ProductionSchedulerTest {
         }
         for (var order : orders) {
             repo.addOrder(order);
-            scheduler.recalculatePredictedEndTimes(10);  // Set the time 10 minutes later
         }
     }
 
@@ -64,7 +62,7 @@ class ProductionSchedulerTest {
 
     @Test
     void recalculatePredictedEndTimes() {
-        scheduler.recalculatePredictedEndTimes(30);
+        scheduler.advanced(20, new LinkedList<>(Arrays.asList(null, null, null)));
         assertEquals(new DateTime(0, 10, 0), orders.get(0).getEndTime());
         assertEquals(new DateTime(0, 11, 0), orders.get(1).getEndTime());
         assertEquals(new DateTime(0, 12, 0), orders.get(2).getEndTime());
