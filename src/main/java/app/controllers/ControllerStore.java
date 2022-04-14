@@ -10,14 +10,17 @@ public class ControllerStore {
     private final CarController carController;
     @Getter
     private final MechanicController mechanicController;
+    //@Getter
+    //private final AssemblyLineStatusController assemblyLineStatusController;
 
     public ControllerStore() {
         this(new ManagerStore());
     }
 
     public ControllerStore(ManagerStore managerStore) {
+        //assemblyLineStatusController = new AssemblyLineStatusController(managerStore.getAssemblyLineManager());
         managerController = new ManagerController(managerStore.getAssemblyLineManager());
         carController = new CarController(managerStore.getCarOrderManager());
-        mechanicController = new MechanicController(managerStore.getMechanicManager());
+        mechanicController = new MechanicController(managerStore.getMechanicManager(), managerStore.getAssemblyLineManager());
     }
 }

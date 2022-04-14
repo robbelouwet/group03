@@ -13,10 +13,7 @@ import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 import services.ManagerStore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,21 +74,21 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showOverview(Map<String, String> pendingOrders,
-                                     Map<String, String> simFinishedOrders,
-                                     Map<String, List<String>> pendingTasks,
-                                     Map<String, List<String>> finishedTasks) {
-
+            public void showAdvanceOverview() {
+                String action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
+                while (!(action.equals("yes") || action.equals("no"))) {
+                    ConsoleReader.getInstance().println("This is not a valid option.");
+                    action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
+                }
+                if (action.equals("yes")) {
+                    int time = new Random().nextInt(100);
+                    confirmMove(time);
+                }
             }
 
             @Override
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
-            }
-
-            @Override
-            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
-
             }
         };
         controller.setUi(mgrView);
@@ -143,25 +140,24 @@ public class AdvanceIntegrationTest {
 
         var view = new IManagerView() {
             @Override
-            public void confirmMove(int timeSpent) {
-
-            }
+            public void confirmMove(int timeSpent) {}
 
             @Override
-            public void showOverview(Map<String, String> pendingOrders,
-                                     Map<String, String> simFinishedOrders,
-                                     Map<String, List<String>> pendingTasks,
-                                     Map<String, List<String>> finishedTasks) {
+            public void showAdvanceOverview() {
+                String action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
+                while (!(action.equals("yes") || action.equals("no"))) {
+                    ConsoleReader.getInstance().println("This is not a valid option.");
+                    action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
+                }
+                if (action.equals("yes")) {
+                    int time = new Random().nextInt(100);
+                    confirmMove(time);
+                }
             }
 
             @Override
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
-            }
-
-            @Override
-            public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
-
             }
         };
 
