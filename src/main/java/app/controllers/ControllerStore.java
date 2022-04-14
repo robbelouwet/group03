@@ -10,8 +10,6 @@ public class ControllerStore {
     private final CarController carController;
     @Getter
     private final MechanicController mechanicController;
-    //@Getter
-    //private final AssemblyLineStatusController assemblyLineStatusController;
 
     public ControllerStore() {
         this(new ManagerStore());
