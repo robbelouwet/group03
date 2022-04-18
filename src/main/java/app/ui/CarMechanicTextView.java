@@ -17,7 +17,20 @@ public class CarMechanicTextView implements ICarMechanicView {
 
     private void initialize() {
         ConsoleReader.getInstance().println("Hi mechanic!");
-        controller.showMainMenu();
+        var askString = "Select menu option: \n\tAssembly Line Status [status] | Perform Tasks [tasks] | Cancel [cancel]:";
+        String action = ConsoleReader.getInstance().ask(askString);
+
+        while (!(action.equals("status") || action.equals("tasks") || action.equals("cancel"))) {
+            ConsoleReader.getInstance().println("This is not a valid option.");
+            action = ConsoleReader.getInstance().ask(askString);
+        }
+
+        switch (action) {
+            case "status" -> controller.showAssemblyLineStatus();
+            case "tasks" -> controller.showMainMenu();
+            default -> {
+            }
+        }
     }
 
     @Override
@@ -71,7 +84,7 @@ public class CarMechanicTextView implements ICarMechanicView {
     public void showTaskInfo(String info, List<String> actions) {
         ConsoleReader.getInstance().println(info);
         ConsoleReader.getInstance().println("Actions to complete this task:");
-        for (String action: actions){
+        for (String action : actions) {
             ConsoleReader.getInstance().println("-" + action);
         }
 
@@ -86,6 +99,4 @@ public class CarMechanicTextView implements ICarMechanicView {
             controller.showMainMenu();
         }
     }
-
-
 }

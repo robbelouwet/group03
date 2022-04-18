@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.ui.interfaces.IManagerView;
+import app.utils.ConsoleReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.AssemblyManager;
@@ -8,8 +9,8 @@ import services.CarOrderManager;
 import services.ManagerStore;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.mockito.Mockito.*;
 
@@ -37,11 +38,16 @@ public class ManagerControllerTest {
             }
 
             @Override
-            public void showOverview(Map<String, String> pendingOrders,
-                                     Map<String, String> simFinishedOrders,
-                                     Map<String, List<String>> pendingTasks,
-                                     Map<String, List<String>> finishedTasks) {
-
+            public void showAdvanceOverview() {
+                String action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
+                while (!(action.equals("yes") || action.equals("no"))) {
+                    ConsoleReader.getInstance().println("This is not a valid option.");
+                    action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
+                }
+                if (action.equals("yes")) {
+                    int time = new Random().nextInt(100);
+                    confirmMove(time);
+                }
             }
 
             @Override
