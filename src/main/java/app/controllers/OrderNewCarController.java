@@ -1,6 +1,6 @@
 package app.controllers;
 
-import app.ui.interfaces.IGarageHolderView;
+import app.ui.interfaces.IOrderNewCarView;
 import domain.car.CarModel;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
@@ -10,15 +10,15 @@ import services.CarOrderManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CarController {
+public class OrderNewCarController {
     private final CarOrderManager carOrderManager;
-    private IGarageHolderView ui;
+    private IOrderNewCarView ui;
 
-    CarController(CarOrderManager carOrderManager) {
+    OrderNewCarController(CarOrderManager carOrderManager) {
         this.carOrderManager = carOrderManager;
     }
 
-    public void setUi(IGarageHolderView ui) {
+    public void setUi(IOrderNewCarView ui) {
         this.ui = ui;
     }
 

@@ -1,17 +1,16 @@
 package app.ui;
 
-import app.controllers.CarController;
-import app.ui.interfaces.IGarageHolderView;
+import app.controllers.OrderNewCarController;
+import app.ui.interfaces.IOrderNewCarView;
 import app.utils.ConsoleReader;
 import domain.scheduler.DateTime;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class GarageHolderTextView implements IGarageHolderView {
-    private final CarController controller;
+public class OrderNewCarTextView implements IOrderNewCarView {
+    private final OrderNewCarController controller;
 
-    public GarageHolderTextView(CarController controller) {
+    public OrderNewCarTextView(OrderNewCarController controller) {
         this.controller = controller;
         controller.setUi(this);
         initialize();

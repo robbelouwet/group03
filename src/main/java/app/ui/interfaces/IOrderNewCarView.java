@@ -3,9 +3,8 @@ package app.ui.interfaces;
 import domain.scheduler.DateTime;
 
 import java.util.List;
-import java.util.Map;
 
-public interface IGarageHolderView {
+public interface IOrderNewCarView {
 
     /**
      * Show the overview

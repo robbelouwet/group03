@@ -1,25 +1,22 @@
 package app.controllers;
 
-import app.ui.interfaces.IGarageHolderView;
+import app.ui.interfaces.IOrderNewCarView;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 import services.ManagerStore;
 import utils.TestObjects;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CarControllerTest {
-    private CarController controller;
+    private OrderNewCarController controller;
     @BeforeEach
     public void setup() {
         var orders = new ArrayList<CarOrder>();
@@ -41,7 +38,7 @@ public class CarControllerTest {
 
     @Test
     void showMainMenu() {
-        var view = new IGarageHolderView() {
+        var view = new IOrderNewCarView() {
 
             @Override
             public boolean showOverview(List<String> pendingOrders, List<String> finishedOrders) {
@@ -76,7 +73,7 @@ public class CarControllerTest {
 
     @Test
     void showModels() {
-        var view = new IGarageHolderView() {
+        var view = new IOrderNewCarView() {
             private int counter = 0;
             @Override
             public boolean showOverview(List<String> pendingOrders, List<String> finishedOrders) {
@@ -113,7 +110,7 @@ public class CarControllerTest {
 
     @Test
     void submitOrder() {
-        var view = new IGarageHolderView() {
+        var view = new IOrderNewCarView() {
             int overviewCounter = 0;
             @Override
             public boolean showOverview(List<String> pendingOrders, List<String> finishedOrders) {
