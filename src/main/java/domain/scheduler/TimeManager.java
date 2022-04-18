@@ -8,18 +8,29 @@ public class TimeManager {
      * The application always starts at 6 in the morning
      */
     @Getter
-    private static DateTime currentTime = new DateTime(60 * 6);
+    private DateTime currentTime;
+
+    public TimeManager() {
+        this(new DateTime(60 * 6));
+    }
+
+    public TimeManager(DateTime currentTime) {
+        this.currentTime = currentTime;
+    }
 
     /**
      * Increment the current time of our application
      *
      * @param minutes the amount of minutes to add to the current time
      */
-    static void addTime(long minutes) {
+    void addTime(long minutes) {
         currentTime = currentTime.addTime(minutes);
     }
 
-    static void reset() {
-        currentTime = new DateTime(60 * 6);
+    /**
+     * @return A copy of this object
+     */
+    public TimeManager copy() {
+        return new TimeManager(currentTime);
     }
 }

@@ -5,6 +5,7 @@ import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -39,22 +40,30 @@ public class AssemblyLine {
      */
     public boolean advance(int timeSpent, boolean simulation) {
         if (simulation){
-            advance();
+            advance(timeSpent);
         } else {
-            if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
-            scheduler.recalculatePredictedEndTimes(timeSpent);
             if (hasAllCompleted()) {
-                advance();
+                advance(timeSpent);
+                return true;
             }
+            return false;
         }
         return true;
     }
 
-    private void advance(){
-        resetAllTasksOfWorkStations();
-        finishLastWorkStation();
+    private void advance(int timeSpent){
+        var lastOrder = workStations.getLast().getCarOrder();
         moveAllOrders();
+        resetAllTasksOfWorkStations();
         restartFirstWorkStation();
+        // Notify the scheduler that we have advanced and get the current time
+        var orders = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
+        Collections.reverse(orders);
+        var currentTime = scheduler.advanced(timeSpent, new LinkedList<>(orders));
+        if (lastOrder!= null) {
+            lastOrder.setEndTime(currentTime);
+            lastOrder.setStatus(OrderStatus.Finished);
+        }
     }
 
     private void resetAllTasksOfWorkStations() {
@@ -65,17 +74,9 @@ public class AssemblyLine {
         WorkStation first = workStations.getFirst();
         var nextOrder = scheduler.getNextOrder();
         if (nextOrder != null) {
-            scheduler.firstSpotTaken();
             nextOrder.setStatus(OrderStatus.OnAssemblyLine);
             first.updateCurrentOrder(nextOrder);
         }
-    }
-
-    private void finishLastWorkStation() {
-        WorkStation last = workStations.getLast();
-        last.updateEndTimeOrder(TimeManager.getCurrentTime());
-        if (last.getCarOrder() != null)
-            last.finishCarOrder();
     }
 
     /*
