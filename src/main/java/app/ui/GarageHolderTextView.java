@@ -60,7 +60,7 @@ public class GarageHolderTextView implements IGarageHolderView {
         for (var value : options) {
             ConsoleReader.getInstance().println(value);
         }
-        String value = ConsoleReader.getInstance().ask("Select a value: " + String.join(",", options));
+        String value = ConsoleReader.getInstance().ask("Select a value: ");
         if (value.equals("cancel")) {
             return null;
         }

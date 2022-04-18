@@ -4,6 +4,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A helper class for creating the option selection.
+ * After selecting each option, it updates the available options on other categories
+ */
 public class OptionSelector {
     private Map<OptionCategory, List<Option>> options;
     private final Map<OptionCategory, Option> selectedOptions = new LinkedHashMap<>();
@@ -13,7 +17,7 @@ public class OptionSelector {
     }
 
     /**
-     * @param option   The option to select for this category
+     * @param option The option to select for this category
      * @return null if the selected option is not a valid choice, otherwise the new options after selecting this option
      */
     private Map<OptionCategory, List<Option>> getNewOptions(Option option) {
@@ -39,17 +43,9 @@ public class OptionSelector {
     }
 
     /**
-     * @param option   The option to select for this category
-     * @return true if this is a valid selection
-     */
-    public boolean isValid(Option option) {
-        return getNewOptions(option) != null;
-    }
-
-    /**
      * Select this option and set it in the selected options
      *
-     * @param option   The option to select for this category
+     * @param option The option to select for this category
      * @return true if this is a valid selection
      */
     public boolean selectOption(Option option) {
@@ -61,6 +57,9 @@ public class OptionSelector {
         return true;
     }
 
+    /**
+     * @return The categories and their options for which you still need to select an option
+     */
     public Map<OptionCategory, List<Option>> getNotSelectedCategories() {
         var copyCats = new LinkedHashMap<>(options);
         for (var cat : selectedOptions.entrySet()) {
@@ -69,6 +68,10 @@ public class OptionSelector {
         return copyCats;
     }
 
+    /**
+     * If you are finished, you can call this method to get the options that you selected
+     * Throws an error if you have not selected an option in each category
+     */
     public Map<OptionCategory, Option> getSelectedOptions() {
         if (options.size() != selectedOptions.size())
             throw new IllegalStateException("Can't get selected options if not all options are selected yet!");

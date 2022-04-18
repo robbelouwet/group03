@@ -83,7 +83,8 @@ public class CarController {
         }
         else {
             if (ui.confirmOrder()) {
-                carOrderManager.submitCarOrder();
+                var order = carOrderManager.submitCarOrder();
+                ui.showPredictedEndTime(order.getEndTime());
             } else {
                 carOrderManager.cancelCarOrder();
             }

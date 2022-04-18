@@ -48,7 +48,7 @@ public class OrderCarIntegrationTest {
             public void println(String l) {
                 switch (prints++) {
                     case 1 -> assertEquals("Pending orders:", l);  // 1
-                    case 2 -> assertEquals("Finished orders:", l); // 1
+                    case 2, 47, 141 -> assertEquals("Finished orders:", l); // 1
                     case 3 -> assertEquals("Carmodel options:", l);  // 3
                     case 4 -> assertEquals("Model A", l);  // 3
                     case 5 -> assertEquals("Model B", l);  // 3
@@ -60,10 +60,11 @@ public class OrderCarIntegrationTest {
                     case 12 -> assertEquals("Category: Color", l);  // 5
                     case 13 -> assertEquals("Red", l);  // 5
                     case 14 -> assertEquals("Blue", l);  // 5
-                    case 45 -> assertEquals("Order (Model A): orderTime=Day 0, 6:0, endTime=Day 0, 8:30, status=Pending}", l);
-                    case 91, 137 -> assertEquals("Order (Model A): orderTime=Day 0, 6:0, endTime=Day 0, 9:10, status=Pending}", l);
-                    case 92, 138 -> assertEquals("Order (Model B): orderTime=Day 0, 6:0, endTime=Day 0, 10:20, status=Pending}", l);
-                    case 46, 139 -> assertEquals("Finished orders:", l);
+                    case 44 -> assertEquals("Predicted end time: Day 0, 8:30", l);  // 8
+                    case 91 -> assertEquals("Predicted end time: Day 0, 10:20", l);  // 8
+                    case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 6:0, endTime=Day 0, 8:30, status=Pending}", l);  // 1
+                    case 93, 139 -> assertEquals("Order (Model A): orderTime=Day 0, 6:0, endTime=Day 0, 9:10, status=Pending}", l);  // 1
+                    case 94, 140 -> assertEquals("Order (Model B): orderTime=Day 0, 6:0, endTime=Day 0, 10:20, status=Pending}", l);  // 1
                 }
             }
 
