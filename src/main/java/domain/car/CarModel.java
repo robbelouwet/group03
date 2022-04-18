@@ -1,5 +1,7 @@
 package domain.car;
 
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import lombok.Getter;
 
 import java.util.Map;
@@ -27,8 +29,7 @@ public class CarModel {
         this.expectedMinutesPerWorkStation = expectedMinutesPerWorkStation;
     }
 
-    public boolean isValidInputData(Map<String, String> data) {
-        return modelSpecification.isValidInputData(data);
+    public boolean isValidInputData(Map<OptionCategory, Option> selections) {
+        return modelSpecification.isValidInputData(selections);
     }
-
 }

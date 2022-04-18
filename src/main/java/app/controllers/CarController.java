@@ -2,11 +2,12 @@ package app.controllers;
 
 import app.ui.interfaces.IGarageHolderView;
 import domain.car.CarModel;
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
 import services.CarOrderManager;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CarController {
@@ -22,19 +23,31 @@ public class CarController {
     }
 
     /**
+     * Start the car controller
+     */
+    public void start() {
+        showMainMenu();
+    }
+
+    /**
      * Gets all pending and finished orders and notifies the ui to show some metadata about these orders
      */
-    public void showMainMenu() {
+    private void showMainMenu() {
         List<CarOrder> pendingOrders = carOrderManager.getPendingOrders();
         List<CarOrder> finishedOrders = carOrderManager.getFinishedOrders();
-        ui.showOverview(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()), finishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()));
+        while (ui.showOverview(pendingOrders.stream().map(CarOrder::toString).collect(Collectors.toList()), finishedOrders.stream().map(CarOrder::toString).collect(Collectors.toList()))) {
+            showModels();
+            pendingOrders = carOrderManager.getPendingOrders();
+            finishedOrders = carOrderManager.getFinishedOrders();
+        }
     }
 
     /**
      * Gets all available carmodels and notifies the ui to show the names of these models
      */
-    public void showModels() {
-        ui.showCarModels(carOrderManager.getCarModels().stream().map(CarModel::getName).collect(Collectors.toList()));
+    private void showModels() {
+        var model = ui.showCarModels(carOrderManager.getCarModels().stream().map(CarModel::getName).collect(Collectors.toList()));
+        selectModel(model);
     }
 
     /**
@@ -43,24 +56,37 @@ public class CarController {
      *
      * @param model the name of the selected model
      */
-    public void selectModel(String model) {
+    private void selectModel(String model) {
         var selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
 
         carOrderManager.selectModel(selectedModel);
-        ui.showCarForm(selectedModel.getModelSpecification().getOptions());
+        askNextOption();
     }
 
-    /**
-     * Submit a car order
-     * Throws an error when there is no model selected yet
-     *
-     * @param data a map which maps the option-key to the selected value
-     */
-    public void submitCarOrder(Map<String, String> data) {
-        var carModel = carOrderManager.getSelectedModel();
-        if (!carModel.isValidInputData(data)) {
-            throw new IllegalArgumentException("The data object does not match the modelspecification!");
+    private OptionCategory getNextCategory() {
+        for (var cat : carOrderManager.getOptionSelector().getNotSelectedCategories().keySet()) return cat;
+        return null;
+    }
+
+    private void askNextOption() {
+        var cat = getNextCategory();
+        if (cat != null) {
+            var selector = carOrderManager.getOptionSelector();
+            var options = selector.getNotSelectedCategories().get(cat);
+            var option = ui.showCarOption(cat.getName(), options.stream().map(Option::name).collect(Collectors.toList()));
+            if (option == null) {
+                carOrderManager.cancelCarOrder();
+                return;
+            }
+            selector.selectOption(options.stream().filter(option1 -> option1.name().equals(option)).findAny().orElseThrow());
+            askNextOption();
         }
-        ui.showPredictedEndTime(carOrderManager.submitCarOrder(data).getEndTime());
+        else {
+            if (ui.confirmOrder()) {
+                carOrderManager.submitCarOrder();
+            } else {
+                carOrderManager.cancelCarOrder();
+            }
+        }
     }
 }

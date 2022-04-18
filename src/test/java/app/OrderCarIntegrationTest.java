@@ -7,6 +7,9 @@ import app.utils.IConsoleReader;
 import org.junit.jupiter.api.Test;
 import services.ManagerStore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -20,20 +23,23 @@ public class OrderCarIntegrationTest {
             public String ask(String str) {
                 return switch (number++) {
                     case 0 -> "garage holder";
-                    case 1, 12, 22 -> "order";  // 2
-                    case 2, 13, 23 -> "Ford Fiesta";  // 4
+                    case 1, 13, 24 -> "order";  // 2
+                    case 2 -> "Model A";  // 4
+                    case 14 -> "Model B"; // 4
+                    case 25 -> "Model C"; // 4
                     case 3 -> "bla";  // wrong input
-                    case 4 -> "manual"; // Will ask again on wrong input
-                    case 14, 24 -> "manual";  // 6
-                    case 5, 15, 25 -> "comfort";  // 6
-                    case 6, 16, 26 -> "red";  // 6
-                    case 7, 17, 27 -> "6 speed manual";  // 6
-                    case 8, 18, 28 -> "sedan";  // 6
-                    case 9, 19, 29 -> "standard";  // 6
-                    case 10, 20, 30 -> "leather black";  // 6
-                    case 11, 21 -> "confirm";  // 6
-                    case 31 -> "cancel"; // 6.a
-                    case 32 -> "cancel";  // 1.a
+                    case 4, 15 -> "Sedan"; // 6
+                    case 26 -> "Sport"; // 6
+                    case 5, 16, 27 -> "Red";  // 6
+                    case 6, 17, 28 -> "Standard 2l v4";  // 6
+                    case 7, 18, 29 -> "6 speed manual";  // 6
+                    case 8, 19, 30 -> "Leather black";  // 6
+                    case 9, 20, 31 -> "Automatic";  // 6
+                    case 10, 21, 32 -> "Comfort";  // 6
+                    case 11, 22, 33 -> "None";  // 6
+                    case 12, 23 -> "confirm";  // 6
+                    case 34 -> "cancel"; // 6.a
+                    case 35 -> "cancel";  // 1.a
                     default -> "quit";
                 };
             }
@@ -44,14 +50,20 @@ public class OrderCarIntegrationTest {
                     case 1 -> assertEquals("Pending orders:", l);  // 1
                     case 2 -> assertEquals("Finished orders:", l); // 1
                     case 3 -> assertEquals("Carmodel options:", l);  // 3
-                    case 4 -> assertEquals("Ford Fiesta", l);  // 3
-                    case 5 -> assertEquals("Make a selection for each option, or type [cancel]", l);  // 5
-                    case 6 -> assertEquals("Option: Airco", l);  // 5
-                    case 7 -> assertEquals("manual", l);  // 5
-                    case 8 -> assertEquals("automatic", l);  // 5
-                    case 32, 63, 94 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:0, status=Pending}", l);
-                    case 64, 95 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:0, status=Pending}", l);
-                    case 96 -> assertEquals("Finished orders:", l);
+                    case 4 -> assertEquals("Model A", l);  // 3
+                    case 5 -> assertEquals("Model B", l);  // 3
+                    case 6 -> assertEquals("Model C", l);  // 3
+                    case 7 -> assertEquals("Select an option or cancel [cancel]", l);  // 5
+                    case 8 -> assertEquals("Category: Body", l);  // 5
+                    case 9 -> assertEquals("Sedan", l);  // 5
+                    case 10 -> assertEquals("Break", l);  // 5
+                    case 12 -> assertEquals("Category: Color", l);  // 5
+                    case 13 -> assertEquals("Red", l);  // 5
+                    case 14 -> assertEquals("Blue", l);  // 5
+                    case 45 -> assertEquals("Order (Model A): orderTime=Day 0, 6:0, endTime=Day 0, 8:30, status=Pending}", l);
+                    case 91, 137 -> assertEquals("Order (Model A): orderTime=Day 0, 6:0, endTime=Day 0, 9:10, status=Pending}", l);
+                    case 92, 138 -> assertEquals("Order (Model B): orderTime=Day 0, 6:0, endTime=Day 0, 10:20, status=Pending}", l);
+                    case 46, 139 -> assertEquals("Finished orders:", l);
                 }
             }
 

@@ -8,6 +8,7 @@ import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
+import utils.TestObjects;
 
 import java.util.*;
 
@@ -27,16 +28,7 @@ public class MechanicManagerTest {
 
         var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
         workStation = mockedWorkStation1;
-        var model = CarCatalog.getModels().get(0);
-        var order = new CarOrder(new DateTime(2), model, new HashMap<>() {{
-            put("Body", "break");
-            put("Color", "white");
-            put("Engine", "performance");
-            put("Gearbox", "5 speed automatic");
-            put("Seats", "vinyl grey");
-            put("Airco", "automatic");
-            put("Wheels", "sports");
-        }});
+        var order = TestObjects.getCarOrder();
         workStation.updateCurrentOrder(order);
 
         mechanicManager = new MechanicManager(new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1)), null));

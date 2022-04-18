@@ -7,11 +7,13 @@ import java.util.Map;
 
 public interface IGarageHolderView {
 
-    void showOverview(List<String> pendingOrders, List<String> finishedOrders);
+    boolean showOverview(List<String> pendingOrders, List<String> finishedOrders);
 
-    void showCarModels(List<String> models);
+    String showCarModels(List<String> models);
 
-    void showCarForm(Map<String, List<String>> options);
+    String showCarOption(String category, List<String> options);
+
+    boolean confirmOrder();
 
     void showPredictedEndTime(DateTime endTime);
 }
