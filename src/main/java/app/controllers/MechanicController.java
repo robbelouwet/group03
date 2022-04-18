@@ -4,7 +4,6 @@ import app.ui.interfaces.ICarMechanicView;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import services.AssemblyManager;
-import services.ManagerStore;
 import services.MechanicManager;
 
 import java.util.List;
@@ -13,11 +12,12 @@ import java.util.stream.Collectors;
 /**
  * Class {@code MechanicController} is responsible for the communication between the UI and the Domain.
  */
-public class MechanicController {
+public class MechanicController extends AssemblyLineStatusController {
     private ICarMechanicView ui;
     private final MechanicManager mechanicManager;
 
-    MechanicController(MechanicManager mechanicManager) {
+    MechanicController(MechanicManager mechanicManager, AssemblyManager assemblyManager) {
+        super(assemblyManager);
         this.mechanicManager = mechanicManager;
     }
 
@@ -71,5 +71,9 @@ public class MechanicController {
      */
     public boolean isTaskName(String name) {
         return mechanicManager.isValidTask(name);
+    }
+
+    public void showAssemblyLineStatus() {
+        super.showAssemblyLineStatus(ui);
     }
 }

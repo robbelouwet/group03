@@ -5,7 +5,7 @@ import domain.scheduler.DateTime;
 import java.util.List;
 import java.util.Map;
 
-public interface IGarageHolderView{
+public interface IGarageHolderView {
 
     void showOverview(List<String> pendingOrders, List<String> finishedOrders);
 

@@ -1,14 +1,11 @@
 package app.ui.interfaces;
 
-import domain.assembly.AssemblyTask;
-import domain.assembly.WorkStation;
-
 import java.util.List;
 
 /**
  * Interface {@code ICarMechanicView} provides an interface for the UI-view for the car mechanic.
  */
-public interface ICarMechanicView {
+public interface ICarMechanicView extends IAssemblyLineStatusView {
     /**
      * Shows an overview of the available work stations (to be worked on).
      * @param availableWorkstations A list of all the available work stations (to be worked on).
@@ -27,5 +24,4 @@ public interface ICarMechanicView {
      * @param actions A list of all the actions of a task.
      */
     void showTaskInfo(String info, List<String> actions);
-
 }
