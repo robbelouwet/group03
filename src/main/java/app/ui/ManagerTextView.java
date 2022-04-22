@@ -4,6 +4,8 @@ import app.controllers.ManagerController;
 import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
 
+import java.util.List;
+
 public class ManagerTextView implements IManagerView {
     private final ManagerController managerController;
 
@@ -15,7 +17,20 @@ public class ManagerTextView implements IManagerView {
 
     private void initialize() {
         ConsoleReader.getInstance().println("Hi manager!");
-        managerController.showMainMenu();
+        var askString = "Select menu option: \n\tAssembly Line Overview [assembly] \n\tScheduling Algorithm Overview [algorithm] \n\tCancel [cancel]:";
+        String action = ConsoleReader.getInstance().ask(askString);
+
+        while (!(action.equals("assembly") || action.equals("algorithm") || action.equals("cancel"))) {
+            ConsoleReader.getInstance().println("This is not a valid option.");
+            action = ConsoleReader.getInstance().ask(askString);
+        }
+
+        switch (action) {
+            case "assembly" -> managerController.showAssemblyLineOverview();
+            case "algorithm" -> managerController.showAlgorithmOverview();
+            default -> {
+            }
+        }
     }
 
     @Override
@@ -39,6 +54,27 @@ public class ManagerTextView implements IManagerView {
     @Override
     public void showErrorMessage(String err) {
         System.err.println(err);
+    }
+
+    @Override
+    public void showSchedulingAlgorithms(List<String> algorithms, String selectedAlgorithm) {
+        ConsoleReader.getInstance().println("Possible Scheduling Algorithms:");
+        for (String algorithm : algorithms) {
+            StringBuilder string = new StringBuilder(String.format("%s", algorithm));
+            if (algorithm.equals(selectedAlgorithm)) string.append(": (X)");
+            ConsoleReader.getInstance().println(string.toString());
+        }
+
+        String askString = "Select an algorithm by typing its name: | Cancel [cancel]: ";
+        String action = ConsoleReader.getInstance().ask(askString);
+
+        while (!(algorithms.contains(action) || action.equals("cancel"))) {
+            ConsoleReader.getInstance().println("This is not a valid option.");
+            action = ConsoleReader.getInstance().ask(askString);
+        }
+        if (algorithms.contains(action)){
+            managerController.selectAlgorithm(action);
+        }
     }
 
     private int askTimeSpent() {

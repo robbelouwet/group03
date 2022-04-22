@@ -1,6 +1,7 @@
 package services;
 
 import domain.assembly.AssemblyLine;
+import domain.scheduler.FIFOSchedulingAlgorithm;
 import domain.scheduler.ProductionScheduler;
 import lombok.Getter;
 import persistence.CarOrderRepository;
@@ -21,7 +22,7 @@ public class ManagerStore {
     public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
 
-        var scheduler = new ProductionScheduler(carOrderRepository);
+        var scheduler = new ProductionScheduler(carOrderRepository, new FIFOSchedulingAlgorithm());
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);

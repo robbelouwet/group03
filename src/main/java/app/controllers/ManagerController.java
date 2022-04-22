@@ -3,6 +3,8 @@ package app.controllers;
 import app.ui.interfaces.IManagerView;
 import services.AssemblyManager;
 
+import java.util.List;
+
 /**
  * Class {@code ManagerController} is responsible for the communication between the UI and the Domain.
  */
@@ -22,7 +24,7 @@ public class ManagerController extends AssemblyLineStatusController {
     /**
      * Provides the UI with the pending & finished tasks and orders of the assembly line.
      */
-    public void showMainMenu() {
+    public void showAssemblyLineOverview() {
         showAssemblyLineStatus(ui);
         ui.showAdvanceOverview();
     }
@@ -39,5 +41,20 @@ public class ManagerController extends AssemblyLineStatusController {
 
         var ordersOnAssembly = assemblyManager.getOrdersOnAssemblyLine();
         showAssemblyLineStatusAfterMove(ordersOnAssembly, ui);
+    }
+
+    public void showAlgorithmOverview() {
+        // TODO: not hard-coded -> retrieve via assemblyManager
+        ui.showSchedulingAlgorithms(List.of("FIFO", "Specification Batch"), "FIFO");
+    }
+
+    public void selectAlgorithm(String algorithm) {
+        // TODO: map String to a SchedulingAlgorithm so that we can change the instance
+        // List<?> algorithms = assemblyManager.getSchedulingAlgorithms();
+        // for (? alg in algorithms){
+        //     if (algorithm.equals(algorithm.getName())){
+        //         assemblyManager.select(algorithm);
+        //     }
+        // }
     }
 }

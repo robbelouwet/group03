@@ -1,5 +1,7 @@
 package app.ui.interfaces;
 
+import java.util.List;
+
 /**
  * Interface {@code IManagerView} provides an interface for the UI-view for the manager.
  */
@@ -17,4 +19,6 @@ public interface IManagerView extends IAssemblyLineStatusView {
     void showAdvanceOverview();
 
     void showErrorMessage(String err);
+
+    void showSchedulingAlgorithms(List<String> algorithms, String selectedAlgorithm);
 }

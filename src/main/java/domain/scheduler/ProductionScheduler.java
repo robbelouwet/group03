@@ -1,11 +1,10 @@
 package domain.scheduler;
 
-import domain.order.OrderStatus;
 import domain.order.CarOrder;
-import persistence.CarOrderRepository;
+import domain.order.OrderStatus;
 import persistence.CarOrderCatalogObserver;
+import persistence.CarOrderRepository;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,23 +12,27 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
     private static final long END_SHIFT = 22 * 60;  // Day ends at 22 o' clock
     private static final long DEFAULT_PRODUCTION_TIME = 3 * 60;  // An order takes 3 hours normally
-
     private final CarOrderRepository carOrderRepository;
+    private SchedulingAlgorithm schedulingAlgorithm;
     private boolean firstSpotFree = true;
 
-    public ProductionScheduler(CarOrderRepository carOrderRepository) {
+    public ProductionScheduler(CarOrderRepository carOrderRepository, SchedulingAlgorithm schedulingAlgorithm) {
         this.carOrderRepository = carOrderRepository;
         this.carOrderRepository.registerListener(this);
+        this.schedulingAlgorithm = schedulingAlgorithm;
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
         TimeManager.reset();
     }
 
     private List<CarOrder> getOrderedListOfPendingOrders() {
-        return carOrderRepository.getOrders().stream().filter(o -> o.getStatus().equals(OrderStatus.Pending)).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());
+        var orders = carOrderRepository.getOrders().stream()
+                .filter(o -> o.getStatus().equals(OrderStatus.Pending))
+                .collect(Collectors.toList());
+        return schedulingAlgorithm.getOrderedList(orders);
     }
 
     private CarOrder getLastScheduledOrder() {
-        var orders = getOrderedListOfPendingOrders().stream().filter(o -> o.getEndTime() != null).collect(Collectors.toList());
+        var orders = getOrderedListOfPendingOrders().stream().filter(o -> o.getEndTime() != null).toList();
         if (orders.size() > 0) {
             return orders.get(orders.size() - 1);
         }
@@ -118,6 +121,6 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     }
 
     public ProductionScheduler copy(){
-        return new ProductionScheduler(carOrderRepository.copy());
+        return new ProductionScheduler(carOrderRepository.copy(), schedulingAlgorithm);
     }
 }

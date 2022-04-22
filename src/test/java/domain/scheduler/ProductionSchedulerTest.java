@@ -21,7 +21,7 @@ class ProductionSchedulerTest {
     @BeforeEach
     void setup() {
         repo =  new CarOrderRepository();
-        scheduler = new ProductionScheduler(repo);
+        scheduler = new ProductionScheduler(repo, new FIFOSchedulingAlgorithm());
 
         for (int i = 0; i < 3; i++) {
             orders.add(new CarOrder(new DateTime(2), CarCatalog.getModels().get(0), new HashMap<>() {{

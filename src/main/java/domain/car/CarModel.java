@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * An immutable object that represents a car model
  */
-public class CarModel {
+public class CarModel implements Comparable<CarModel> {
     @Getter
     private final String name;
 
@@ -25,5 +25,10 @@ public class CarModel {
 
     public boolean isValidInputData(Map<String, String> data) {
         return modelSpecification.isValidInputData(data);
+    }
+
+    @Override
+    public int compareTo(CarModel o) {
+        return 0;
     }
 }
