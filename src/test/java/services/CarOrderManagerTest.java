@@ -1,6 +1,8 @@
 package services;
 
 import domain.car.CarModel;
+import domain.car.CarModelSpecification;
+import domain.car.options.OptionSelector;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
@@ -8,9 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
 import persistence.CarOrderRepository;
+import utils.TestObjects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,18 +30,9 @@ class CarOrderManagerTest {
     public void reset() {
         // mock a finished and not-finished order
         List<CarOrder> orders = new ArrayList<>();
-        var model = CarCatalog.getModels().get(0);
 
         for (int i = 0; i < 2; i++) {
-            orders.add(new CarOrder(new DateTime(2), model, new HashMap<>() {{
-                put("Body", "break");
-                put("Color", "white");
-                put("Engine", "performance");
-                put("Gearbox", "5 speed automatic");
-                put("Seats", "vinyl grey");
-                put("Airco", "automatic");
-                put("Wheels", "sports");
-            }}));
+            orders.add(TestObjects.getCarOrder());
         }
         orders.get(0).setStatus(OrderStatus.Finished);
 
@@ -68,21 +63,23 @@ class CarOrderManagerTest {
     }
 
     @Test
-    void submitCarOrder() {
+    void submitCarOrderFails() {
         var mockedModel = mock(CarModel.class);
-        when(mockedModel.isValidInputData(anyMap())).thenReturn(true);
-        managerStore.getCarOrderManager().selectModel(mockedModel);
-        var order = managerStore.getCarOrderManager().submitCarOrder(new HashMap<>());
-
-        assertNotNull(order);
+        var mockedSelector = mock(OptionSelector.class);
+        when(mockedSelector.getSelectedOptions()).thenReturn(new LinkedHashMap<>());
+        when(mockedModel.getOptionSelector()).thenReturn(mockedSelector);
+        when(mockedModel.isValidInputData(anyMap())).thenReturn(false);
+        assertThrows(IllegalArgumentException.class, () -> managerStore.getCarOrderManager().submitCarOrder(mockedModel, mockedSelector));
     }
 
     @Test
-    void selectModel() {
+    void submitCarOrderSuccess() {
         var mockedModel = mock(CarModel.class);
-        managerStore.getCarOrderManager().selectModel(mockedModel);
-        var selectedModel = managerStore.getCarOrderManager().getSelectedModel();
+        var mockedSelector = mock(OptionSelector.class);
+        when(mockedSelector.getSelectedOptions()).thenReturn(new LinkedHashMap<>());
 
-        assertNotNull(selectedModel);
+        when(mockedModel.getOptionSelector()).thenReturn(mockedSelector);
+        when(mockedModel.isValidInputData(anyMap())).thenReturn(true);
+        assertNotNull(managerStore.getCarOrderManager().submitCarOrder(mockedModel, mockedSelector));
     }
 }

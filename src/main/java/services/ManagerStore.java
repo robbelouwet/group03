@@ -22,7 +22,7 @@ public class ManagerStore {
 
     public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
-        var scheduler = ProductionScheduler.of(carOrderRepository, "SB");
+        var scheduler = ProductionScheduler.of(carOrderRepository, "FIFO");
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);
