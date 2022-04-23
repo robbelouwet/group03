@@ -5,6 +5,9 @@ import app.ui.interfaces.IManagerView;
 import app.utils.ConsoleReader;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ManagerTextView implements IManagerView {
     private final ManagerController managerController;
@@ -72,9 +75,46 @@ public class ManagerTextView implements IManagerView {
             ConsoleReader.getInstance().println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask(askString);
         }
-        if (algorithms.contains(action)){
-            managerController.selectAlgorithm(action);
+        if (algorithms.contains(action)) {
+            switch (action) {
+                case "SB" -> {
+                    managerController.showSpecificationBatchOrders(action);
+                }
+                default -> managerController.selectAlgorithm(action, Optional.empty());
+            }
         }
+    }
+
+    @Override
+    public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+        ConsoleReader.getInstance().println("Possible Car Options to Give Priority:");
+        for (int i = 0; i < options.size(); i++) {
+            var optionsSet = options.get(i);
+            var optionsString = optionsSet.keySet().stream()
+                    .map(key -> key + " = " + optionsSet.get(key))
+                    .collect(Collectors.joining(", ", i + 1 + ". -> {", "}"));
+            ConsoleReader.getInstance().println(optionsString);
+        }
+        int index = askCarOptionsIndex(options.size());
+        Map<String, String> selectedOptions = options.get(index - 1);
+        managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
+    }
+
+    private int askCarOptionsIndex(int max) {
+        String askString = "Select Car Options to Give Priority of Batch [number]: | Cancel [cancel]: ";
+        boolean correct = false;
+        int result = 0;
+        while (!correct) {
+            String number = ConsoleReader.getInstance().ask(askString);
+            try {
+                result = Integer.parseInt(number);
+                correct = result >= 1 && result <= max;
+                if (!correct) throw new Exception();
+            } catch (Exception e) {
+                ConsoleReader.getInstance().println("That's not a valid number!");
+            }
+        }
+        return result;
     }
 
     private int askTimeSpent() {

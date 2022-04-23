@@ -4,14 +4,10 @@ import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
-import domain.scheduler.ProductionScheduler;
-import lombok.Getter;
+import domain.scheduler.SchedulingAlgorithm;
 import persistence.DataSeeder;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -81,6 +77,10 @@ public class AssemblyManager {
         return getOrdersOnAssemblyLine(copy);
     }
 
+    public List<Map<String, String>> getPossibleOrdersForSpecificationBatch() {
+       return assemblyLine.getPossibleOrdersForSpecificationBatch();
+    }
+
     public Map<WorkStation, CarOrder> getOrdersOnAssemblyLine() {
         return getOrdersOnAssemblyLine(assemblyLine);
     }
@@ -99,4 +99,16 @@ public class AssemblyManager {
         return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
     }
 
+    public List<String> getSchedulingAlgorithms() {
+        return new ArrayList<>(DataSeeder.getSchedulingAlgorithms().keySet());
+    }
+
+    public void selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
+        var selectedAlgorithm = DataSeeder.getSchedulingAlgorithms().get(algorithm);
+        assemblyLine.selectAlgorithm(selectedAlgorithm, selectedOptions);
+    }
+
+    public SchedulingAlgorithm getCurrentAlgorithm() {
+        return assemblyLine.getCurrentAlgorithm();
+    }
 }

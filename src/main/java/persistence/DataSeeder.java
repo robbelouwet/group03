@@ -2,10 +2,13 @@ package persistence;
 
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.scheduler.FIFOSchedulingAlgorithm;
+import domain.scheduler.SpecificationBatchSchedulingAlgorithm;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class DataSeeder {
 
@@ -72,6 +75,12 @@ public class DataSeeder {
         workStations.add(ws3);
 
         return workStations;
+    }
 
+    public static Map<String, String> getSchedulingAlgorithms() {
+        return Map.of(
+                "FIFO", FIFOSchedulingAlgorithm.class.getCanonicalName(),
+                "SB", SpecificationBatchSchedulingAlgorithm.class.getCanonicalName()
+        );
     }
 }

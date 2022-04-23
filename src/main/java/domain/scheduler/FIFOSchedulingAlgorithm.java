@@ -4,13 +4,18 @@ import domain.order.CarOrder;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FIFOSchedulingAlgorithm implements SchedulingAlgorithm {
     @Override
-    public List<CarOrder> getOrderedList(List<CarOrder> carOrders) {
+    public CarOrder getNextOrder(List<CarOrder> carOrders) {
         return carOrders.stream()
-                .sorted(Comparator.comparing(CarOrder::getStartTime))
-                .collect(Collectors.toList());
+                // has the same effect as saying getFirst()
+                .min(Comparator.comparing(CarOrder::getStartTime))
+                .orElse(null);
+    }
+
+    @Override
+    public String toString() {
+        return "FIFO";
     }
 }

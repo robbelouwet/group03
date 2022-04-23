@@ -2,12 +2,11 @@ package domain.assembly;
 
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
+import domain.scheduler.SchedulingAlgorithm;
 import domain.scheduler.TimeManager;
 import lombok.Getter;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -121,5 +120,17 @@ public class AssemblyLine {
         LinkedList<WorkStation> copyWorkStations = new LinkedList<>();
         workStations.forEach(w -> copyWorkStations.add(w.copy()));
         return new AssemblyLine(new LinkedList<>(copyWorkStations), scheduler.copy());
+    }
+
+    public void selectAlgorithm(String selectedAlgorithm, Optional<Map<String, String>> selectedOptions) {
+        scheduler.switchAlgorithm(selectedAlgorithm, selectedOptions);
+    }
+
+    public List<Map<String, String>> getPossibleOrdersForSpecificationBatch() {
+        return scheduler.getPossibleOrdersForSpecificationBatch();
+    }
+
+    public SchedulingAlgorithm getCurrentAlgorithm() {
+        return scheduler.getCurrentAlgorithm();
     }
 }

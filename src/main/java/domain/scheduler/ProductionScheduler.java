@@ -1,12 +1,16 @@
 package domain.scheduler;
 
+import app.utils.ConsoleReader;
+import domain.car.CarModel;
+import domain.car.CarModelSpecification;
 import domain.order.CarOrder;
-import domain.order.OrderStatus;
 import persistence.CarOrderCatalogObserver;
 import persistence.CarOrderRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class ProductionScheduler implements CarOrderCatalogObserver {
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
@@ -22,17 +26,113 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
         this.schedulingAlgorithm = schedulingAlgorithm;
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
         TimeManager.reset();
+        /**
+         * TODO: Remove everything below this block - pure testing
+         */
+        Map<String, List<String>> options = new HashMap<>();
+
+        options.put("Body", List.of(new String[]{"sedan", "break"}));
+        options.put("Color", List.of(new String[]{"red", "blue", "black", "white"}));
+        options.put("Engine", List.of(new String[]{"standard", "performance"}));
+        options.put("Gearbox", List.of(new String[]{"6 speed manual", "5 speed automatic"}));
+        options.put("Seats", List.of(new String[]{"leather black", "leather white", "vinyl grey"}));
+        options.put("Airco", List.of(new String[]{"manual", "automatic"}));
+        options.put("Wheels", List.of(new String[]{"comfort", "sports"}));
+
+        CarModelSpecification specification = new CarModelSpecification(options);
+        List<CarOrder> testOrders = new ArrayList<CarOrder>(List.of(
+                new CarOrder(
+                        new DateTime(LocalDateTime.now().getMinute()),
+                        new CarModel("Ford Fiesta", specification),
+                        Map.of(
+                                "Body", "sedan",
+                                "Color", "red",
+                                "Engine", "standard",
+                                "Gearbox", "6 speed manual",
+                                "Seats", "leather black",
+                                "Airco", "manual",
+                                "Wheels", "comfort"
+                        )
+                ),
+                new CarOrder(
+                        new DateTime(LocalDateTime.now().getMinute()),
+                        new CarModel("Ford Fiesta", specification),
+                        Map.of(
+                                "Body", "sedan",
+                                "Color", "red",
+                                "Engine", "standard",
+                                "Gearbox", "6 speed manual",
+                                "Seats", "leather black",
+                                "Airco", "manual",
+                                "Wheels", "comfort"
+                        )
+                ),
+                new CarOrder(
+                        new DateTime(LocalDateTime.now().getMinute()),
+                        new CarModel("Ford Fiesta", specification),
+                        Map.of(
+                                "Body", "sedan",
+                                "Color", "red",
+                                "Engine", "standard",
+                                "Gearbox", "6 speed manual",
+                                "Seats", "leather black",
+                                "Airco", "manual",
+                                "Wheels", "comfort"
+                        )
+                ),
+                new CarOrder(
+                        new DateTime(LocalDateTime.now().getMinute()),
+                        new CarModel("Ford Fiesta", specification),
+                        Map.of(
+                                "Body", "sedan",
+                                "Color", "black",
+                                "Engine", "standard",
+                                "Gearbox", "6 speed manual",
+                                "Seats", "leather black",
+                                "Airco", "manual",
+                                "Wheels", "comfort"
+                        )
+                ),
+                new CarOrder(
+                        new DateTime(LocalDateTime.now().getMinute()),
+                        new CarModel("Ford Fiesta", specification),
+                        Map.of(
+                                "Body", "sedan",
+                                "Color", "black",
+                                "Engine", "standard",
+                                "Gearbox", "6 speed manual",
+                                "Seats", "leather black",
+                                "Airco", "manual",
+                                "Wheels", "comfort"
+                        )
+                ),
+                new CarOrder(
+                        new DateTime(LocalDateTime.now().getMinute()),
+                        new CarModel("Ford Fiesta", specification),
+                        Map.of(
+                                "Body", "sedan",
+                                "Color", "black",
+                                "Engine", "standard",
+                                "Gearbox", "6 speed manual",
+                                "Seats", "leather black",
+                                "Airco", "manual",
+                                "Wheels", "comfort"
+                        )
+                )
+        ));
+        for (CarOrder order : testOrders) {
+            carOrderRepository.addOrder(order);
+        }
     }
 
     private List<CarOrder> getOrderedListOfPendingOrders() {
-        var orders = carOrderRepository.getOrders().stream()
-                .filter(o -> o.getStatus().equals(OrderStatus.Pending))
-                .collect(Collectors.toList());
-        return schedulingAlgorithm.getOrderedList(orders);
+        return schedulingAlgorithm.getOrderedListOfPendingOrders(
+                carOrderRepository.getOrders()
+        );
     }
 
     private CarOrder getLastScheduledOrder() {
-        var orders = getOrderedListOfPendingOrders().stream().filter(o -> o.getEndTime() != null).toList();
+        var orders = getOrderedListOfPendingOrders();
         if (orders.size() > 0) {
             return orders.get(orders.size() - 1);
         }
@@ -40,14 +140,13 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
     }
 
     /**
-     * @return the next order in line
+     * @return the next order in line according to the current scheduling algorithm.
      */
     public CarOrder getNextOrder() {
-        var orders = getOrderedListOfPendingOrders();
-        if (orders.size() == 0) {
-            return null;
-        }
-        return orders.get(0);
+        var orders = carOrderRepository.getOrders();
+        if (!schedulingAlgorithm.isFinished()) return schedulingAlgorithm.getNextOrder(orders);
+        else schedulingAlgorithm = new FIFOSchedulingAlgorithm();
+        return schedulingAlgorithm.getNextOrder(orders);
     }
 
     private DateTime getFirstFinishTimeNextDay(DateTime time) {
@@ -95,7 +194,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
 
             orders.get(0).setEndTime(previousOrderTime);
             // Calculate the next time based on the previous order time
-            for (var order : orders.stream().skip(1).collect(Collectors.toList())) {
+            for (var order : orders.stream().skip(1).toList()) {
                 previousOrderTime = calculatePredictedTimeBasedOnPreviousTime(previousOrderTime);
                 order.setEndTime(previousOrderTime);
             }
@@ -120,7 +219,43 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
         firstSpotFree = false;
     }
 
-    public ProductionScheduler copy(){
+    public ProductionScheduler copy() {
         return new ProductionScheduler(carOrderRepository.copy(), schedulingAlgorithm);
+    }
+
+    public void switchAlgorithm(String selectedAlgorithm, Optional<Map<String, String>> selectedOptions) {
+        SchedulingAlgorithm algorithm;
+        try {
+            Class<?> clazz = Class.forName(selectedAlgorithm);
+            if (selectedOptions.isPresent()){
+                Constructor<?> ctor = clazz.getConstructor(Map.class);
+                algorithm = (SchedulingAlgorithm) ctor.newInstance(selectedOptions.get());
+            } else {
+                Constructor<?> ctor = clazz.getConstructor();
+                algorithm = (SchedulingAlgorithm) ctor.newInstance();
+            }
+            if (!schedulingAlgorithm.isFinished() && !schedulingAlgorithm.readyToSwitch())
+                throw new IllegalStateException("The algorithm couldn't be changed because the current one hasn't finished yet!");
+            schedulingAlgorithm = algorithm;
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            ConsoleReader.getInstance().println("Something went wrong with selecting the algorithm!");
+        } catch (IllegalStateException e){
+            ConsoleReader.getInstance().println(e.getMessage());
+        }
+    }
+
+    public List<Map<String, String>> getPossibleOrdersForSpecificationBatch() {
+        var optionsList = getOrderedListOfPendingOrders()
+                .stream()
+                .map(CarOrder::getSelections)
+                .toList();
+        return optionsList.stream()
+                .filter(o -> Collections.frequency(optionsList, o) >= 3)
+                .distinct()
+                .toList();
+    }
+
+    public SchedulingAlgorithm getCurrentAlgorithm() {
+        return schedulingAlgorithm;
     }
 }

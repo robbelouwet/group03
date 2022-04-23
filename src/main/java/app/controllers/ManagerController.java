@@ -1,9 +1,11 @@
 package app.controllers;
 
 import app.ui.interfaces.IManagerView;
+import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class {@code ManagerController} is responsible for the communication between the UI and the Domain.
@@ -44,17 +46,21 @@ public class ManagerController extends AssemblyLineStatusController {
     }
 
     public void showAlgorithmOverview() {
-        // TODO: not hard-coded -> retrieve via assemblyManager
-        ui.showSchedulingAlgorithms(List.of("FIFO", "Specification Batch"), "FIFO");
+        SchedulingAlgorithm algorithm = assemblyManager.getCurrentAlgorithm();
+        ui.showSchedulingAlgorithms(assemblyManager.getSchedulingAlgorithms(), algorithm.toString());
     }
 
-    public void selectAlgorithm(String algorithm) {
-        // TODO: map String to a SchedulingAlgorithm so that we can change the instance
-        // List<?> algorithms = assemblyManager.getSchedulingAlgorithms();
-        // for (? alg in algorithms){
-        //     if (algorithm.equals(algorithm.getName())){
-        //         assemblyManager.select(algorithm);
-        //     }
-        // }
+    public void selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
+        var algorithms = assemblyManager.getSchedulingAlgorithms();
+        for (String alg : algorithms) {
+            if (alg.equals(algorithm)) {
+                assemblyManager.selectAlgorithm(algorithm, selectedOptions);
+            }
+        }
+    }
+
+    public void showSpecificationBatchOrders(String algorithm) {
+        var options = assemblyManager.getPossibleOrdersForSpecificationBatch();
+        ui.showPossibleOptionsForAlgorithm(options, algorithm);
     }
 }
