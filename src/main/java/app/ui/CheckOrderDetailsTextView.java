@@ -1,16 +1,15 @@
 package app.ui;
 
-import app.controllers.CarOrderDetailsController;
-import app.ui.interfaces.ICarOrderDetailsView;
+import app.controllers.CheckOrderDetailsController;
+import app.ui.interfaces.ICheckOrderDetailsView;
 import app.utils.ConsoleReader;
 
-import java.text.ParseException;
 import java.util.List;
 
-public class CarOrderDetailsTextView implements ICarOrderDetailsView {
-    private final CarOrderDetailsController controller;
+public class CheckOrderDetailsTextView implements ICheckOrderDetailsView {
+    private final CheckOrderDetailsController controller;
 
-    public CarOrderDetailsTextView(CarOrderDetailsController controller) {
+    public CheckOrderDetailsTextView(CheckOrderDetailsController controller) {
         this.controller = controller;
         controller.setUi(this);
         start();
@@ -36,7 +35,7 @@ public class CarOrderDetailsTextView implements ICarOrderDetailsView {
         ConsoleReader.getInstance().println("Finished Orders:");
         for (var order : finishedOrders) ConsoleReader.getInstance().println(order);
         var result = ConsoleReader.getInstance().ask("Select the number before an order or [cancel]");
-        while (!result.equals("cancel") && !number(result)) {
+        while (!result.equals("cancel") && !(number(result) && Integer.parseInt(result) < pendingOrders.size() + finishedOrders.size())) {
             result = ConsoleReader.getInstance().ask("Try again: ");
         }
         if (result.equals("cancel")) return -1;

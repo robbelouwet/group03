@@ -2,7 +2,7 @@ package app.ui.interfaces;
 
 import java.util.List;
 
-public interface ICarOrderDetailsView {
+public interface ICheckOrderDetailsView {
     /**
      * @param pendingOrders  the orders to pick from with leading digit
      * @param finishedOrders the orders to pick from with leading digit

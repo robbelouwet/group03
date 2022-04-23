@@ -57,7 +57,7 @@ public class DateTime implements Comparable<DateTime> {
 
     @Override
     public String toString() {
-        return "Day " + getDays() + ", " + getHours() + ":" + getMinutes();
+        return "Day " + getDays() + ", " + String.format("%02d", getHours()) + ":" + String.format("%02d", getMinutes());
     }
 
     @Override

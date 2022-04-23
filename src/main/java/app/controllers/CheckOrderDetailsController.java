@@ -1,21 +1,21 @@
 package app.controllers;
 
-import app.ui.interfaces.ICarOrderDetailsView;
+import app.ui.interfaces.ICheckOrderDetailsView;
 import domain.order.CarOrder;
 import services.CarOrderManager;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CarOrderDetailsController {
+public class CheckOrderDetailsController {
     private final CarOrderManager manager;
-    private ICarOrderDetailsView ui;
+    private ICheckOrderDetailsView ui;
 
-    public CarOrderDetailsController(CarOrderManager manager) {
+    public CheckOrderDetailsController(CarOrderManager manager) {
         this.manager = manager;
     }
 
-    public void setUi(ICarOrderDetailsView ui) {
+    public void setUi(ICheckOrderDetailsView ui) {
         this.ui = ui;
     }
 
@@ -24,7 +24,7 @@ public class CarOrderDetailsController {
             var pendingOrders = manager.getPendingOrders();
             var finishedOrders = manager.getFinishedOrders();
             var pending = IntStream.range(0, pendingOrders.size()).mapToObj(i -> i + ": " + pendingOrders.get(i).toString()).collect(Collectors.toList());
-            var finished = IntStream.range(0, finishedOrders.size()).mapToObj(i -> (i + pending.size()) + ": " + pendingOrders.get(i).toString()).collect(Collectors.toList());
+            var finished = IntStream.range(0, finishedOrders.size()).mapToObj(i -> (i + pending.size()) + ": " + finishedOrders.get(i).toString()).collect(Collectors.toList());
             var index = ui.selectCar(pending, finished);
             if (index == -1) {
                 return;

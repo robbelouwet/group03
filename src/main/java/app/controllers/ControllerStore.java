@@ -7,11 +7,11 @@ public class ControllerStore {
     @Getter
     private final ManagerController managerController;
     @Getter
-    private final OrderNewCarController carController;
+    private final OrderNewCarController orderNewCarController;
     @Getter
     private final MechanicController mechanicController;
     @Getter
-    private final CarOrderDetailsController carOrderDetailsController;
+    private final CheckOrderDetailsController checkOrderDetailsController;
 
     public ControllerStore() {
         this(new ManagerStore());
@@ -19,8 +19,8 @@ public class ControllerStore {
 
     public ControllerStore(ManagerStore managerStore) {
         managerController = new ManagerController(managerStore.getAssemblyLineManager());
-        carController = new OrderNewCarController(managerStore.getCarOrderManager());
+        orderNewCarController = new OrderNewCarController(managerStore.getCarOrderManager());
         mechanicController = new MechanicController(managerStore.getMechanicManager(), managerStore.getAssemblyLineManager());
-        carOrderDetailsController = new CarOrderDetailsController(managerStore.getCarOrderManager());
+        checkOrderDetailsController = new CheckOrderDetailsController(managerStore.getCarOrderManager());
     }
 }
