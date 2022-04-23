@@ -29,7 +29,7 @@ public class CarModelSpecification {
     private static Map<OptionCategory, List<Option>> copyOptions(Map<OptionCategory, List<Option>> options) {
         Map<OptionCategory, List<Option>> copy = new LinkedHashMap<>();
         for (var key : options.keySet()) {
-            copy.put(key, new ArrayList<>(options.get(key)));
+            copy.put(key.copy(), new ArrayList<>(options.get(key)));  // Option category rule is mutable, so should be copied as well
         }
         return copy;
     }

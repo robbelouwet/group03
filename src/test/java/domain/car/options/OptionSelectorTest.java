@@ -19,7 +19,7 @@ class OptionSelectorTest {
     @Test
     void checkRules() {
         // Create a selector for Model B
-        var selector = (new CarCatalog()).getModels().get(1).getModelSpecification().getOptionSelector();
+        var selector = (new CarCatalog()).getModels().get(1).getOptionSelector();
         var options = selector.getNotSelectedCategories();
         var spoilerCat = getCategory(options, "Spoiler");
 

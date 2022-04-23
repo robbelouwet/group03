@@ -2,6 +2,7 @@ package domain.car;
 
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
+import domain.car.options.OptionSelector;
 import lombok.Getter;
 
 import java.util.Map;
@@ -31,5 +32,9 @@ public class CarModel {
 
     public boolean isValidInputData(Map<OptionCategory, Option> selections) {
         return modelSpecification.isValidInputData(selections);
+    }
+
+    public OptionSelector getOptionSelector() {
+        return modelSpecification.getOptionSelector();
     }
 }

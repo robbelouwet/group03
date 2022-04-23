@@ -35,4 +35,10 @@ public final class OptionCategory {
     public String toString() {
         return name;
     }
+
+    public OptionCategory copy() {
+        var cat = new OptionCategory(name);
+        cat.setOptionCategoryRule(optionCategoryRule);  // OptionCategoryRule is immutable
+        return cat;
+    }
 }

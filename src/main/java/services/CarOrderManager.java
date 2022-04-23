@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 public class CarOrderManager {
     private final CarOrderRepository carRepository;
 
-    private CarModel selectedModel;
-    private OptionSelector optionSelector;
     private final CarCatalog carCatalog = new CarCatalog();
 
     public CarOrderManager(CarOrderRepository repository) {
@@ -40,46 +38,13 @@ public class CarOrderManager {
     }
 
     /**
-     * Throws an exception if getSelectedModel() == null
-     * After this call getSelectedModel() and getOptionSelector() will be reset to null
+     * Throws an exception if the optionSelector does not contain a valid selection for the carModel
      *
      * @return A copy of the CarOrder that is created
      */
-    public CarOrder submitCarOrder() {
-        if (selectedModel == null || getOptionSelector() == null) {
-            throw new IllegalStateException("There was no model selected!");
-        }
-
-        CarOrder order = new CarOrder(selectedModel, optionSelector.getSelectedOptions());
+    public CarOrder submitCarOrder(CarModel carModel, OptionSelector optionSelector) {
+        CarOrder order = new CarOrder(carModel, optionSelector.getSelectedOptions());
         carRepository.addOrder(order);
-        selectedModel = null;
-        optionSelector = null;
         return order.copy();
-    }
-
-    /**
-     * After this call getSelectedModel() and getOptionSelector() will be reset to null
-     */
-    public void cancelCarOrder() {
-        selectedModel = null;
-        optionSelector = null;
-    }
-
-    /**
-     * After this call getSelectedModel() == model and getOptionSelector() is set to the correct optionSelector
-     *
-     * @param model
-     */
-    public void selectModel(CarModel model) {
-        selectedModel = model;
-        optionSelector = model.getModelSpecification().getOptionSelector();
-    }
-
-    public CarModel getSelectedModel() {
-        return selectedModel;
-    }
-
-    public OptionSelector getOptionSelector() {
-        return optionSelector;
     }
 }

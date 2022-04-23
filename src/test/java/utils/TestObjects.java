@@ -9,7 +9,7 @@ public class TestObjects {
 
     public static CarOrder getCarOrder() {
         var model = carCatalog.getModels().get(0);
-        var selector = model.getModelSpecification().getOptionSelector();
+        var selector = model.getOptionSelector();
         for (var options : selector.getNotSelectedCategories().values()) {
             selector.selectOption(options.get(0));
         }

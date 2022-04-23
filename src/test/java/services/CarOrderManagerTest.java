@@ -65,42 +65,21 @@ class CarOrderManagerTest {
     @Test
     void submitCarOrderFails() {
         var mockedModel = mock(CarModel.class);
-        var mockedSpec = mock(CarModelSpecification.class);
         var mockedSelector = mock(OptionSelector.class);
         when(mockedSelector.getSelectedOptions()).thenReturn(new LinkedHashMap<>());
-        when(mockedSpec.getOptionSelector()).thenReturn(mockedSelector);
-        when(mockedModel.getModelSpecification()).thenReturn(mockedSpec);
+        when(mockedModel.getOptionSelector()).thenReturn(mockedSelector);
         when(mockedModel.isValidInputData(anyMap())).thenReturn(false);
-        managerStore.getCarOrderManager().selectModel(mockedModel);
-        assertThrows(IllegalArgumentException.class, () -> managerStore.getCarOrderManager().submitCarOrder());
+        assertThrows(IllegalArgumentException.class, () -> managerStore.getCarOrderManager().submitCarOrder(mockedModel, mockedSelector));
     }
 
     @Test
     void submitCarOrderSuccess() {
         var mockedModel = mock(CarModel.class);
-        var mockedSpec = mock(CarModelSpecification.class);
         var mockedSelector = mock(OptionSelector.class);
         when(mockedSelector.getSelectedOptions()).thenReturn(new LinkedHashMap<>());
-        when(mockedSpec.getOptionSelector()).thenReturn(mockedSelector);
-        when(mockedModel.getModelSpecification()).thenReturn(mockedSpec);
+
+        when(mockedModel.getOptionSelector()).thenReturn(mockedSelector);
         when(mockedModel.isValidInputData(anyMap())).thenReturn(true);
-        managerStore.getCarOrderManager().selectModel(mockedModel);
-        assertNotNull(managerStore.getCarOrderManager().submitCarOrder());
-    }
-
-    @Test
-    void selectModel() {
-        var mockedModel = mock(CarModel.class);
-        var mockedSpec = mock(CarModelSpecification.class);
-        var mockedSelector = mock(OptionSelector.class);
-        when(mockedSpec.getOptionSelector()).thenReturn(mockedSelector);
-
-        when(mockedModel.getModelSpecification()).thenReturn(mockedSpec);
-
-        managerStore.getCarOrderManager().selectModel(mockedModel);
-        var selectedModel = managerStore.getCarOrderManager().getSelectedModel();
-
-        assertNotNull(selectedModel);
-        assertNotNull(managerStore.getCarOrderManager().getOptionSelector());
+        assertNotNull(managerStore.getCarOrderManager().submitCarOrder(mockedModel, mockedSelector));
     }
 }

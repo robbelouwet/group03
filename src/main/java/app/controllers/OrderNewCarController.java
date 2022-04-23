@@ -4,6 +4,7 @@ import app.ui.interfaces.IOrderNewCarView;
 import domain.car.CarModel;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
+import domain.car.options.OptionSelector;
 import domain.order.CarOrder;
 import services.CarOrderManager;
 
@@ -23,7 +24,7 @@ public class OrderNewCarController {
     }
 
     /**
-     * Start the car controller
+     * Start the controller
      */
     public void start() {
         showMainMenu();
@@ -47,47 +48,38 @@ public class OrderNewCarController {
      */
     private void showModels() {
         var model = ui.showCarModels(carOrderManager.getCarModels().stream().map(CarModel::getName).collect(Collectors.toList()));
-        selectModel(model);
+        var selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
+        OptionSelector selector = selectedModel.getOptionSelector();
+        askNextOption(selectedModel, selector);
     }
 
     /**
-     * Select a model for a carorder
-     * Gets the specification for this model and notifies the ui it should show these specifications
+     * Gets the first category for which a selection should be made
      *
-     * @param model the name of the selected model
+     * @param optionSelector The optionSelector from which to find the next category
+     * @return The next category
      */
-    private void selectModel(String model) {
-        var selectedModel = carOrderManager.getCarModels().stream().filter(m -> m.getName().equals(model)).findAny().orElseThrow();
-
-        carOrderManager.selectModel(selectedModel);
-        askNextOption();
-    }
-
-    private OptionCategory getNextCategory() {
-        for (var cat : carOrderManager.getOptionSelector().getNotSelectedCategories().keySet()) return cat;
+    private OptionCategory getNextCategory(OptionSelector optionSelector) {
+        for (var cat : optionSelector.getNotSelectedCategories().keySet()) return cat;
         return null;
     }
 
-    private void askNextOption() {
-        var cat = getNextCategory();
-        if (cat != null) {
-            var selector = carOrderManager.getOptionSelector();
-            var options = selector.getNotSelectedCategories().get(cat);
+    private void askNextOption(CarModel carModel, OptionSelector optionSelector) {
+        var cat = getNextCategory(optionSelector);
+        if (cat != null) {  // If we are not finished selecting options
+            var options = optionSelector.getNotSelectedCategories().get(cat);  // Get the available options in this category
             var option = ui.showCarOption(cat.getName(), options.stream().map(Option::name).collect(Collectors.toList()));
-            if (option == null) {
-                carOrderManager.cancelCarOrder();
+            if (option == null) {  // If we decided to cancel, return
                 return;
             }
-            selector.selectOption(options.stream().filter(option1 -> option1.name().equals(option)).findAny().orElseThrow());
-            askNextOption();
-        }
-        else {
-            if (ui.confirmOrder()) {
-                var order = carOrderManager.submitCarOrder();
+            optionSelector.selectOption(options.stream().filter(option1 -> option1.name().equals(option)).findAny().orElseThrow());
+            askNextOption(carModel, optionSelector);
+        } else {  // We are finished selecting options
+            if (ui.confirmOrder()) {  // Ask the user to confirm
+                var order = carOrderManager.submitCarOrder(carModel, optionSelector);
                 ui.showPredictedEndTime(order.getEndTime());
-            } else {
-                carOrderManager.cancelCarOrder();
             }
         }
+        // Return to the beginning of this use case
     }
 }
