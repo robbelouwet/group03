@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
 import persistence.CarOrderRepository;
+import utils.TestObjects;
 
 import java.util.*;
 
@@ -23,15 +24,7 @@ class ProductionSchedulerTest {
         scheduler = ProductionScheduler.of(repo, "FIFO");
 
         for (int i = 0; i < 3; i++) {
-            orders.add(new CarOrder(new DateTime(2), CarCatalog.getModels().get(0), new HashMap<>() {{
-                put("Body", "break");
-                put("Color", "white");
-                put("Engine", "performance");
-                put("Gearbox", "5 speed automatic");
-                put("Seats", "vinyl grey");
-                put("Airco", "automatic");
-                put("Wheels", "sports");
-            }}));
+            orders.add(TestObjects.getCarOrder());
         }
         for (var order : orders) {
             repo.addOrder(order);
@@ -47,15 +40,7 @@ class ProductionSchedulerTest {
 
     @Test
     void carOrderAdded() {
-        var order = new CarOrder(new DateTime(2), CarCatalog.getModels().get(0), new HashMap<>() {{
-            put("Body", "break");
-            put("Color", "white");
-            put("Engine", "performance");
-            put("Gearbox", "5 speed automatic");
-            put("Seats", "vinyl grey");
-            put("Airco", "automatic");
-            put("Wheels", "sports");
-        }});
+        var order = TestObjects.getCarOrder();
         repo.addOrder(order);
         assertEquals(new DateTime(0, 12, 30), order.getEndTime());
     }

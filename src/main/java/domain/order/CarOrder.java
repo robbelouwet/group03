@@ -1,11 +1,14 @@
 package domain.order;
 
 import domain.car.CarModel;
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import domain.scheduler.DateTime;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -21,7 +24,7 @@ public class CarOrder {
     private DateTime startTime;
     @Setter
     private DateTime endTime;
-    private final Map<String, String> selections;
+    private final Map<OptionCategory, Option> selections;
     @Getter
     private final CarModel model;
     @Getter
@@ -32,7 +35,7 @@ public class CarOrder {
      * @param carModel  the model of this car
      * @param data      the selection op options, a map which maps the option-name to its selected value
      */
-    public CarOrder(CarModel carModel, Map<String, String> data) {
+    public CarOrder(CarModel carModel, Map<OptionCategory, Option> data) {
         if (data == null || carModel == null) {
             throw new IllegalArgumentException();
         }
@@ -45,7 +48,7 @@ public class CarOrder {
         model = carModel;
     }
 
-    private CarOrder(DateTime orderTime, DateTime startTime, DateTime endTime, CarModel model, Map<String, String> selections, OrderStatus status) {
+    private CarOrder(DateTime orderTime, DateTime startTime, DateTime endTime, CarModel model, Map<OptionCategory, Option> selections, OrderStatus status) {
         this.orderTime = orderTime;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -81,14 +84,14 @@ public class CarOrder {
         return endTime;
     }
 
-    private Map<String, String> copySelections(Map<String, String> selections) {
-        return new HashMap<>(selections);
+    private Map<OptionCategory, Option> copySelections(Map<OptionCategory, Option> selections) {
+        return new LinkedHashMap<>(selections);
     }
 
     /**
      * @return the concrete selection of options, a map which maps the option-name to its value
      */
-    public Map<String, String> getSelections() {
+    public Map<OptionCategory, Option> getSelections() {
         return copySelections(selections);
     }
 

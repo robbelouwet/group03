@@ -4,7 +4,6 @@ import app.controllers.AppController;
 import app.controllers.ControllerStore;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
-import services.ManagerStore;
 
 public class AppTextView implements IAppView {
 
@@ -33,7 +32,7 @@ public class AppTextView implements IAppView {
 
     @Override
     public void showGarageHolder() {
-        new CarOrderDetailsTextView(controllerStore.getCarOrderDetailsController());
+        new OrderNewCarTextView(controllerStore.getCarController());
     }
 
     @Override

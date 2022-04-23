@@ -12,6 +12,7 @@ import persistence.CarCatalog;
 import services.AssemblyManager;
 import services.ManagerStore;
 import services.MechanicManager;
+import utils.TestObjects;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -44,17 +45,9 @@ public class MechanicControllerTest {
 
         var mockedWorkStation1 = new WorkStation("mockedWorkStation1", tasksWS1);
         var mockedWorkStation2 = new WorkStation("mockedWorkStation2", tasksWS2);
-        var model = CarCatalog.getModels().get(0);
+        var model = (new CarCatalog()).getModels().get(0);
 
-        var order = new CarOrder(new DateTime(2), model, new HashMap<>() {{
-            put("Body", "break");
-            put("Color", "white");
-            put("Engine", "performance");
-            put("Gearbox", "5 speed automatic");
-            put("Seats", "vinyl grey");
-            put("Airco", "automatic");
-            put("Wheels", "sports");
-        }});
+        var order = TestObjects.getCarOrder();
         mockedWorkStation1.updateCurrentOrder(order);
         mockedWorkStation2.updateCurrentOrder(order);
         var mockedAssemblyLine = new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1, mockedWorkStation2)), null);

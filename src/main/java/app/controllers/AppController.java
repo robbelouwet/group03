@@ -1,8 +1,5 @@
 package app.controllers;
 
-import app.ui.CarMechanicTextView;
-import app.ui.GarageHolderTextView;
-import app.ui.ManagerTextView;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
 

@@ -2,19 +2,18 @@ package services;
 
 
 import domain.car.CarModel;
+import domain.car.options.OptionSelector;
 import domain.order.CarOrder;
-import domain.scheduler.TimeManager;
 import persistence.CarOrderRepository;
 import persistence.CarCatalog;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CarOrderManager {
     private final CarOrderRepository carRepository;
 
-    private CarModel selectedModel;
+    private final CarCatalog carCatalog = new CarCatalog();
 
     public CarOrderManager(CarOrderRepository repository) {
         this.carRepository = repository;
@@ -34,38 +33,18 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
-    public List<CarModel> getCarModels()  {
-        return CarCatalog.getModels();
+    public List<CarModel> getCarModels() {
+        return carCatalog.getModels();
     }
 
     /**
-     * Throws an exception if getSelectedModel() == null
-     * After this call getSelectedModel() will be reset to null
+     * Throws an exception if the optionSelector does not contain a valid selection for the carModel
      *
-     * @param data a map that maps the option-name to the selected value
      * @return A copy of the CarOrder that is created
      */
-    public CarOrder submitCarOrder(Map<String, String> data) {
-        if (selectedModel == null) {
-            throw new IllegalStateException("There was no model selected!");
-        }
-
-        CarOrder order = new CarOrder(selectedModel, data);
+    public CarOrder submitCarOrder(CarModel carModel, OptionSelector optionSelector) {
+        CarOrder order = new CarOrder(carModel, optionSelector.getSelectedOptions());
         carRepository.addOrder(order);
-        selectedModel = null;
         return order.copy();
-    }
-
-    /**
-     * After this call getSelectedModel() == model
-     *
-     * @param model
-     */
-    public void selectModel(CarModel model) {
-        selectedModel = model;
-    }
-
-    public CarModel getSelectedModel() {
-        return selectedModel;
     }
 }
