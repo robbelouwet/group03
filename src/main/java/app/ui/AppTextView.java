@@ -33,7 +33,7 @@ public class AppTextView implements IAppView {
 
     @Override
     public void showGarageHolder() {
-        new GarageHolderTextView(controllerStore.getCarController());
+        new CarOrderDetailsTextView(controllerStore.getCarOrderDetailsController());
     }
 
     @Override
