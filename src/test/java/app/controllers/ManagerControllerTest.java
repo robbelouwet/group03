@@ -9,6 +9,7 @@ import services.CarOrderManager;
 import services.ManagerStore;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -53,6 +54,16 @@ public class ManagerControllerTest {
             @Override
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
+            }
+
+            @Override
+            public void showSchedulingAlgorithms(List<String> algorithms, String selectedAlgorithm) {
+                // TODO
+            }
+
+            @Override
+            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+                // TODO
             }
 
             @Override

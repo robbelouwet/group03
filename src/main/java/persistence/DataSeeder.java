@@ -77,6 +77,13 @@ public class DataSeeder {
         return workStations;
     }
 
+    /**
+     * Representation of the available scheduling algorithms that are available in the system.
+     * Based on Key-Value pair:
+     *      Key = Textual representation of the Algorithm
+     *      Value = Textual class name which represents the scheduling algorithm
+     * @return Map of Scheduling algorithms
+     */
     public static Map<String, String> getSchedulingAlgorithms() {
         return Map.of(
                 "FIFO", FIFOSchedulingAlgorithm.class.getCanonicalName(),

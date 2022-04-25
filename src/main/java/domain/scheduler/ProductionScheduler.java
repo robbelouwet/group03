@@ -223,14 +223,27 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
         return new ProductionScheduler(carOrderRepository.copy(), schedulingAlgorithm);
     }
 
+    /**
+     * This method will create the subclass of the Strategy Pattern for the scheduling algorithm and reassign it
+     * as the current selected algorithm. The algorithm can only be changed if the current one is finished
+     * doing its job of scheduling the orders or if it is ready to switch. Some algorithms can be blocked once they're
+     * activated.
+     *
+     * @param selectedAlgorithm Textual representation of the scheduling algorithm
+     * @param selectedOptions   Optional of selectedOptions. Some algorithms need to know which selected
+     *                          Car Options need priority.
+     *                          Will be Optional.empty() if the algorithm doesn't need this.
+     */
     public void switchAlgorithm(String selectedAlgorithm, Optional<Map<String, String>> selectedOptions) {
         SchedulingAlgorithm algorithm;
         try {
             Class<?> clazz = Class.forName(selectedAlgorithm);
-            if (selectedOptions.isPresent()){
+            if (selectedOptions.isPresent()) {
+                // Specification-Batch
                 Constructor<?> ctor = clazz.getConstructor(Map.class);
                 algorithm = (SchedulingAlgorithm) ctor.newInstance(selectedOptions.get());
             } else {
+                // FIFO
                 Constructor<?> ctor = clazz.getConstructor();
                 algorithm = (SchedulingAlgorithm) ctor.newInstance();
             }
@@ -239,11 +252,18 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
             schedulingAlgorithm = algorithm;
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             ConsoleReader.getInstance().println("Something went wrong with selecting the algorithm!");
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             ConsoleReader.getInstance().println(e.getMessage());
         }
     }
 
+    /**
+     * Method for that calculates the possible car options to give priority to.
+     * Checks if the unique key-value pair combinations is present more than 2 times, if so:
+     * then that unique combination is a possible combination to prioritize.
+     *
+     * @return all the possible combinations that fulfill the constraint.
+     */
     public List<Map<String, String>> getPossibleOrdersForSpecificationBatch() {
         var optionsList = getOrderedListOfPendingOrders()
                 .stream()

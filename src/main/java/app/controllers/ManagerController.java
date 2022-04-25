@@ -45,11 +45,22 @@ public class ManagerController extends AssemblyLineStatusController {
         showAssemblyLineStatusAfterMove(ordersOnAssembly, ui);
     }
 
+    /**
+     * Method for the UI that retrieves the currently selected scheduling algorithm
+     * and all the available algorithms.
+     */
     public void showAlgorithmOverview() {
         SchedulingAlgorithm algorithm = assemblyManager.getCurrentAlgorithm();
         ui.showSchedulingAlgorithms(assemblyManager.getSchedulingAlgorithms(), algorithm.toString());
     }
 
+    /**
+     * The user has chosen an algorithm and it has to be altered now.
+     * @param algorithm The textual representation of the chosen algorithm.
+     * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
+     *                        Car Options need priority.
+     *                        Will be Optional.empty() if the algorithm doesn't need this.
+     */
     public void selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
         var algorithms = assemblyManager.getSchedulingAlgorithms();
         for (String alg : algorithms) {
@@ -59,6 +70,10 @@ public class ManagerController extends AssemblyLineStatusController {
         }
     }
 
+    /**
+     * Method for the UI that retrieves the possible car options to give priority to.
+     * @param algorithm The textual representation of the chosen algorithm.
+     */
     public void showSpecificationBatchOrders(String algorithm) {
         var options = assemblyManager.getPossibleOrdersForSpecificationBatch();
         ui.showPossibleOptionsForAlgorithm(options, algorithm);

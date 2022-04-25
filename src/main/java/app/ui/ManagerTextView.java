@@ -82,7 +82,7 @@ public class ManagerTextView implements IManagerView {
                 }
                 default -> managerController.selectAlgorithm(action, Optional.empty());
             }
-        }
+        } else showErrorMessage("This algorithm doesn't exist!");
     }
 
     @Override
@@ -100,6 +100,10 @@ public class ManagerTextView implements IManagerView {
         managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
     }
 
+    /**
+     * For every unique key-value pairs of options we want to choose 1 and validate
+     * if the input number is correct.
+     */
     private int askCarOptionsIndex(int max) {
         String askString = "Select Car Options to Give Priority of Batch [number]: | Cancel [cancel]: ";
         boolean correct = false;

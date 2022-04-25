@@ -90,6 +90,16 @@ public class AdvanceIntegrationTest {
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
             }
+
+            @Override
+            public void showSchedulingAlgorithms(List<String> algorithms, String selectedAlgorithm) {
+
+            }
+
+            @Override
+            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+
+            }
         };
         controller.setUi(mgrView);
 
@@ -158,6 +168,16 @@ public class AdvanceIntegrationTest {
             @Override
             public void showErrorMessage(String err) {
                 throw new RuntimeException("Assembly line is blocked!");
+            }
+
+            @Override
+            public void showSchedulingAlgorithms(List<String> algorithms, String selectedAlgorithm) {
+                // TODO
+            }
+
+            @Override
+            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+                // TODO
             }
         };
 

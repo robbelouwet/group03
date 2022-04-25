@@ -68,7 +68,7 @@ public class AssemblyManager {
      * This method retrieves the new pending orders after the assembly line WOULD have moved.
      * This means that this is a best-case scenario and will retrieve all the pending orders but the {@code CarOrder} of the last workstation.
      *
-     * @return {@code List&#60;CarOrder&#62;} All car orders that still need to be processed on the
+     * @return {@code Map&#60;WorkStation, CarOrder&#62;} All car orders that still need to be processed on the
      * assembly line without the car orders that would be finished after the assembly line moves one step forward.
      */
     public Map<WorkStation, CarOrder> getSimulatedOrders() {
@@ -99,15 +99,28 @@ public class AssemblyManager {
         return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
     }
 
+    /**
+     * @return list of scheduling algorithms that are available in the system.
+     */
     public List<String> getSchedulingAlgorithms() {
         return new ArrayList<>(DataSeeder.getSchedulingAlgorithms().keySet());
     }
 
+    /**
+     * New algorithm has been chosen. Needs to be altered in the system.
+     * @param algorithm Textual representation of the algorithm.
+     * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
+     *                        Car Options need priority.
+     *                        Will be Optional.empty() if the algorithm doesn't need this.
+     */
     public void selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
         var selectedAlgorithm = DataSeeder.getSchedulingAlgorithms().get(algorithm);
         assemblyLine.selectAlgorithm(selectedAlgorithm, selectedOptions);
     }
 
+    /**
+     * @return the currently selected scheduling algorithm.
+     */
     public SchedulingAlgorithm getCurrentAlgorithm() {
         return assemblyLine.getCurrentAlgorithm();
     }

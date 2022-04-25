@@ -15,6 +15,12 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
         this.selectedOptions = selectedOptions;
     }
 
+    /**
+     * Once the Specification-Batch algorithm has been chosen it needs to keep track of the remaining
+     * pending car orders that match the same properties (car options).
+     *
+     * @param carOrders List of pending car orders
+     */
     private void initialize(List<CarOrder> carOrders) {
         remainingOrders = carOrders.stream()
                 .filter(o -> o.getSelections().equals(selectedOptions))
@@ -23,11 +29,19 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
     }
 
     @Override
+    /*
+      The Specification-Batch Algorithm is only finished when there are
+      no pending orders in remainingOrders any longer.
+     */
     public boolean isFinished() {
         return remainingOrders != null && remainingOrders.size() == 0;
     }
 
     @Override
+    /*
+        The Specification-Batch Algorithm is only ready to be altered by another algorithm
+        if it is finished with the complete batch.
+     */
     public boolean readyToSwitch() {
         return isFinished();
     }

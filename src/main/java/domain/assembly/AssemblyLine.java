@@ -32,12 +32,12 @@ public class AssemblyLine {
      * This method will move the {@code AssemblyLine} one step forward if it isn't blocked (all the workstations are free of work).
      * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
      *
-     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
+     * @param timeSpent  The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
      * @param simulation When true, the {@code AssemblyLine} will simulate the advance, if not: it will move one step forward in the real-life application.
      * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
     public boolean advance(int timeSpent, boolean simulation) {
-        if (simulation){
+        if (simulation) {
             advance();
         } else {
             if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
@@ -49,7 +49,7 @@ public class AssemblyLine {
         return true;
     }
 
-    private void advance(){
+    private void advance() {
         resetAllTasksOfWorkStations();
         finishLastWorkStation();
         moveAllOrders();
@@ -116,12 +116,20 @@ public class AssemblyLine {
         return true;
     }
 
-    public AssemblyLine copy(){
+    public AssemblyLine copy() {
         LinkedList<WorkStation> copyWorkStations = new LinkedList<>();
         workStations.forEach(w -> copyWorkStations.add(w.copy()));
         return new AssemblyLine(new LinkedList<>(copyWorkStations), scheduler.copy());
     }
 
+    /**
+     * New algorithm has been chosen. Needs to be altered in the system.
+     *
+     * @param selectedAlgorithm Textual representation of the algorithm.
+     * @param selectedOptions   Optional of selectedOptions. Some algorithms need to know which selected
+     *                          Car Options need priority.
+     *                          Will be Optional.empty() if the algorithm doesn't need this.
+     */
     public void selectAlgorithm(String selectedAlgorithm, Optional<Map<String, String>> selectedOptions) {
         scheduler.switchAlgorithm(selectedAlgorithm, selectedOptions);
     }
@@ -130,6 +138,9 @@ public class AssemblyLine {
         return scheduler.getPossibleOrdersForSpecificationBatch();
     }
 
+    /**
+     * @return the current selected scheduling algorithm
+     */
     public SchedulingAlgorithm getCurrentAlgorithm() {
         return scheduler.getCurrentAlgorithm();
     }
