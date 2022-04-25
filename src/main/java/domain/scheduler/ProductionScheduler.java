@@ -26,7 +26,7 @@ public class ProductionScheduler implements CarOrderCatalogObserver {
         this.schedulingAlgorithm = schedulingAlgorithm;
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
         TimeManager.reset();
-        /**
+        /*
          * TODO: Remove everything below this block - pure testing
          */
         Map<String, List<String>> options = new HashMap<>();
