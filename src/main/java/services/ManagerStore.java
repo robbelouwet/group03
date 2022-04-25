@@ -3,9 +3,12 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.scheduler.FIFOSchedulingAlgorithm;
 import domain.scheduler.ProductionScheduler;
+import domain.scheduler.TimeManager;
 import lombok.Getter;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
+
+import java.util.LinkedList;
 
 public class ManagerStore {
     @Getter
@@ -21,8 +24,8 @@ public class ManagerStore {
 
     public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
-
-        var scheduler = new ProductionScheduler(carOrderRepository, new FIFOSchedulingAlgorithm());
+        var timemanager = new TimeManager();
+        var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new LinkedList<>(), new FIFOSchedulingAlgorithm());
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);

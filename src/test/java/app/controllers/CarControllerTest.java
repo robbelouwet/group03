@@ -1,49 +1,33 @@
 package app.controllers;
 
-import app.ui.interfaces.IGarageHolderView;
+import app.ui.interfaces.IOrderNewCarView;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 import services.ManagerStore;
+import utils.TestObjects;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CarControllerTest {
-    private CarController controller;
+    private OrderNewCarController controller;
     @BeforeEach
     public void setup() {
-        var model = CarCatalog.getModels().get(0);
         var orders = new ArrayList<CarOrder>();
         for (int i = 0; i < 3; i++) {
-            orders.add(new CarOrder(new DateTime(2), model, new HashMap<>() {{
-                put("Body", "break");
-                put("Color", "white");
-                put("Engine", "performance");
-                put("Gearbox", "5 speed automatic");
-                put("Seats", "vinyl grey");
-                put("Airco", "automatic");
-                put("Wheels", "sports");
-            }}));
+            var order = TestObjects.getCarOrder();
+            order.setOrderTime(new DateTime(2));
+            orders.add(order);
         }
         for (int i = 0; i < 2; i++) {
-            var order = new CarOrder(new DateTime(2), model, new HashMap<>() {{
-                put("Body", "break");
-                put("Color", "white");
-                put("Engine", "performance");
-                put("Gearbox", "5 speed automatic");
-                put("Seats", "vinyl grey");
-                put("Airco", "automatic");
-                put("Wheels", "sports");
-            }});
+            var order = TestObjects.getCarOrder();
+            order.setOrderTime(new DateTime(2));
             order.setStatus(OrderStatus.Finished);
             orders.add(order);
         }
@@ -54,22 +38,28 @@ public class CarControllerTest {
 
     @Test
     void showMainMenu() {
-        var view = new IGarageHolderView() {
+        var view = new IOrderNewCarView() {
 
             @Override
-            public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
+            public boolean showOverview(List<String> pendingOrders, List<String> finishedOrders) {
                 assertEquals(pendingOrders.size(), 3);
                 assertEquals(finishedOrders.size(), 2);
+                return false;
             }
 
             @Override
-            public void showCarModels(List<String> models) {
-
+            public String showCarModels(List<String> models) {
+                return null;
             }
 
             @Override
-            public void showCarForm(Map<String, List<String>> options) {
+            public String showCarOption(String category, List<String> options) {
+                return null;
+            }
 
+            @Override
+            public boolean confirmOrder() {
+                return false;
             }
 
             @Override
@@ -78,26 +68,35 @@ public class CarControllerTest {
             }
         };
         controller.setUi(view);
-        controller.showMainMenu();
+        controller.start();
     }
 
     @Test
     void showModels() {
-        var view = new IGarageHolderView() {
-
+        var view = new IOrderNewCarView() {
+            private int counter = 0;
             @Override
-            public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
+            public boolean showOverview(List<String> pendingOrders, List<String> finishedOrders) {
+                return counter++ < 1;
             }
 
             @Override
-            public void showCarModels(List<String> models) {
-                assertEquals(1, models.size());
-                assertEquals("Ford Fiesta", models.get(0));
+            public String showCarModels(List<String> models) {
+                assertEquals(3, models.size());
+                assertEquals("Model A", models.get(0));
+                assertEquals("Model B", models.get(1));
+                assertEquals("Model C", models.get(2));
+                return "Model A";
             }
 
             @Override
-            public void showCarForm(Map<String, List<String>> options) {
+            public String showCarOption(String category, List<String> options) {
+                return null;
+            }
 
+            @Override
+            public boolean confirmOrder() {
+                return false;
             }
 
             @Override
@@ -106,39 +105,47 @@ public class CarControllerTest {
             }
         };
         controller.setUi(view);
-        controller.showModels();
+        controller.start();
     }
 
     @Test
     void submitOrder() {
-        var view = new IGarageHolderView() {
+        var view = new IOrderNewCarView() {
+            int overviewCounter = 0;
             @Override
-            public void showOverview(List<String> pendingOrders, List<String> finishedOrders) {
+            public boolean showOverview(List<String> pendingOrders, List<String> finishedOrders) {
+                if (overviewCounter++ < 1) {
+                    assertEquals(3, pendingOrders.size());
+                    assertEquals(2, finishedOrders.size());
+                    return true;
+                }
                 assertEquals(4, pendingOrders.size());
                 assertEquals(2, finishedOrders.size());
+                return false;
             }
 
             @Override
-            public void showCarModels(List<String> models) {
-                controller.selectModel(models.get(0));
+            public String showCarModels(List<String> models) {
+                return models.get(0);
             }
 
             @Override
-            public void showCarForm(Map<String, List<String>> options) {
-                Map<String, String> selection = new HashMap<>();
-                for (var option : options.keySet()) {
-                    selection.put(option, options.get(option).get(0));
-                }
-                controller.submitCarOrder(selection);
+            public String showCarOption(String category, List<String> options) {
+                return options.get(0);
             }
+
+            @Override
+            public boolean confirmOrder() {
+                return true;
+            }
+
 
             @Override
             public void showPredictedEndTime(DateTime endTime) {
                 assertEquals(new DateTime(0, 12, 0), endTime);
-                controller.showMainMenu();
             }
         };
         controller.setUi(view);
-        controller.showModels();
+        controller.start();
     }
 }

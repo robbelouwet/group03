@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 import services.ManagerStore;
+import utils.TestObjects;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -33,18 +34,10 @@ public class AdvanceIntegrationTest {
     @BeforeEach
     public void setup() {
         // create 3 car orders from 1 model
-        var model = CarCatalog.getModels().get(0);
+        var model = (new CarCatalog()).getModels().get(0);
         var orders = new ArrayList<CarOrder>();
         for (int i = 0; i < 3; i++) {
-            orders.add(new CarOrder(new DateTime(2), model, new HashMap<>() {{
-                put("Body", "break");
-                put("Color", "white");
-                put("Engine", "performance");
-                put("Gearbox", "5 speed automatic");
-                put("Seats", "vinyl grey");
-                put("Airco", "automatic");
-                put("Wheels", "sports");
-            }}));
+            orders.add(TestObjects.getCarOrder());
         }
 
         managerStore = new ManagerStore(new CarOrderRepository(orders));

@@ -4,8 +4,7 @@ import app.ui.interfaces.IManagerView;
 import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Class {@code ManagerController} is responsible for the communication between the UI and the Domain.
@@ -75,7 +74,15 @@ public class ManagerController extends AssemblyLineStatusController {
      * @param algorithm The textual representation of the chosen algorithm.
      */
     public void showSpecificationBatchOrders(String algorithm) {
+        List<Map<String, String>> listConversion = new ArrayList<>();
         var options = assemblyManager.getPossibleOrdersForSpecificationBatch();
-        ui.showPossibleOptionsForAlgorithm(options, algorithm);
+        for (var map : options){
+            Map<String, String> mapConversion = new HashMap<>();
+            for (var key : map.keySet()){
+                   mapConversion.put(key.toString(), map.get(key).toString());
+            }
+            listConversion.add(mapConversion);
+        }
+        ui.showPossibleOptionsForAlgorithm(listConversion, algorithm);
     }
 }

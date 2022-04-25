@@ -3,6 +3,8 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
 import domain.scheduler.SchedulingAlgorithm;
 import persistence.DataSeeder;
@@ -77,7 +79,7 @@ public class AssemblyManager {
         return getOrdersOnAssemblyLine(copy);
     }
 
-    public List<Map<String, String>> getPossibleOrdersForSpecificationBatch() {
+    public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
        return assemblyLine.getPossibleOrdersForSpecificationBatch();
     }
 

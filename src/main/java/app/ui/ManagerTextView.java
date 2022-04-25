@@ -87,6 +87,10 @@ public class ManagerTextView implements IManagerView {
 
     @Override
     public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+        if (options.isEmpty()) {
+            ConsoleReader.getInstance().println("No options possible... Choose other algorithm");
+            return;
+        }
         ConsoleReader.getInstance().println("Possible Car Options to Give Priority:");
         for (int i = 0; i < options.size(); i++) {
             var optionsSet = options.get(i);

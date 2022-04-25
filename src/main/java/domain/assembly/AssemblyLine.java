@@ -1,9 +1,10 @@
 package domain.assembly;
 
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.scheduler.SchedulingAlgorithm;
-import domain.scheduler.TimeManager;
 import lombok.Getter;
 
 import java.util.*;
@@ -32,28 +33,36 @@ public class AssemblyLine {
      * This method will move the {@code AssemblyLine} one step forward if it isn't blocked (all the workstations are free of work).
      * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
      *
-     * @param timeSpent  The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
+     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
      * @param simulation When true, the {@code AssemblyLine} will simulate the advance, if not: it will move one step forward in the real-life application.
      * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
     public boolean advance(int timeSpent, boolean simulation) {
         if (simulation) {
-            advance();
+            advance(timeSpent);
         } else {
-            if (!workStations.stream().allMatch(WorkStation::hasCompleted)) return false;
-            scheduler.recalculatePredictedEndTimes(timeSpent);
             if (hasAllCompleted()) {
-                advance();
+                advance(timeSpent);
+                return true;
             }
+            return false;
         }
         return true;
     }
 
-    private void advance() {
-        resetAllTasksOfWorkStations();
-        finishLastWorkStation();
+    private void advance(int timeSpent){
+        var lastOrder = workStations.getLast().getCarOrder();
         moveAllOrders();
+        resetAllTasksOfWorkStations();
         restartFirstWorkStation();
+        // Notify the scheduler that we have advanced and get the current time
+        var orders = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
+        Collections.reverse(orders);
+        var currentTime = scheduler.advanced(timeSpent, new LinkedList<>(orders));
+        if (lastOrder!= null) {
+            lastOrder.setEndTime(currentTime);
+            lastOrder.setStatus(OrderStatus.Finished);
+        }
     }
 
     private void resetAllTasksOfWorkStations() {
@@ -64,17 +73,9 @@ public class AssemblyLine {
         WorkStation first = workStations.getFirst();
         var nextOrder = scheduler.getNextOrder();
         if (nextOrder != null) {
-            scheduler.firstSpotTaken();
             nextOrder.setStatus(OrderStatus.OnAssemblyLine);
             first.updateCurrentOrder(nextOrder);
         }
-    }
-
-    private void finishLastWorkStation() {
-        WorkStation last = workStations.getLast();
-        last.updateEndTimeOrder(TimeManager.getCurrentTime());
-        if (last.getCarOrder() != null)
-            last.finishCarOrder();
     }
 
     /*
@@ -134,7 +135,7 @@ public class AssemblyLine {
         scheduler.switchAlgorithm(selectedAlgorithm, selectedOptions);
     }
 
-    public List<Map<String, String>> getPossibleOrdersForSpecificationBatch() {
+    public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
         return scheduler.getPossibleOrdersForSpecificationBatch();
     }
 
