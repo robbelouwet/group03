@@ -16,7 +16,7 @@ public class CarOrderManager {
 
     private final CarCatalog carCatalog = new CarCatalog();
 
-    private final Comparator<CarOrder> sorter = (o1, o2) -> -o1.getOrderTime().compareTo(o2.getOrderTime());
+    private final Comparator<CarOrder> sorter = (o1, o2) -> -o1.getOrderTime().compareTo(o2.getOrderTime());  // This is defined here, because the same sorting is used for different functions
 
     public CarOrderManager(CarOrderRepository repository) {
         this.carRepository = repository;

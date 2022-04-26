@@ -19,7 +19,7 @@ public class CheckOrderDetailsTextView implements ICheckOrderDetailsView {
         controller.start();
     }
 
-    private boolean number(String n) {
+    private boolean isNumber(String n) {
         try {
             var number = Integer.parseInt(n);
             return true;
@@ -34,8 +34,13 @@ public class CheckOrderDetailsTextView implements ICheckOrderDetailsView {
         for (var order : pendingOrders) ConsoleReader.getInstance().println(order);
         ConsoleReader.getInstance().println("Finished Orders:");
         for (var order : finishedOrders) ConsoleReader.getInstance().println(order);
-        var result = ConsoleReader.getInstance().ask("Select the number before an order or [cancel]");
-        while (!result.equals("cancel") && !(number(result) && Integer.parseInt(result) < pendingOrders.size() + finishedOrders.size())) {
+
+        var result = ConsoleReader.getInstance().ask("Select the number before an order or [cancel]: ");
+
+        int maxIndex = pendingOrders.size() + finishedOrders.size() - 1;
+
+        // While the user did not type cancel or a valid number that is a valid index
+        while (!result.equals("cancel") && !(isNumber(result) && Integer.parseInt(result) <= maxIndex && Integer.parseInt(result) >= 0)) {
             result = ConsoleReader.getInstance().ask("Try again: ");
         }
         if (result.equals("cancel")) return -1;

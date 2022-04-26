@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static utils.TestObjects.getCarOrder;
 
 public class CheckOrderDetailsIntegrationTest {
@@ -28,7 +29,6 @@ public class CheckOrderDetailsIntegrationTest {
 
             @Override
             public String ask(String str) {
-                System.out.println(str);
                 return switch (number++) {
                     case 0 -> "garage holder";
                     case 1 -> "details";
@@ -58,30 +58,28 @@ public class CheckOrderDetailsIntegrationTest {
                             assertEquals("4: Order (Model B): orderTime=Day 0, 07:00, endTime=Day 0, 10:10, status=Finished}", l);  // 1
                     case 7 ->
                             assertEquals("5: Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 10:10, status=Finished}", l);  // 1
-                    case 8 ->
-                            assertEquals("""
-                                    Order (Model C): orderTime=Day 1, 08:00, endTime=Day 0, 11:20, status=Pending}
-                                    Body: Sport
-                                    Color: Black
-                                    engine: Performance 2.5l v6
-                                    Gearbox: 6 speed manual
-                                    Seats: Leather white
-                                    Airco: Manual
-                                    Wheels: Winter
-                                    Spoiler: High
-                                    """, l); // 3
-                    case 17 ->
-                            assertEquals("""
-                                    Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 10:10, status=Finished}
-                                    Body: Sedan
-                                    Color: Red
-                                    engine: Standard 2l v4
-                                    Gearbox: 6 speed manual
-                                    Seats: Leather white
-                                    Airco: Manual
-                                    Wheels: Winter
-                                    Spoiler: None
-                                    """, l);
+                    case 8 -> assertEquals("""
+                            Order (Model C): orderTime=Day 1, 08:00, endTime=Day 0, 11:20, status=Pending}
+                            Body: Sport
+                            Color: Black
+                            engine: Performance 2.5l v6
+                            Gearbox: 6 speed manual
+                            Seats: Leather white
+                            Airco: Manual
+                            Wheels: Winter
+                            Spoiler: High
+                            """, l); // 3
+                    case 17 -> assertEquals("""
+                            Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 10:10, status=Finished}
+                            Body: Sedan
+                            Color: Red
+                            engine: Standard 2l v4
+                            Gearbox: 6 speed manual
+                            Seats: Leather white
+                            Airco: Manual
+                            Wheels: Winter
+                            Spoiler: None
+                            """, l);
                 }
             }
 
@@ -107,6 +105,45 @@ public class CheckOrderDetailsIntegrationTest {
         var carOrderRepo = new CarOrderRepository(orders);
         var managerStore = new ManagerStore(carOrderRepo);
         var view = new AppTextView(new ControllerStore(managerStore));
+        view.start();
+    }
+
+    @Test
+    public void testWithoutOrdersReturnsWithoutAsking() {
+        ConsoleReader.setInstance(new IConsoleReader() {
+            int number = 0;
+            int prints = 0;
+            @Override
+            public String ask(String str) {
+                return switch (number++) {
+                    case 0 -> "garage holder";
+                    case 1 -> "details";
+                    case 2 -> "0";  // Not valid so should ask again
+                    case 3 -> "cancel";  // Cancel when application asks again
+                    default -> "quit";
+                };
+            }
+
+            @Override
+            public void println(String l) {
+                switch (prints++) {
+                    case 0 -> assertEquals("Pending Orders:", l);
+                    case 1 -> assertEquals("Finished Orders:", l);
+                }
+            }
+
+            @Override
+            public void print(String s) {
+
+            }
+
+            @Override
+            public void printf(String format, Object obj) {
+
+            }
+        });
+
+        var view = new AppTextView(new ControllerStore());
         view.start();
     }
 }

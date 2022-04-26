@@ -20,7 +20,8 @@ public class CheckOrderDetailsController {
     }
 
     public void start() {
-        while(true) {
+        boolean quit = false;
+        while(!quit) {
             var pendingOrders = manager.getPendingOrders();
             var finishedOrders = manager.getFinishedOrders();
             var pending = IntStream.range(0, pendingOrders.size()).mapToObj(i -> i + ": " + pendingOrders.get(i).toString()).collect(Collectors.toList());
@@ -29,13 +30,11 @@ public class CheckOrderDetailsController {
             if (index == -1) {
                 return;
             }
-            boolean quit;
             if (index > pending.size() - 1) {
                 quit = showOrder(finishedOrders.get(index - pending.size()));
             } else {
                 quit = showOrder(pendingOrders.get(index));
             }
-            if (quit) return;
         }
     }
 
