@@ -4,9 +4,6 @@ import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
-import domain.scheduler.ProductionScheduler;
-import lombok.Getter;
-import persistence.DataSeeder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,7 +69,7 @@ public class AssemblyManager {
      * This method retrieves the new pending orders after the assembly line WOULD have moved.
      * This means that this is a best-case scenario and will retrieve all the pending orders but the {@code CarOrder} of the last workstation.
      *
-     * @return {@code List&#60;CarOrder&#62;} All car orders that still need to be processed on the
+     * @return {@code Map&#60;WorkStation, CarOrder&#62;} All car orders that still need to be processed on the
      * assembly line without the car orders that would be finished after the assembly line moves one step forward.
      */
     public Map<WorkStation, CarOrder> getSimulatedOrders() {
@@ -98,5 +95,4 @@ public class AssemblyManager {
     public List<WorkStation> getBusyWorkStations() {
         return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
     }
-
 }

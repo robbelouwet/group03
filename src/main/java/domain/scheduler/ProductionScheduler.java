@@ -1,14 +1,18 @@
 package domain.scheduler;
 
+import app.utils.ConsoleReader;
 import domain.order.CarOrder;
-import persistence.CarOrderRepository;
+import lombok.Getter;
 import persistence.CarOrderCatalogObserver;
+import persistence.CarOrderRepository;
 
 import java.util.*;
 
-public abstract class ProductionScheduler {
+public class ProductionScheduler {
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
     private static final long END_SHIFT = 22 * 60;  // Day ends at 22 o' clock
+    @Getter
+    private SchedulingAlgorithm schedulingAlgorithm;
 
     private final CarOrderCatalogObserver orderCatalogObserver = new CarOrderCatalogObserver() {
         @Override
@@ -24,42 +28,28 @@ public abstract class ProductionScheduler {
     final TimeManager timeManager;
     LinkedList<CarOrder> currentOrdersOnAssemblyLine;
 
-    ProductionScheduler(CarOrderRepository carOrderRepository, TimeManager timeManager, LinkedList<CarOrder> currentOrdersOnAssemblyLine) {
+    public ProductionScheduler(CarOrderRepository carOrderRepository, TimeManager timeManager, LinkedList<CarOrder> currentOrdersOnAssemblyLine, SchedulingAlgorithm schedulingAlgorithm) {
         this.timeManager = timeManager;
         this.currentOrdersOnAssemblyLine = currentOrdersOnAssemblyLine;
         this.carOrderRepository = carOrderRepository;
+        this.schedulingAlgorithm = schedulingAlgorithm;
         this.carOrderRepository.registerListener(orderCatalogObserver);
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
     }
 
-    public static ProductionScheduler of(ProductionScheduler oldScheduler, String newType) {
-        return of(oldScheduler.carOrderRepository, oldScheduler.timeManager, oldScheduler.currentOrdersOnAssemblyLine, newType);
+    public List<CarOrder> getOrderedListOfPendingOrders() {
+        // return copy!
+        return new ArrayList<>(carOrderRepository.getOrders());
     }
-
-    public static ProductionScheduler of(CarOrderRepository carOrderRepository, String type) {
-        return of(carOrderRepository, new TimeManager(), new LinkedList<>(Arrays.asList(null, null, null)), type);
-    }
-
-    private static ProductionScheduler of(CarOrderRepository carOrderRepository, TimeManager timeManager, LinkedList<CarOrder> currentOrdersOnAssemblyLine, String newType) {
-        // TODO implement other scheduler and change this factory method
-        return switch (newType) {
-            case "FIFO" -> new FIFOScheduler(carOrderRepository, timeManager, currentOrdersOnAssemblyLine);
-            case "SB" -> new SpecificationBatchScheduler(carOrderRepository, timeManager, currentOrdersOnAssemblyLine);
-            default -> throw new IllegalArgumentException(newType + "is not a valid scheduler");
-        };
-    }
-
-    abstract List<CarOrder> getOrderedListOfPendingOrders();
 
     /**
-     * @return the next order in line
+     * @return the next order in line according to the current scheduling algorithm.
      */
     public CarOrder getNextOrder() {
-        var orders = getOrderedListOfPendingOrders();
-        if (orders.size() == 0) {
-            return null;
-        }
-        return orders.get(0);
+        var orders = carOrderRepository.getOrders();
+        if (!schedulingAlgorithm.isFinished()) return schedulingAlgorithm.getNextOrder(orders);
+        else schedulingAlgorithm = new FIFOSchedulingAlgorithm();
+        return schedulingAlgorithm.getNextOrder(orders);
     }
 
     /**
@@ -157,7 +147,31 @@ public abstract class ProductionScheduler {
         recalculatePredictedEndTimes();
     }
 
-    public abstract ProductionScheduler copy();
+    public ProductionScheduler copy() {
+        return new ProductionScheduler(carOrderRepository.copy(), timeManager, currentOrdersOnAssemblyLine, schedulingAlgorithm);
+    }
+
+    /**
+     * This method will create the subclass of the Strategy Pattern for the scheduling algorithm and reassign it
+     * as the current selected algorithm. The algorithm can only be changed if the current one is finished
+     * doing its job of scheduling the orders or if it is ready to switch. Some algorithms can be blocked once they're
+     * activated.
+     * @param schedulingAlgorithm The new scheduling algorithm that replaces the old one.
+     * @return true if the algorithm has been succesfully changed
+     */
+    public boolean switchAlgorithm(SchedulingAlgorithm schedulingAlgorithm) {
+        try {
+            if (!schedulingAlgorithm.isFinished() && !schedulingAlgorithm.readyToSwitch()) {
+                throw new IllegalStateException("The algorithm couldn't be changed because the current one hasn't finished yet!");
+            } else{
+                this.schedulingAlgorithm = schedulingAlgorithm;
+                return true;
+            }
+        } catch (IllegalStateException e) {
+            ConsoleReader.getInstance().println(e.getMessage());
+        }
+        return false;
+    }
 
     /**
      * Call this method if this scheduler is not active anymore

@@ -4,13 +4,16 @@ import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 import utils.TestObjects;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ProductionSchedulerTest {
     // TODO this entire test needs to be rewritten
@@ -21,7 +24,12 @@ class ProductionSchedulerTest {
     @BeforeEach
     void setup() {
         repo =  new CarOrderRepository();
-        scheduler = ProductionScheduler.of(repo, "FIFO");
+        scheduler = new ProductionScheduler(
+                repo,
+                new TimeManager(),
+                new LinkedList<>(),
+                new FIFOSchedulingAlgorithm()
+        );
 
         for (int i = 0; i < 3; i++) {
             orders.add(TestObjects.getCarOrder());

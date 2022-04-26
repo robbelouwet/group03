@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * An immutable object that represents a car model
  */
-public class CarModel {
+public class CarModel implements Comparable<CarModel> {
     @Getter
     private final String name;
 
@@ -36,5 +36,10 @@ public class CarModel {
 
     public OptionSelector getOptionSelector() {
         return modelSpecification.getOptionSelector();
+    }
+
+    @Override
+    public int compareTo(CarModel o) {
+        return 0;
     }
 }

@@ -2,7 +2,6 @@ package domain.assembly;
 
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
-import domain.scheduler.TimeManager;
 import lombok.Getter;
 
 import java.util.Collections;
@@ -39,7 +38,7 @@ public class AssemblyLine {
      * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
     public boolean advance(int timeSpent, boolean simulation) {
-        if (simulation){
+        if (simulation) {
             advance(timeSpent);
         } else {
             if (hasAllCompleted()) {
@@ -118,7 +117,7 @@ public class AssemblyLine {
         return true;
     }
 
-    public AssemblyLine copy(){
+    public AssemblyLine copy() {
         LinkedList<WorkStation> copyWorkStations = new LinkedList<>();
         workStations.forEach(w -> copyWorkStations.add(w.copy()));
         return new AssemblyLine(new LinkedList<>(copyWorkStations), scheduler.copy());
