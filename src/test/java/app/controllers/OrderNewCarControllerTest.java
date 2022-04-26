@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CarControllerTest {
+public class OrderNewCarControllerTest {
     private OrderNewCarController controller;
     @BeforeEach
     public void setup() {
@@ -33,7 +33,7 @@ public class CarControllerTest {
         }
         var managerStore = new ManagerStore(new CarOrderRepository(orders));
         var controllerStore = new ControllerStore(managerStore);
-        controller = controllerStore.getCarController();
+        controller = controllerStore.getOrderNewCarController();
     }
 
     @Test
