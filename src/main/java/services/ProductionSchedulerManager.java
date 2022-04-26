@@ -1,6 +1,5 @@
 package services;
 
-import app.utils.ConsoleReader;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
@@ -21,7 +20,8 @@ public class ProductionSchedulerManager {
 
     /**
      * New algorithm has been chosen. Needs to be altered in the system.
-     * @param algorithm Textual representation of the algorithm.
+     *
+     * @param algorithm       Textual representation of the algorithm.
      * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
      *                        Car Options need priority.
      * @return boolean whether the algorithm has been changed succesfully.
@@ -40,9 +40,10 @@ public class ProductionSchedulerManager {
                 Constructor<?> ctor = clazz.getConstructor();
                 schedulingAlgorithm = (SchedulingAlgorithm) ctor.newInstance();
             }
-            return productionScheduler.switchAlgorithm(schedulingAlgorithm);
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            ConsoleReader.getInstance().println("Something went wrong with selecting the algorithm!");
+            productionScheduler.switchAlgorithm(schedulingAlgorithm);
+            return true;
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
             return false;
         }
     }
@@ -63,7 +64,7 @@ public class ProductionSchedulerManager {
      */
     public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
         var optionsList = productionScheduler
-                .getOrderedListOfPendingOrders()
+                .getPendingOrders()
                 .stream()
                 .map(CarOrder::getSelections)
                 .toList();

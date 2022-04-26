@@ -1,28 +1,20 @@
 package domain.scheduler;
 
 import domain.order.CarOrder;
-import domain.order.OrderStatus;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class FIFOSchedulingAlgorithm implements SchedulingAlgorithm {
     @Override
-    public boolean isFinished() {
+    public boolean isFinished(List<CarOrder> pendingOrders) {
         return false;
-    }
-
-    @Override
-    public boolean readyToSwitch() {
-        return true;
     }
 
     @Override
     public List<CarOrder> getOrderedListOfPendingOrders(List<CarOrder> carOrders) {
         return carOrders.stream()
-                .filter(o -> o.getStatus().equals(OrderStatus.Pending))
-                .filter(o -> o.getEndTime() != null)
-                .sorted(Comparator.comparing(CarOrder::getEndTime).reversed())
+                .sorted(Comparator.comparing(CarOrder::getOrderTime))
                 .toList();
     }
 

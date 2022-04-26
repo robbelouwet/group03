@@ -17,12 +17,12 @@ import java.util.Map;
 public class CarOrder {
     @Getter
     @Setter
-    private DateTime orderTime;
+    private DateTime orderTime;  // The time at which the order was placed
     @Getter
     @Setter
-    private DateTime startTime;
+    private DateTime startTime;  // The time at which the order was placed on the assembly line
     @Setter
-    private DateTime endTime;
+    private DateTime endTime;  // Either the predicted end time or the time at which the order left the assembly line if it is finished
     private final Map<OptionCategory, Option> selections;
     @Getter
     private final CarModel model;
