@@ -2,11 +2,13 @@ package domain.scheduler;
 
 import app.utils.ConsoleReader;
 import domain.order.CarOrder;
+import domain.order.OrderStatus;
 import lombok.Getter;
 import persistence.CarOrderCatalogObserver;
 import persistence.CarOrderRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProductionScheduler {
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
@@ -22,11 +24,11 @@ public class ProductionScheduler {
         }
     };
 
-    final CarOrderRepository carOrderRepository;
+    private final CarOrderRepository carOrderRepository;
     private long timeSpentThisCycle = 0;
 
-    final TimeManager timeManager;
-    LinkedList<CarOrder> currentOrdersOnAssemblyLine;
+    private final TimeManager timeManager;
+    private LinkedList<CarOrder> currentOrdersOnAssemblyLine;
 
     public ProductionScheduler(CarOrderRepository carOrderRepository, TimeManager timeManager, LinkedList<CarOrder> currentOrdersOnAssemblyLine, SchedulingAlgorithm schedulingAlgorithm) {
         this.timeManager = timeManager;
@@ -37,16 +39,20 @@ public class ProductionScheduler {
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
     }
 
-    public List<CarOrder> getOrderedListOfPendingOrders() {
+    public List<CarOrder> getPendingOrders() {
+        return carOrderRepository.getOrders().stream().filter(o -> o.getStatus().equals(OrderStatus.Pending)).collect(Collectors.toList());
+    }
+
+    private List<CarOrder> getOrderedListOfPendingOrders() {
         // return copy!
-        return new ArrayList<>(carOrderRepository.getOrders());
+        return new ArrayList<>(schedulingAlgorithm.getOrderedListOfPendingOrders(getPendingOrders()));
     }
 
     /**
      * @return the next order in line according to the current scheduling algorithm.
      */
     public CarOrder getNextOrder() {
-        var orders = carOrderRepository.getOrders();
+        var orders = getPendingOrders();
         if (!schedulingAlgorithm.isFinished()) return schedulingAlgorithm.getNextOrder(orders);
         else schedulingAlgorithm = new FIFOSchedulingAlgorithm();
         return schedulingAlgorithm.getNextOrder(orders);
@@ -161,7 +167,8 @@ public class ProductionScheduler {
      */
     public boolean switchAlgorithm(SchedulingAlgorithm schedulingAlgorithm) {
         try {
-            if (!schedulingAlgorithm.isFinished() && !schedulingAlgorithm.readyToSwitch()) {
+            var orders = getPendingOrders();
+            if (!schedulingAlgorithm.isFinished(orders) && !schedulingAlgorithm.readyToSwitch(orders)) {
                 throw new IllegalStateException("The algorithm couldn't be changed because the current one hasn't finished yet!");
             } else{
                 this.schedulingAlgorithm = schedulingAlgorithm;

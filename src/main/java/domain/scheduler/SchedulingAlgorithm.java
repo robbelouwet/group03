@@ -14,7 +14,7 @@ public interface SchedulingAlgorithm {
      * Determines when the algorithm is completely done.
      * @return false if the algorithm still has pending orders.
      */
-    boolean isFinished();
+    boolean isFinished(List<CarOrder> pendingOrders);
 
     /**
      * Determines when the algorithm can be altered.
@@ -22,7 +22,7 @@ public interface SchedulingAlgorithm {
      * because some algorithms can be altered even when they aren't finished yet.
      * @return true if the algorithm can be altered at any given time.
      */
-    boolean readyToSwitch();
+    boolean readyToSwitch(List<CarOrder> pendingOrders);
 
     /**
      * This method determines the order in which the pending orders should be processed.
@@ -38,5 +38,9 @@ public interface SchedulingAlgorithm {
      * @return The pending CarOrder that has the highest priority
      * to be processed according to the algorithm
      */
-    CarOrder getNextOrder(List<CarOrder> carOrders);
+    default CarOrder getNextOrder(List<CarOrder> carOrders) {
+        var orders = getOrderedListOfPendingOrders(carOrders);
+        if (orders.size() == 0) return null;
+        return orders.get(0);
+    };
 }

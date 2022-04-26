@@ -63,7 +63,7 @@ public class ProductionSchedulerManager {
      */
     public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
         var optionsList = productionScheduler
-                .getOrderedListOfPendingOrders()
+                .getPendingOrders()
                 .stream()
                 .map(CarOrder::getSelections)
                 .toList();
