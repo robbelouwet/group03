@@ -1,6 +1,5 @@
 package domain.scheduler;
 
-import app.utils.ConsoleReader;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import lombok.Getter;
@@ -16,25 +15,25 @@ public class ProductionScheduler {
     @Getter
     private SchedulingAlgorithm schedulingAlgorithm;
 
-    private final CarOrderCatalogObserver orderCatalogObserver = new CarOrderCatalogObserver() {
-        @Override
-        public void carOrderAdded(CarOrder order) {
-            order.setOrderTime(timeManager.getCurrentTime());
-            recalculatePredictedEndTimes();
-        }
-    };
-
     private final CarOrderRepository carOrderRepository;
     private long timeSpentThisCycle = 0;
 
     private final TimeManager timeManager;
     private LinkedList<CarOrder> currentOrdersOnAssemblyLine;
 
-    public ProductionScheduler(CarOrderRepository carOrderRepository, TimeManager timeManager, LinkedList<CarOrder> currentOrdersOnAssemblyLine, SchedulingAlgorithm schedulingAlgorithm) {
+    public ProductionScheduler(CarOrderRepository carOrderRepository, TimeManager timeManager, SchedulingAlgorithm schedulingAlgorithm) {
+        this(carOrderRepository, timeManager, new LinkedList<>(Arrays.asList(new CarOrder[]{null, null, null})), schedulingAlgorithm);
+    }
+
+    private ProductionScheduler(CarOrderRepository carOrderRepository, TimeManager timeManager, LinkedList<CarOrder> currentOrdersOnAssemblyLine, SchedulingAlgorithm schedulingAlgorithm) {
         this.timeManager = timeManager;
         this.currentOrdersOnAssemblyLine = currentOrdersOnAssemblyLine;
         this.carOrderRepository = carOrderRepository;
         this.schedulingAlgorithm = schedulingAlgorithm;
+        CarOrderCatalogObserver orderCatalogObserver = order -> {
+            order.setOrderTime(timeManager.getCurrentTime());
+            recalculatePredictedEndTimes();
+        };
         this.carOrderRepository.registerListener(orderCatalogObserver);
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
     }
@@ -53,7 +52,7 @@ public class ProductionScheduler {
      */
     public CarOrder getNextOrder() {
         var orders = getPendingOrders();
-        if (!schedulingAlgorithm.isFinished()) return schedulingAlgorithm.getNextOrder(orders);
+        if (!schedulingAlgorithm.isFinished(orders)) return schedulingAlgorithm.getNextOrder(orders);
         else schedulingAlgorithm = new FIFOSchedulingAlgorithm();
         return schedulingAlgorithm.getNextOrder(orders);
     }
@@ -154,7 +153,7 @@ public class ProductionScheduler {
     }
 
     public ProductionScheduler copy() {
-        return new ProductionScheduler(carOrderRepository.copy(), timeManager, currentOrdersOnAssemblyLine, schedulingAlgorithm);
+        return new ProductionScheduler(carOrderRepository.copy(), timeManager, new LinkedList<>(currentOrdersOnAssemblyLine.stream().map(CarOrder::copy).toList()), schedulingAlgorithm);
     }
 
     /**
@@ -162,28 +161,11 @@ public class ProductionScheduler {
      * as the current selected algorithm. The algorithm can only be changed if the current one is finished
      * doing its job of scheduling the orders or if it is ready to switch. Some algorithms can be blocked once they're
      * activated.
+     *
      * @param schedulingAlgorithm The new scheduling algorithm that replaces the old one.
-     * @return true if the algorithm has been succesfully changed
      */
-    public boolean switchAlgorithm(SchedulingAlgorithm schedulingAlgorithm) {
-        try {
-            var orders = getPendingOrders();
-            if (!schedulingAlgorithm.isFinished(orders) && !schedulingAlgorithm.readyToSwitch(orders)) {
-                throw new IllegalStateException("The algorithm couldn't be changed because the current one hasn't finished yet!");
-            } else{
-                this.schedulingAlgorithm = schedulingAlgorithm;
-                return true;
-            }
-        } catch (IllegalStateException e) {
-            ConsoleReader.getInstance().println(e.getMessage());
-        }
-        return false;
-    }
-
-    /**
-     * Call this method if this scheduler is not active anymore
-     */
-    public void clean() {
-        carOrderRepository.unregisterListener(orderCatalogObserver);
+    public void switchAlgorithm(SchedulingAlgorithm schedulingAlgorithm) {
+        this.schedulingAlgorithm = schedulingAlgorithm;
+        recalculatePredictedEndTimes();
     }
 }

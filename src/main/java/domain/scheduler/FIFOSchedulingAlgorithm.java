@@ -1,7 +1,6 @@
 package domain.scheduler;
 
 import domain.order.CarOrder;
-import domain.order.OrderStatus;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,14 +12,9 @@ public class FIFOSchedulingAlgorithm implements SchedulingAlgorithm {
     }
 
     @Override
-    public boolean readyToSwitch(List<CarOrder> pendingOrders) {
-        return true;
-    }
-
-    @Override
     public List<CarOrder> getOrderedListOfPendingOrders(List<CarOrder> carOrders) {
         return carOrders.stream()
-                .sorted(Comparator.comparing(CarOrder::getStartTime))
+                .sorted(Comparator.comparing(CarOrder::getOrderTime))
                 .toList();
     }
 
