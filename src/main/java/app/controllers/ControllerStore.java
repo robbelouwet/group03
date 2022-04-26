@@ -16,7 +16,7 @@ public class ControllerStore {
     }
 
     public ControllerStore(ManagerStore managerStore) {
-        managerController = new ManagerController(managerStore.getAssemblyLineManager());
+        managerController = new ManagerController(managerStore.getAssemblyLineManager(), managerStore.getProductionSchedulerManager());
         carController = new OrderNewCarController(managerStore.getCarOrderManager());
         mechanicController = new MechanicController(managerStore.getMechanicManager(), managerStore.getAssemblyLineManager());
     }

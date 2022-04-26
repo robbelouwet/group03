@@ -3,6 +3,7 @@ package app.controllers;
 import app.ui.interfaces.IManagerView;
 import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
+import services.ProductionSchedulerManager;
 
 import java.util.*;
 
@@ -11,11 +12,13 @@ import java.util.*;
  */
 public class ManagerController extends AssemblyLineStatusController {
     private final AssemblyManager assemblyManager;
+    private final ProductionSchedulerManager productionSchedulerManager;
     private IManagerView ui;
 
-    ManagerController(AssemblyManager assemblyManager) {
+    ManagerController(AssemblyManager assemblyManager, ProductionSchedulerManager productionSchedulerManager) {
         super(assemblyManager);
         this.assemblyManager = assemblyManager;
+        this.productionSchedulerManager = productionSchedulerManager;
     }
 
     public void setUi(IManagerView ui) {
@@ -49,8 +52,8 @@ public class ManagerController extends AssemblyLineStatusController {
      * and all the available algorithms.
      */
     public void showAlgorithmOverview() {
-        SchedulingAlgorithm algorithm = assemblyManager.getCurrentAlgorithm();
-        ui.showSchedulingAlgorithms(assemblyManager.getSchedulingAlgorithms(), algorithm.toString());
+        SchedulingAlgorithm algorithm = productionSchedulerManager.getCurrentAlgorithm();
+        ui.showSchedulingAlgorithms(productionSchedulerManager.getSchedulingAlgorithms(), algorithm.toString());
     }
 
     /**
@@ -60,13 +63,14 @@ public class ManagerController extends AssemblyLineStatusController {
      *                        Car Options need priority.
      *                        Will be Optional.empty() if the algorithm doesn't need this.
      */
-    public void selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
-        var algorithms = assemblyManager.getSchedulingAlgorithms();
+    public boolean selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
+        var algorithms = productionSchedulerManager.getSchedulingAlgorithms();
         for (String alg : algorithms) {
             if (alg.equals(algorithm)) {
-                assemblyManager.selectAlgorithm(algorithm, selectedOptions);
+                return productionSchedulerManager.selectAlgorithm(algorithm, selectedOptions);
             }
         }
+        return false;
     }
 
     /**
@@ -75,7 +79,7 @@ public class ManagerController extends AssemblyLineStatusController {
      */
     public void showSpecificationBatchOrders(String algorithm) {
         List<Map<String, String>> listConversion = new ArrayList<>();
-        var options = assemblyManager.getPossibleOrdersForSpecificationBatch();
+        var options = productionSchedulerManager.getPossibleOrdersForSpecificationBatch();
         for (var map : options){
             Map<String, String> mapConversion = new HashMap<>();
             for (var key : map.keySet()){

@@ -101,7 +101,9 @@ public class ManagerTextView implements IManagerView {
         }
         int index = askCarOptionsIndex(options.size());
         Map<String, String> selectedOptions = options.get(index - 1);
-        managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
+        boolean success = managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
+        if (!success)
+            showErrorMessage("Something went wrong with selecting the algorithm!");
     }
 
     /**

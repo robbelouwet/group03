@@ -1,20 +1,18 @@
 package domain.scheduler;
 
 import app.utils.ConsoleReader;
-import domain.car.options.Option;
-import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
+import lombok.Getter;
 import persistence.CarOrderCatalogObserver;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ProductionScheduler {
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
     private static final long END_SHIFT = 22 * 60;  // Day ends at 22 o' clock
+    @Getter
     private SchedulingAlgorithm schedulingAlgorithm;
 
     private final CarOrderCatalogObserver orderCatalogObserver = new CarOrderCatalogObserver() {
@@ -40,23 +38,14 @@ public class ProductionScheduler {
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
 
         // TODO: remove this, only to show the point that it's working!
-        for (var order : DataSeeder.getTestCarsForAlgorithm()){
+        for (var order : DataSeeder.getTestCarsForAlgorithm()) {
             carOrderRepository.getOrders().add(order);
         }
     }
 
-    private List<CarOrder> getOrderedListOfPendingOrders() {
-        return schedulingAlgorithm.getOrderedListOfPendingOrders(
-                carOrderRepository.getOrders()
-        );
-    }
-
-    private CarOrder getLastScheduledOrder() {
-        var orders = getOrderedListOfPendingOrders();
-        if (orders.size() > 0) {
-            return orders.get(orders.size() - 1);
-        }
-        return null;
+    public List<CarOrder> getOrderedListOfPendingOrders() {
+        // return copy!
+        return new ArrayList<>(carOrderRepository.getOrders());
     }
 
     /**
@@ -173,55 +162,21 @@ public class ProductionScheduler {
      * as the current selected algorithm. The algorithm can only be changed if the current one is finished
      * doing its job of scheduling the orders or if it is ready to switch. Some algorithms can be blocked once they're
      * activated.
-     *
-     * @param selectedAlgorithm Textual representation of the scheduling algorithm
-     * @param selectedOptions   Optional of selectedOptions. Some algorithms need to know which selected
-     *                          Car Options need priority.
-     *                          Will be Optional.empty() if the algorithm doesn't need this.
+     * @param schedulingAlgorithm The new scheduling algorithm that replaces the old one.
+     * @return true if the algorithm has been succesfully changed
      */
-    public void switchAlgorithm(String selectedAlgorithm, Optional<Map<String, String>> selectedOptions) {
-        SchedulingAlgorithm algorithm;
+    public boolean switchAlgorithm(SchedulingAlgorithm schedulingAlgorithm) {
         try {
-            Class<?> clazz = Class.forName(selectedAlgorithm);
-            if (selectedOptions.isPresent()) {
-                // Specification-Batch
-                Constructor<?> ctor = clazz.getConstructor(Map.class);
-                algorithm = (SchedulingAlgorithm) ctor.newInstance(selectedOptions.get());
-            } else {
-                // FIFO
-                Constructor<?> ctor = clazz.getConstructor();
-                algorithm = (SchedulingAlgorithm) ctor.newInstance();
-            }
-            if (!schedulingAlgorithm.isFinished() && !schedulingAlgorithm.readyToSwitch())
+            if (!schedulingAlgorithm.isFinished() && !schedulingAlgorithm.readyToSwitch()) {
                 throw new IllegalStateException("The algorithm couldn't be changed because the current one hasn't finished yet!");
-            schedulingAlgorithm = algorithm;
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            ConsoleReader.getInstance().println("Something went wrong with selecting the algorithm!");
+            } else{
+                this.schedulingAlgorithm = schedulingAlgorithm;
+                return true;
+            }
         } catch (IllegalStateException e) {
             ConsoleReader.getInstance().println(e.getMessage());
         }
-    }
-
-    /**
-     * Method for that calculates the possible car options to give priority to.
-     * Checks if the unique key-value pair combinations is present more than 2 times, if so:
-     * then that unique combination is a possible combination to prioritize.
-     *
-     * @return all the possible combinations that fulfill the constraint.
-     */
-    public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
-        var optionsList = getOrderedListOfPendingOrders()
-                .stream()
-                .map(CarOrder::getSelections)
-                .toList();
-        return optionsList.stream()
-                .filter(o -> Collections.frequency(optionsList, o) >= 3)
-                .distinct()
-                .toList();
-    }
-
-    public SchedulingAlgorithm getCurrentAlgorithm() {
-        return schedulingAlgorithm;
+        return false;
     }
 
     /**

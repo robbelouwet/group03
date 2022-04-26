@@ -17,6 +17,8 @@ public class ManagerStore {
     private final CarOrderManager carOrderManager;
     @Getter
     private final MechanicManager mechanicManager;
+    @Getter
+    private final ProductionSchedulerManager productionSchedulerManager;
 
     public ManagerStore() {
         this(new CarOrderRepository());
@@ -27,6 +29,7 @@ public class ManagerStore {
         var timemanager = new TimeManager();
         var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new LinkedList<>(), new FIFOSchedulingAlgorithm());
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
+        this.productionSchedulerManager = new ProductionSchedulerManager(scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);
         mechanicManager = new MechanicManager(assemblyLine);

@@ -1,13 +1,13 @@
 package domain.assembly;
 
-import domain.car.options.Option;
-import domain.car.options.OptionCategory;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
-import domain.scheduler.SchedulingAlgorithm;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 /**
@@ -121,28 +121,5 @@ public class AssemblyLine {
         LinkedList<WorkStation> copyWorkStations = new LinkedList<>();
         workStations.forEach(w -> copyWorkStations.add(w.copy()));
         return new AssemblyLine(new LinkedList<>(copyWorkStations), scheduler.copy());
-    }
-
-    /**
-     * New algorithm has been chosen. Needs to be altered in the system.
-     *
-     * @param selectedAlgorithm Textual representation of the algorithm.
-     * @param selectedOptions   Optional of selectedOptions. Some algorithms need to know which selected
-     *                          Car Options need priority.
-     *                          Will be Optional.empty() if the algorithm doesn't need this.
-     */
-    public void selectAlgorithm(String selectedAlgorithm, Optional<Map<String, String>> selectedOptions) {
-        scheduler.switchAlgorithm(selectedAlgorithm, selectedOptions);
-    }
-
-    public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
-        return scheduler.getPossibleOrdersForSpecificationBatch();
-    }
-
-    /**
-     * @return the current selected scheduling algorithm
-     */
-    public SchedulingAlgorithm getCurrentAlgorithm() {
-        return scheduler.getCurrentAlgorithm();
     }
 }

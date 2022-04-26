@@ -3,13 +3,12 @@ package services;
 import domain.assembly.AssemblyLine;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
-import domain.car.options.Option;
-import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
-import domain.scheduler.SchedulingAlgorithm;
-import persistence.DataSeeder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -79,10 +78,6 @@ public class AssemblyManager {
         return getOrdersOnAssemblyLine(copy);
     }
 
-    public List<Map<OptionCategory, Option>> getPossibleOrdersForSpecificationBatch() {
-       return assemblyLine.getPossibleOrdersForSpecificationBatch();
-    }
-
     public Map<WorkStation, CarOrder> getOrdersOnAssemblyLine() {
         return getOrdersOnAssemblyLine(assemblyLine);
     }
@@ -99,31 +94,5 @@ public class AssemblyManager {
 
     public List<WorkStation> getBusyWorkStations() {
         return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
-    }
-
-    /**
-     * @return list of scheduling algorithms that are available in the system.
-     */
-    public List<String> getSchedulingAlgorithms() {
-        return new ArrayList<>(DataSeeder.getSchedulingAlgorithms().keySet());
-    }
-
-    /**
-     * New algorithm has been chosen. Needs to be altered in the system.
-     * @param algorithm Textual representation of the algorithm.
-     * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
-     *                        Car Options need priority.
-     *                        Will be Optional.empty() if the algorithm doesn't need this.
-     */
-    public void selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
-        var selectedAlgorithm = DataSeeder.getSchedulingAlgorithms().get(algorithm);
-        assemblyLine.selectAlgorithm(selectedAlgorithm, selectedOptions);
-    }
-
-    /**
-     * @return the currently selected scheduling algorithm.
-     */
-    public SchedulingAlgorithm getCurrentAlgorithm() {
-        return assemblyLine.getCurrentAlgorithm();
     }
 }

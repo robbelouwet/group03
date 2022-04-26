@@ -1,5 +1,7 @@
 package domain.scheduler;
 
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
 
 import java.util.Comparator;
@@ -8,10 +10,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorithm {
-    private final Map<String, String> selectedOptions;
-    private List<CarOrder> remainingOrders;
+    private final Map<OptionCategory, Option> selectedOptions;
+    private int remainingOrders;
 
-    public SpecificationBatchSchedulingAlgorithm(Map<String, String> selectedOptions) {
+    public SpecificationBatchSchedulingAlgorithm(Map<OptionCategory, Option> selectedOptions) {
         this.selectedOptions = selectedOptions;
     }
 
@@ -22,10 +24,7 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
      * @param carOrders List of pending car orders
      */
     private void initialize(List<CarOrder> carOrders) {
-        remainingOrders = carOrders.stream()
-                .filter(o -> o.getSelections().equals(selectedOptions))
-                .sorted(Comparator.comparing(CarOrder::getStartTime))
-                .collect(Collectors.toList());
+        remainingOrders = getOrderedListOfPendingOrders(carOrders).size();
     }
 
     @Override
@@ -34,7 +33,7 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
       no pending orders in remainingOrders any longer.
      */
     public boolean isFinished() {
-        return remainingOrders != null && remainingOrders.size() == 0;
+        return remainingOrders == 0;
     }
 
     @Override
@@ -47,10 +46,18 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
     }
 
     @Override
+    public List<CarOrder> getOrderedListOfPendingOrders(List<CarOrder> carOrders) {
+        return carOrders.stream()
+                .filter(o -> o.getSelections().equals(selectedOptions))
+                .sorted(Comparator.comparing(CarOrder::getStartTime))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public CarOrder getNextOrder(List<CarOrder> carOrders) {
-        if (remainingOrders == null) initialize(carOrders);
-        if (!isFinished()) return remainingOrders.remove(0);
-        else return null;
+        // make sure there was no Car Order added after the batch initially was completely done.
+        if (remainingOrders == 0) initialize(carOrders);
+        return !isFinished() ? getOrderedListOfPendingOrders(carOrders).remove(0) : null;
     }
 
     @Override
