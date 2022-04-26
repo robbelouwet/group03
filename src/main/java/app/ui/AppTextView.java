@@ -5,12 +5,24 @@ import app.controllers.ControllerStore;
 import app.ui.interfaces.IAppView;
 import app.utils.ConsoleReader;
 
+import java.util.List;
+
 public class AppTextView implements IAppView {
 
     private final AppController appController;
-    private final ControllerStore controllerStore = new ControllerStore();
+    private final ControllerStore controllerStore;
 
     public AppTextView() {
+        this(new ControllerStore());
+    }
+
+    /**
+     * Allows passing a controller store with seeded data for running tests
+     *
+     * @param controllerStore the controller store to use for the application
+     */
+    public AppTextView(ControllerStore controllerStore) {
+        this.controllerStore = controllerStore;
         appController = new AppController(this);
     }
 
@@ -32,7 +44,15 @@ public class AppTextView implements IAppView {
 
     @Override
     public void showGarageHolder() {
-        new OrderNewCarTextView(controllerStore.getCarController());
+        var response = ConsoleReader.getInstance().ask("[details] | [order]: ");
+        while (!List.of("details", "order").contains(response)) {
+            response = ConsoleReader.getInstance().ask("Try again: ");
+        }
+        if (response.equals("details")) {
+            new CheckOrderDetailsTextView(controllerStore.getCheckOrderDetailsController());
+        } else {
+            new OrderNewCarTextView(controllerStore.getOrderNewCarController());
+        }
     }
 
     @Override

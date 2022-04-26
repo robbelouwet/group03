@@ -5,7 +5,6 @@ import domain.order.CarOrder;
 import lombok.Getter;
 import persistence.CarOrderCatalogObserver;
 import persistence.CarOrderRepository;
-import persistence.DataSeeder;
 
 import java.util.*;
 
@@ -36,11 +35,6 @@ public class ProductionScheduler {
         this.schedulingAlgorithm = schedulingAlgorithm;
         this.carOrderRepository.registerListener(orderCatalogObserver);
         recalculatePredictedEndTimes();  // Do this for the orders that are already in the repository
-
-        // TODO: remove this, only to show the point that it's working!
-        for (var order : DataSeeder.getTestCarsForAlgorithm()) {
-            carOrderRepository.getOrders().add(order);
-        }
     }
 
     public List<CarOrder> getOrderedListOfPendingOrders() {
