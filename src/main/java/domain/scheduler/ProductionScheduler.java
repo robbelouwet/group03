@@ -66,9 +66,15 @@ public class ProductionScheduler {
         var orders = getPendingOrders();
         if (schedulingAlgorithm.isFinished(orders)) schedulingAlgorithm = new FIFOSchedulingAlgorithm();
         var order = schedulingAlgorithm.getNextOrder(orders);
+        // If this order will be finished the next day
         if (order != null && order.getEndTime().getDays() > timeManager.getCurrentTime().getDays()) {
-            overtime = timeManager.getCurrentTime().getMinutesInDay() - END_SHIFT;
-            timeManager.nextDay();
+            // If there are no orders on the assembly line, we can change to the next day and return this order
+            if (currentOrdersOnAssemblyLine.stream().allMatch(Objects::isNull)) {
+                overtime = timeManager.getCurrentTime().getMinutesInDay() - END_SHIFT;
+                timeManager.nextDay();
+            } else {  // If there are orders, we should wait till there are no orders on the assemblyline anymore
+                return null;
+            }
         }
         return order;
     }
@@ -100,17 +106,24 @@ public class ProductionScheduler {
 
         // When will this cycle be done?
         DateTime endTime = currentTime.addTime(-timeSpentOnThisStep + Math.max(getMinutesOnStep(ordersOnAssemblyLine), timeSpentOnThisStep));
-        System.out.println("endtime");
-        System.out.println(endTime);
-        if (endTime.getMinutesInDay() > END_SHIFT - overtime || endTime.getMinutesInDay() < START_SHIFT)
-            return 3;  // This is not a valid scheduling, and we need to backtrack 3 steps
-
-        // Now we try to simulate an advance of the assembly line
         var orderFinished = ordersOnAssemblyLine.pop();  // Remove the order from the assembly line
+
+        // If we are over the end of the day
+        if (endTime.getMinutesInDay() > END_SHIFT - overtime || endTime.getMinutesInDay() < START_SHIFT) {
+            if (orderFinished == null) { // If the first workstation is empty, and we are already over the deadline
+                var toBackTrack = ordersOnAssemblyLine.size();
+                while (ordersOnAssemblyLine.pop() == null) toBackTrack--;
+                return toBackTrack;
+            }
+            if (orderFinished.getStatus().equals(OrderStatus.Pending))
+                return ordersOnAssemblyLine.size() + 1;  // This is not a valid scheduling, and we need to backtrack the size of the assembly line
+        }
+
         if (orderFinished != null) {
             orderFinished.setEndTime(endTime);  // Set the predicted end time
         }
 
+        // Now we add another order on the line
         CarOrder nextOrderOnLine;
         try {
             nextOrderOnLine = pendingOrders.pop();
@@ -144,7 +157,6 @@ public class ProductionScheduler {
     public void recalculatePredictedEndTimes() {
         var ordersAssembly = new LinkedList<>(currentOrdersOnAssemblyLine);  // We need to make a copy
         var pendingOrders = new LinkedList<>(getOrderedListOfPendingOrders());  // We need a linked list
-        System.out.println(timeManager.getTimeSpentOnThisStep());
         int backtrack = simulateScheduling(timeManager.getCurrentTime(), 0, timeManager.getTimeSpentOnThisStep(), ordersAssembly, pendingOrders);
         if (backtrack != 0) {
             LinkedList<CarOrder> head = new LinkedList<>();

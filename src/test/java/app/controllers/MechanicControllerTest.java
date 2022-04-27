@@ -28,6 +28,7 @@ import static org.mockito.Mockito.*;
 public class MechanicControllerTest {
     ManagerStore managerStore;
     ControllerStore controllerStore;
+    /*
 
     @BeforeEach
     public void setup() {
@@ -251,4 +252,6 @@ public class MechanicControllerTest {
         controller.selectWorkStation("mockedWorkStation2");
         controller.selectTask("task3");
     }
+
+     */
 }

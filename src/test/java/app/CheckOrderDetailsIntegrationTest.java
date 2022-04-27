@@ -62,7 +62,7 @@ public class CheckOrderDetailsIntegrationTest {
                             Order (Model C): orderTime=Day 1, 08:00, endTime=Day 0, 11:20, status=Pending}
                             Body: Sport
                             Color: Black
-                            engine: Performance 2.5l v6
+                            Engine: Performance 2.5l v6
                             Gearbox: 6 speed manual
                             Seats: Leather white
                             Airco: Manual
@@ -73,7 +73,7 @@ public class CheckOrderDetailsIntegrationTest {
                             Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 10:10, status=Finished}
                             Body: Sedan
                             Color: Red
-                            engine: Standard 2l v4
+                            Engine: Standard 2l v4
                             Gearbox: 6 speed manual
                             Seats: Leather white
                             Airco: Manual

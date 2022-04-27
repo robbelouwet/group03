@@ -48,6 +48,9 @@ public class AssemblyLine {
         scheduler.registerListener(order -> {
             if (hasAllCompleted()) {
                 advance();
+            } else {
+                if (timeManager.getTimeSpentOnThisStep() == 0 && workStations.get(0).hasCompleted())
+                    restartFirstWorkStation();
             }
         });
     }

@@ -58,8 +58,8 @@ public class OrderNewCarIntegrationTest {
                     case 14 -> assertEquals("Blue", l);  // 5
                     case 44 -> assertEquals("Predicted end time: Day 0, 08:30", l);  // 8
                     case 91 -> assertEquals("Predicted end time: Day 0, 10:20", l);  // 8
-                    case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=Pending}", l);  // 1
-                    case 93, 139 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 09:10, status=Pending}", l);  // 1
+                    case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=OnAssemblyLine}", l);  // 1
+                    case 93, 139 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 09:10, status=OnAssemblyLine}", l);  // 1
                     case 94, 140 -> assertEquals("Order (Model B): orderTime=Day 0, 06:00, endTime=Day 0, 10:20, status=Pending}", l);  // 1
                 }
             }
