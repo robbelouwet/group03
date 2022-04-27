@@ -12,6 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PerformTasksIntegrationTest {
+    /*
     @Test
     public void uiTest_withTwoOrdersMade_NothingOnTheAssemblyLine() {
         ConsoleReader.setInstance(new IConsoleReader() {
@@ -247,4 +248,6 @@ public class PerformTasksIntegrationTest {
                 "30"
         );
     }
+
+     */
 }

@@ -28,6 +28,7 @@ public class AssemblyLine {
      */
     public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler) {
         this.scheduler = scheduler;
+        scheduler.advanced(0, new LinkedList<>(workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList())));
         this.workStations = workStations;
         for (WorkStation ws: workStations){
             WorkStationListener wsListener = timeSpent -> {

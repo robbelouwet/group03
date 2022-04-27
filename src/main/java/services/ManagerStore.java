@@ -8,8 +8,6 @@ import lombok.Getter;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
 
-import java.util.LinkedList;
-
 public class ManagerStore {
     @Getter
     private final AssemblyManager assemblyLineManager;
@@ -27,7 +25,7 @@ public class ManagerStore {
     public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
         var timemanager = new TimeManager();
-        var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new LinkedList<>(), new FIFOSchedulingAlgorithm());
+        var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new FIFOSchedulingAlgorithm());
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
         this.productionSchedulerManager = new ProductionSchedulerManager(scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);

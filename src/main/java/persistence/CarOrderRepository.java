@@ -69,9 +69,4 @@ public class CarOrderRepository {
         if (listener == null) throw new IllegalArgumentException();
         listeners.remove(listener);
     }
-
-    public static CarOrderRepository getInstance() {
-        if (instance == null) instance = new CarOrderRepository();
-        return instance;
-    }
 }
