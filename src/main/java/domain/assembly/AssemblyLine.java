@@ -3,7 +3,9 @@ package domain.assembly;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
+import domain.scheduler.TimeManager;
 import lombok.Getter;
+import persistence.CarOrderRepository;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -20,79 +22,66 @@ public class AssemblyLine {
     private final LinkedList<WorkStation> workStations;
     @Getter
     private final ProductionScheduler scheduler;
+    private final TimeManager timeManager;
 
 
     /**
      * @param workStations The workstations that the {@code AssemblyLine} will contain, in the form of a {@code LinkedList}.
      * @param scheduler    The {@code ProductionScheduler} who provides following car orders.
      */
-    public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler) {
+    public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler, TimeManager timeManager) {
         this.scheduler = scheduler;
-        scheduler.advanced(0, new LinkedList<>(workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList())));
+        this.timeManager = timeManager;
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList())));
         this.workStations = workStations;
-        for (WorkStation ws: workStations){
+        for (WorkStation ws : workStations) {
             WorkStationListener wsListener = timeSpent -> {
-                if (hasAllCompleted()) advance(timeSpent);
-                else scheduler.timePassed(timeSpent);
+                timeManager.timePassedOnStep(timeSpent);
+                if (hasAllCompleted()) {
+                    timeManager.resetStep();
+                    advance();
+                }
+                scheduler.recalculatePredictedEndTimes();
             };
             ws.addListener(wsListener);
         }
-    }
-
-    /**
-     * This method will move the {@code AssemblyLine} one step forward if it isn't blocked (all the workstations are free of work).
-     * As a result, every {@code CarOrder} will be moved to the next {@code WorkStation} and place a new {@code CarOrder} on the {@code AssemblyLine}.
-     *
-     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
-     * @param simulation When true, the {@code AssemblyLine} will simulate the advance, if not: it will move one step forward in the real-life application.
-     * @return true if the {@code AssemblyLine} has been moved forward one step.
-     */
-    /*
-    public boolean advance(int timeSpent, boolean simulation) {
-        if (simulation) {
-            advance(timeSpent);
-        } else {
+        scheduler.registerListener(order -> {
             if (hasAllCompleted()) {
-                advance(timeSpent);
-                return true;
+                advance();
             }
-            return false;
-        }
-        return true;
+        });
     }
 
-     */
-
-    private void advance(int timeSpent){
+    private void advance() {
         var lastOrder = workStations.getLast().getCarOrder();
+
         moveAllOrders();
         resetAllTasksOfWorkStations();
-        var nextOrder = restartFirstWorkStation();
-        // Notify the scheduler that we have advanced and get the current time
-        var orders = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
-        Collections.reverse(orders);
-        var currentTime = scheduler.advanced(timeSpent, new LinkedList<>(orders));
-        if (lastOrder!= null) {
-            lastOrder.setEndTime(currentTime);
+        restartFirstWorkStation();
+
+        if (lastOrder != null) {
+            lastOrder.setEndTime(timeManager.getCurrentTime());
             lastOrder.setStatus(OrderStatus.Finished);
         }
-        if (nextOrder != null) {
-            nextOrder.setStartTime(currentTime);
-        }
+
+        // Notify the scheduler about our new state
+        var orders = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
+        Collections.reverse(orders);
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(orders));
     }
 
     private void resetAllTasksOfWorkStations() {
         workStations.forEach(WorkStation::resetAllTasks);
     }
 
-    private CarOrder restartFirstWorkStation() {
+    private void restartFirstWorkStation() {
         WorkStation first = workStations.getFirst();
         var nextOrder = scheduler.getNextOrder();
         if (nextOrder != null) {
             nextOrder.setStatus(OrderStatus.OnAssemblyLine);
             first.updateCurrentOrder(nextOrder);
+            nextOrder.setStartTime(timeManager.getCurrentTime());
         }
-        return nextOrder;
     }
 
     /*
@@ -132,11 +121,5 @@ public class AssemblyLine {
             if (!ws.hasCompleted()) return false;
         }
         return true;
-    }
-
-    public AssemblyLine copy() {
-        LinkedList<WorkStation> copyWorkStations = new LinkedList<>();
-        workStations.forEach(w -> copyWorkStations.add(w.copy()));
-        return new AssemblyLine(new LinkedList<>(copyWorkStations), scheduler.copy());
     }
 }

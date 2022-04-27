@@ -6,6 +6,7 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 import domain.scheduler.DateTime;
+import domain.scheduler.TimeManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
@@ -50,7 +51,7 @@ public class MechanicControllerTest {
         var order = TestObjects.getCarOrder();
         mockedWorkStation1.updateCurrentOrder(order);
         mockedWorkStation2.updateCurrentOrder(order);
-        var mockedAssemblyLine = new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1, mockedWorkStation2)), null);
+        var mockedAssemblyLine = new AssemblyLine(new LinkedList<>(List.of(mockedWorkStation1, mockedWorkStation2)), null, new TimeManager());
 
         var mockedMechanicManager = new MechanicManager(mockedAssemblyLine);
         when(managerStore.getMechanicManager()).thenReturn(mockedMechanicManager);

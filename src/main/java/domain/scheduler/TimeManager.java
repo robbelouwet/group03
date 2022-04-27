@@ -1,6 +1,7 @@
 package domain.scheduler;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class TimeManager {
     /**
@@ -9,6 +10,8 @@ public class TimeManager {
      */
     @Getter
     private DateTime currentTime;
+    @Getter
+    private int timeSpentOnThisStep = 0;
 
     public TimeManager() {
         this(new DateTime(60 * 6));
@@ -32,5 +35,24 @@ public class TimeManager {
      */
     public TimeManager copy() {
         return new TimeManager(currentTime);
+    }
+
+    /**
+     * Advance the time to the start of the next day
+     */
+    public void nextDay() {
+        if (currentTime.getMinutesInDay() <= 6*60) currentTime = new DateTime(currentTime.getDays(), 6, 0);
+        else currentTime = new DateTime(currentTime.getDays() + 1, 6, 0);
+    }
+
+    public void timePassedOnStep(int timeSpent) {
+        if (timeSpent > timeSpentOnThisStep) {
+            currentTime = currentTime.addTime(timeSpent - timeSpentOnThisStep);
+            timeSpentOnThisStep = timeSpent;
+        }
+    }
+
+    public void resetStep() {
+        timeSpentOnThisStep = 0;
     }
 }

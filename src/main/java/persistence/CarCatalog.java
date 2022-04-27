@@ -37,7 +37,7 @@ public class CarCatalog {
         var sManual5 = new Option(gearbox, "5 speed manual");
         var sAutomatic5 = new Option(gearbox, "5 speed automatic");
 
-        var engine = new OptionCategory("engine");
+        var engine = new OptionCategory("Engine");
         var standard = new Option(engine, "Standard 2l v4");
         var performance = new Option(engine, "Performance 2.5l v6");
         var ultra = new Option(engine, "Ultra 3l v8");

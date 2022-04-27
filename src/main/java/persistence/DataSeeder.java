@@ -2,6 +2,7 @@ package persistence;
 
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.car.options.OptionCategory;
 import domain.scheduler.FIFOSchedulingAlgorithm;
 import domain.scheduler.SpecificationBatchSchedulingAlgorithm;
 
