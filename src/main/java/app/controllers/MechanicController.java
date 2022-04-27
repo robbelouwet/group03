@@ -1,7 +1,6 @@
 package app.controllers;
 
 import app.ui.interfaces.ICarMechanicView;
-import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import services.AssemblyManager;
 import services.MechanicManager;
@@ -42,7 +41,7 @@ public class MechanicController extends AssemblyLineStatusController {
     public void selectWorkStation(String workStationName){
         mechanicManager.selectWorkStation(workStationName);
         var ws = mechanicManager.getCurrentWorkStation();
-        ui.showAvailableTasks(ws.getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList()));
+        ui.showAvailableTasks(ws.getTasksInformation());
     }
 
     /**
@@ -59,8 +58,8 @@ public class MechanicController extends AssemblyLineStatusController {
      * Finishes the mechanic's current task.
      * Provides the UI with the current workstation's pending tasks, and triggers the UI to show them.
      */
-    public void finishTask(){
-        mechanicManager.finishTask();
+    public void finishTask(int timeSpent){
+        mechanicManager.finishTask(timeSpent);
         ui.showAvailableTasks(mechanicManager.getTaskNames());
     }
 

@@ -29,12 +29,10 @@ public abstract class AssemblyLineStatusController {
 
     public void showAssemblyLineStatus(IAssemblyLineStatusView ui){
         Map<WorkStation, CarOrder> currentOrdersOnAssemblyLine = assemblyManager.getOrdersOnAssemblyLine();
-        Map<WorkStation, CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders();
         Map<WorkStation, List<AssemblyTask>> pendingTasks = assemblyManager.getPendingTasks();
         Map<WorkStation, List<AssemblyTask>> finishedTasks = assemblyManager.getFinishedTasks();
         ui.showAssemblyLineStatus(
                 convertToStringMap(currentOrdersOnAssemblyLine),
-                convertToStringMap(simFinishedOrders),
                 convertToStringList(pendingTasks),
                 convertToStringList(finishedTasks));
     }

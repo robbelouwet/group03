@@ -130,7 +130,9 @@ public class ProductionScheduler {
      * @param minutes The minutes that were spent on the last step
      */
     public DateTime advanced(long minutes, LinkedList<CarOrder> ordersOnAssemblyLine) {
-        timeManager.addTime(Math.max(timeSpentThisCycle, minutes));
+        if (minutes > timeSpentThisCycle) {
+            timeManager.addTime(minutes - timeSpentThisCycle);
+        }
         timeSpentThisCycle = 0;
         this.currentOrdersOnAssemblyLine = ordersOnAssemblyLine;
         recalculatePredictedEndTimes();
@@ -143,8 +145,11 @@ public class ProductionScheduler {
      * @param minutes The amount of time that was spent on the last step
      */
     public void timePassed(long minutes) {
-        timeSpentThisCycle = Math.max(timeSpentThisCycle, minutes);
-        recalculatePredictedEndTimes();
+        if (minutes > timeSpentThisCycle) {
+            timeManager.addTime(minutes - timeSpentThisCycle);
+            timeSpentThisCycle = minutes;
+            recalculatePredictedEndTimes();
+        }
     }
 
     public ProductionScheduler copy() {

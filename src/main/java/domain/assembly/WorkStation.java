@@ -5,6 +5,7 @@ import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,12 +18,19 @@ public class WorkStation {
     private final String name;
     private CarOrder currentOrder;
     private final List<AssemblyTask> tasks;
+    private final List<WorkStationListener> listeners = new ArrayList<>();
 
     /**
      * @return {@code List&#60;AssemblyTask&#62;} all assembly tasks that are assigned to a {@code WorkStation} that still need to be done.
      */
     public List<AssemblyTask> getPendingTasks() {
-        return tasks.stream().filter(t -> !t.isFinished()).collect(Collectors.toList());
+        if (currentOrder == null) return new ArrayList<>();
+        return tasks.stream().filter(t -> !t.isFinished(currentOrder)).collect(Collectors.toList());
+    }
+
+    public List<AssemblyTask> getFinishedTasks() {
+        if (currentOrder == null) return tasks;
+        return tasks.stream().filter(t -> t.isFinished(currentOrder)).collect(Collectors.toList());
     }
 
     /**
@@ -70,7 +78,7 @@ public class WorkStation {
      * @see domain.order.CarOrder#isFinished()
      */
     public boolean hasCompleted() {
-        return currentOrder == null || tasks.stream().allMatch(AssemblyTask::isFinished);
+        return currentOrder == null || tasks.stream().allMatch(t -> t.isFinished(currentOrder));
     }
 
     /**
@@ -109,5 +117,28 @@ public class WorkStation {
     @Override
     public String toString() {
         return "Workstation: [" + this.getName() + "]";
+    }
+
+    public List<String> getTasksInformation() {
+        return getPendingTasks().stream().map(t -> t.getInformation(currentOrder)).collect(Collectors.toList());
+    }
+
+    public void addListener(WorkStationListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(WorkStationListener listener){
+        listeners.remove(listener);
+    }
+
+    public void finishTask(AssemblyTask task, int timeSpent){
+        if (!tasks.contains(task)) throw new IllegalStateException("The task you're trying to finish is not linked with this workstation.");
+        task.finishTask(timeSpent);
+
+        int accumulatedTimeSpentAtWorkStation = tasks.stream().mapToInt(AssemblyTask::getTimeSpent).sum();
+
+        for(WorkStationListener listener: new ArrayList<>(listeners)){
+            listener.finishedTask(accumulatedTimeSpentAtWorkStation);
+        }
     }
 }

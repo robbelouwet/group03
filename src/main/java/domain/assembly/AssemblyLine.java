@@ -1,5 +1,6 @@
 package domain.assembly;
 
+import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class AssemblyLine {
     @Getter
     private final ProductionScheduler scheduler;
 
+
     /**
      * @param workStations The workstations that the {@code AssemblyLine} will contain, in the form of a {@code LinkedList}.
      * @param scheduler    The {@code ProductionScheduler} who provides following car orders.
@@ -27,6 +29,13 @@ public class AssemblyLine {
     public AssemblyLine(LinkedList<WorkStation> workStations, ProductionScheduler scheduler) {
         this.scheduler = scheduler;
         this.workStations = workStations;
+        for (WorkStation ws: workStations){
+            WorkStationListener wsListener = timeSpent -> {
+                if (hasAllCompleted()) advance(timeSpent);
+                else scheduler.timePassed(timeSpent);
+            };
+            ws.addListener(wsListener);
+        }
     }
 
     /**
@@ -37,6 +46,7 @@ public class AssemblyLine {
      * @param simulation When true, the {@code AssemblyLine} will simulate the advance, if not: it will move one step forward in the real-life application.
      * @return true if the {@code AssemblyLine} has been moved forward one step.
      */
+    /*
     public boolean advance(int timeSpent, boolean simulation) {
         if (simulation) {
             advance(timeSpent);
@@ -50,11 +60,13 @@ public class AssemblyLine {
         return true;
     }
 
+     */
+
     private void advance(int timeSpent){
         var lastOrder = workStations.getLast().getCarOrder();
         moveAllOrders();
         resetAllTasksOfWorkStations();
-        restartFirstWorkStation();
+        var nextOrder = restartFirstWorkStation();
         // Notify the scheduler that we have advanced and get the current time
         var orders = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
         Collections.reverse(orders);
@@ -63,19 +75,23 @@ public class AssemblyLine {
             lastOrder.setEndTime(currentTime);
             lastOrder.setStatus(OrderStatus.Finished);
         }
+        if (nextOrder != null) {
+            nextOrder.setStartTime(currentTime);
+        }
     }
 
     private void resetAllTasksOfWorkStations() {
         workStations.forEach(WorkStation::resetAllTasks);
     }
 
-    private void restartFirstWorkStation() {
+    private CarOrder restartFirstWorkStation() {
         WorkStation first = workStations.getFirst();
         var nextOrder = scheduler.getNextOrder();
         if (nextOrder != null) {
             nextOrder.setStatus(OrderStatus.OnAssemblyLine);
             first.updateCurrentOrder(nextOrder);
         }
+        return nextOrder;
     }
 
     /*

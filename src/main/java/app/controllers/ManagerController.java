@@ -40,7 +40,8 @@ public class ManagerController extends AssemblyLineStatusController {
      * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
      */
     public void advanceAssemblyLine(int timeSpent) {
-        boolean success = assemblyManager.advance(timeSpent);
+        //boolean success = assemblyManager.advance(timeSpent);
+        boolean success = true;
         if (!success) ui.showErrorMessage("Assembly line is blocked!");
 
         var ordersOnAssembly = assemblyManager.getOrdersOnAssemblyLine();
