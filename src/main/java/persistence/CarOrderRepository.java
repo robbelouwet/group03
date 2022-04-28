@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 /**
  * A class that is responsible for keeping track of all car orders in our application
  */
@@ -69,4 +71,5 @@ public class CarOrderRepository {
         if (listener == null) throw new IllegalArgumentException();
         listeners.remove(listener);
     }
+
 }
