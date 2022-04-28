@@ -1,25 +1,5 @@
 package app;
 
-import app.controllers.ControllerStore;
-import app.ui.interfaces.IManagerView;
-import app.utils.ConsoleReader;
-import domain.assembly.AssemblyTask;
-import domain.assembly.WorkStation;
-import domain.order.CarOrder;
-import domain.scheduler.DateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
-import persistence.CarOrderRepository;
-import services.ManagerStore;
-import utils.TestObjects;
-
-import java.util.*;
-import java.util.function.Consumer;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 
 public class AdvanceIntegrationTest {
 /*
@@ -91,6 +71,11 @@ public class AdvanceIntegrationTest {
 
             @Override
             public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+
+            }
+
+            @Override
+            public void showStatistics(String statistics) {
 
             }
         };
@@ -171,6 +156,10 @@ public class AdvanceIntegrationTest {
             @Override
             public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
                 // TODO
+            }
+
+            @Override
+            public void showStatistics(String statistics) {
             }
         };
 

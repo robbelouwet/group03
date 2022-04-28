@@ -1,7 +1,6 @@
 package app.controllers;
 
 import app.ui.interfaces.IAssemblyLineStatusView;
-import app.ui.interfaces.IManagerView;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
@@ -10,7 +9,6 @@ import services.AssemblyManager;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyLineStatusController} is responsible for the overlapping use case of showing the
@@ -35,12 +33,6 @@ public abstract class AssemblyLineStatusController {
                 convertToStringMap(currentOrdersOnAssemblyLine),
                 convertToStringList(pendingTasks),
                 convertToStringList(finishedTasks));
-    }
-
-    public void showAssemblyLineStatusAfterMove(Map<WorkStation, CarOrder> ordersOnAssembly, IManagerView ui){
-        ui.showAssemblyLineStatusAfterMove(
-                convertToStringMap(ordersOnAssembly)
-        );
     }
 
     private Map<String, String> convertToStringMap(Map<WorkStation, CarOrder> orders) {

@@ -20,10 +20,15 @@ public class ManagerTextView implements IManagerView {
 
     private void initialize() {
         ConsoleReader.getInstance().println("Hi manager!");
-        var askString = "Select menu option: \n\tAssembly Line Overview [assembly] \n\tScheduling Algorithm Overview [algorithm] \n\tCancel [cancel]:";
+        var askString = """
+                Select menu option:
+                \tAssembly Line Overview [assembly]
+                \tScheduling Algorithm Overview [algorithm]
+                \tShow statistics [statistics]
+                \tCancel [cancel]:""";
         String action = ConsoleReader.getInstance().ask(askString);
 
-        while (!(action.equals("assembly") || action.equals("algorithm") || action.equals("cancel"))) {
+        while (!(action.equals("assembly") || action.equals("algorithm") || action.equals("cancel") || action.equals("statistics"))) {
             ConsoleReader.getInstance().println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask(askString);
         }
@@ -31,26 +36,9 @@ public class ManagerTextView implements IManagerView {
         switch (action) {
             case "assembly" -> managerController.showAssemblyLineOverview();
             case "algorithm" -> managerController.showAlgorithmOverview();
+            case "statistics" -> managerController.getStatistics();
             default -> {
             }
-        }
-    }
-
-    @Override
-    public void confirmMove(int timeSpent) {
-        managerController.advanceAssemblyLine(timeSpent);
-    }
-
-    @Override
-    public void showAdvanceOverview() {
-        String action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
-        while (!(action.equals("yes") || action.equals("no"))) {
-            ConsoleReader.getInstance().println("This is not a valid option.");
-            action = ConsoleReader.getInstance().ask("Advance Assembly Line? [yes] | [no]");
-        }
-        if (action.equals("yes")) {
-            int time = askTimeSpent();
-            confirmMove(time);
         }
     }
 
@@ -76,13 +64,12 @@ public class ManagerTextView implements IManagerView {
             action = ConsoleReader.getInstance().ask(askString);
         }
         if (algorithms.contains(action)) {
-            switch (action) {
-                case "SB" -> {
-                    managerController.showSpecificationBatchOrders(action);
-                }
-                default -> managerController.selectAlgorithm(action, Optional.empty());
+            if ("SB".equals(action)) {
+                managerController.showSpecificationBatchOrders(action);
+            } else {
+                managerController.selectAlgorithm(action, Optional.empty());
             }
-        } else showErrorMessage("This algorithm doesn't exist!");
+        } else if (!action.equals("cancel")) showErrorMessage("This algorithm doesn't exist!");
     }
 
     @Override
@@ -99,11 +86,17 @@ public class ManagerTextView implements IManagerView {
                     .collect(Collectors.joining(", ", i + 1 + ". -> {", "}"));
             ConsoleReader.getInstance().println(optionsString);
         }
+
         int index = askCarOptionsIndex(options.size());
         Map<String, String> selectedOptions = options.get(index - 1);
         boolean success = managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
         if (!success)
             showErrorMessage("Something went wrong with selecting the algorithm!");
+    }
+
+    @Override
+    public void showStatistics(String statistics) {
+        ConsoleReader.getInstance().println(statistics);
     }
 
     /**
@@ -120,21 +113,6 @@ public class ManagerTextView implements IManagerView {
                 result = Integer.parseInt(number);
                 correct = result >= 1 && result <= max;
                 if (!correct) throw new Exception();
-            } catch (Exception e) {
-                ConsoleReader.getInstance().println("That's not a valid number!");
-            }
-        }
-        return result;
-    }
-
-    private int askTimeSpent() {
-        boolean correct = false;
-        int result = 0;
-        while (!correct) {
-            String time = ConsoleReader.getInstance().ask("Time spent in minutes?");
-            try {
-                result = Integer.parseInt(time);
-                correct = result >= 0;
             } catch (Exception e) {
                 ConsoleReader.getInstance().println("That's not a valid number!");
             }

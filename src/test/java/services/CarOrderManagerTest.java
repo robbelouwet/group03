@@ -1,19 +1,15 @@
 package services;
 
 import domain.car.CarModel;
-import domain.car.CarModelSpecification;
 import domain.car.options.OptionSelector;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
-import domain.scheduler.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
 import persistence.CarOrderRepository;
 import utils.TestObjects;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 

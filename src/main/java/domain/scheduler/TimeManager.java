@@ -1,7 +1,6 @@
 package domain.scheduler;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class TimeManager {
     /**

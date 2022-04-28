@@ -1,11 +1,9 @@
 package domain.assembly;
 
-import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
 import lombok.Getter;
-import persistence.CarOrderRepository;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -56,21 +54,16 @@ public class AssemblyLine {
     }
 
     private void advance() {
-        var lastOrder = workStations.getLast().getCarOrder();
+        workStations.getLast().finishCarOrder(timeManager.getCurrentTime());
 
         moveAllOrders();
         resetAllTasksOfWorkStations();
         restartFirstWorkStation();
 
-        if (lastOrder != null) {
-            lastOrder.setEndTime(timeManager.getCurrentTime());
-            lastOrder.setStatus(OrderStatus.Finished);
-        }
-
         // Notify the scheduler about our new state
-        var orders = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
-        Collections.reverse(orders);
-        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(orders));
+        var orders2 = workStations.stream().map(WorkStation::getCarOrder).collect(Collectors.toList());
+        Collections.reverse(orders2);
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(orders2));
     }
 
     private void resetAllTasksOfWorkStations() {

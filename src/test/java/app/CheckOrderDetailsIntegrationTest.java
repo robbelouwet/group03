@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static utils.TestObjects.getCarOrder;
 
 public class CheckOrderDetailsIntegrationTest {
@@ -36,7 +35,7 @@ public class CheckOrderDetailsIntegrationTest {
                     case 3 -> "other"; // 4.a
                     case 4 -> "6";  // This should ask again, since it goes from 0 to 5
                     case 5 -> "5";  // 2
-                    case 6 -> "quit";  // 4
+                    case 6 -> "cancel";  // 4
                     default -> "quit";
                 };
             }
