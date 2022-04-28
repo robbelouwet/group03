@@ -22,19 +22,17 @@ public class ManagerTextView implements IManagerView {
         ConsoleReader.getInstance().println("Hi manager!");
         var askString = """
                 Select menu option:
-                \tAssembly Line Overview [assembly]
                 \tScheduling Algorithm Overview [algorithm]
                 \tShow statistics [statistics]
                 \tCancel [cancel]:""";
         String action = ConsoleReader.getInstance().ask(askString);
 
-        while (!(action.equals("assembly") || action.equals("algorithm") || action.equals("cancel") || action.equals("statistics"))) {
+        while (!(action.equals("algorithm") || action.equals("cancel") || action.equals("statistics"))) {
             ConsoleReader.getInstance().println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask(askString);
         }
 
         switch (action) {
-            case "assembly" -> managerController.showAssemblyLineOverview();
             case "algorithm" -> managerController.showAlgorithmOverview();
             case "statistics" -> managerController.getStatistics();
             default -> {

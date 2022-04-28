@@ -14,7 +14,6 @@ public class CarModel implements Comparable<CarModel> {
     @Getter
     private final String name;
 
-    @Getter
     private final CarModelSpecification modelSpecification;
 
     @Getter

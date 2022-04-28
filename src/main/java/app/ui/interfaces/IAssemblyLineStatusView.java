@@ -19,16 +19,6 @@ public interface IAssemblyLineStatusView {
         printTasks(finishedTasks);
     }
 
-    /**
-     * Shows an overview of the assembly line status after it has been moved forward with one step.
-     *
-     * @param pendingOrders All car orders that still need to be processed on the assembly line.
-     */
-    default void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders){
-        ConsoleReader.getInstance().printf("Assembly Line Status after the Move: %s\n", pendingOrders.size() > 0 ? "" : "Empty");
-        printOrders(pendingOrders);
-    }
-
     private void printOrders(Map<String, String> list) {
         list.forEach((k, v) -> {
             ConsoleReader.getInstance().printf("\tWorkstation %s: ", k);

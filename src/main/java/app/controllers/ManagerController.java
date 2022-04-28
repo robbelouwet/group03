@@ -24,13 +24,6 @@ public class ManagerController extends AssemblyLineStatusController {
     }
 
     /**
-     * Provides the UI with the pending & finished tasks and orders of the assembly line.
-     */
-    public void showAssemblyLineOverview() {
-        showAssemblyLineStatus(ui);
-    }
-
-    /**
      * Method for the UI that retrieves the currently selected scheduling algorithm
      * and all the available algorithms.
      */
