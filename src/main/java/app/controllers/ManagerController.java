@@ -81,7 +81,7 @@ public class ManagerController extends AssemblyLineStatusController {
         List<Map<String, String>> listConversion = new ArrayList<>();
         var options = productionSchedulerManager.getPossibleOrdersForSpecificationBatch();
         for (var map : options){
-            Map<String, String> mapConversion = new HashMap<>();
+            Map<String, String> mapConversion = new LinkedHashMap<>();
             for (var key : map.keySet()){
                    mapConversion.put(key.toString(), map.get(key).toString());
             }
