@@ -50,10 +50,10 @@ public class CheckOrderDetailsTextView implements ICheckOrderDetailsView {
     @Override
     public boolean showDetails(String order) {
         ConsoleReader.getInstance().println(order);
-        var result = ConsoleReader.getInstance().ask("Show another order? [quit] | [other]: ");
-        while (!List.of("quit", "other").contains(result)) {
+        var result = ConsoleReader.getInstance().ask("Show another order? [cancel] | [other]: ");
+        while (!List.of("cancel", "other").contains(result)) {
             result = ConsoleReader.getInstance().ask("Try again: ");
         }
-        return result.equals("quit");
+        return result.equals("cancel");
     }
 }

@@ -51,6 +51,11 @@ public class ManagerControllerTest {
             }
 
             @Override
+            public void showStatistics(String statistics) {
+
+            }
+
+            @Override
             public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
             }
         };

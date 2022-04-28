@@ -93,6 +93,11 @@ public class AdvanceIntegrationTest {
             public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
 
             }
+
+            @Override
+            public void showStatistics(String statistics) {
+
+            }
         };
         controller.setUi(mgrView);
 
@@ -171,6 +176,10 @@ public class AdvanceIntegrationTest {
             @Override
             public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
                 // TODO
+            }
+
+            @Override
+            public void showStatistics(String statistics) {
             }
         };
 

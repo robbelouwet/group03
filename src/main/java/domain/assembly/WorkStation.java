@@ -82,15 +82,6 @@ public class WorkStation {
     }
 
     /**
-     * @param currentTime The current {@code DateTime}
-     * @see domain.order.CarOrder#setEndTime(DateTime currentTime)
-     */
-    public void updateEndTimeOrder(DateTime currentTime) {
-        if (currentOrder != null)
-            currentOrder.setEndTime(currentTime);
-    }
-
-    /**
      * @param order A {@code CarOrder}
      */
     public void updateCurrentOrder(CarOrder order) {
@@ -100,14 +91,13 @@ public class WorkStation {
     /**
      * This method sets the current car order on finished if there is one present.
      */
-    public CarOrder finishCarOrder() {
+    public void finishCarOrder(DateTime currentTime) {
         if (currentOrder != null) {
             currentOrder.setStatus(OrderStatus.Finished);
+            currentOrder.setEndTime(currentTime);
             var order = currentOrder.copy();
             currentOrder = null;
-            return order;
         }
-        return null;
     }
 
     public WorkStation copy() {
