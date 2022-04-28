@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AdaptSchedulingAlgorithmTest {
+public class AdaptSchedulingAlgorithmIntegrationTest {
     CarOrderRepository repo;
     ProductionScheduler scheduler;
     List<CarOrder> orders = new ArrayList<>();
