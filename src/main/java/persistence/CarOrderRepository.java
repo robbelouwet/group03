@@ -60,7 +60,6 @@ public class CarOrderRepository {
     public void registerListener(CarOrderCatalogObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.add(listener);
-        var iets = orders.stream().collect(groupingBy(CarOrder::getEndTime));
     }
 
     /**

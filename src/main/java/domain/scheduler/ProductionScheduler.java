@@ -83,9 +83,11 @@ public class ProductionScheduler {
             return 3;  // This is not a valid scheduling, and we need to backtrack 3 steps
 
         // Now we try to simulate an advance of the assembly line
-        var orderFinished = ordersOnAssemblyLine.pop();  // Remove the order from the assembly line
-        if (orderFinished != null) {
-            orderFinished.setEndTime(endTime);  // Set the predicted end time
+        if (ordersOnAssemblyLine.size() != 0) {
+            var orderFinished = ordersOnAssemblyLine.pop();  // Remove the order from the assembly line
+            if (orderFinished != null) {
+                orderFinished.setEndTime(endTime);  // Set the predicted end time
+            }
         }
 
         CarOrder nextOrderOnLine;
@@ -156,6 +158,7 @@ public class ProductionScheduler {
      * as the current selected algorithm. The algorithm can only be changed if the current one is finished
      * doing its job of scheduling the orders or if it is ready to switch. Some algorithms can be blocked once they're
      * activated.
+     *
      * @param schedulingAlgorithm The new scheduling algorithm that replaces the old one.
      * @return true if the algorithm has been succesfully changed
      */
@@ -163,7 +166,7 @@ public class ProductionScheduler {
         try {
             if (!schedulingAlgorithm.isFinished() && !schedulingAlgorithm.readyToSwitch()) {
                 throw new IllegalStateException("The algorithm couldn't be changed because the current one hasn't finished yet!");
-            } else{
+            } else {
                 this.schedulingAlgorithm = schedulingAlgorithm;
                 return true;
             }

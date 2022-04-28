@@ -219,9 +219,11 @@ public class DataSeeder {
         for (int i = 0; i < orders.size(); i++) {
             orders.get(i).setStatus(OrderStatus.Finished);
             orders.get(i).setOrderTime(new DateTime(startTimes.get(i)));
-            orders.get(i).setStartTime(new DateTime(
+            var startTime = new DateTime(
                     startTimes.get(i) + delays.get(i)
-            ));
+            );
+            orders.get(i).setStartTime(startTime);
+            orders.get(i).setEndTime(startTime.addTime(60 * 3));
         }
 
         return orders;
