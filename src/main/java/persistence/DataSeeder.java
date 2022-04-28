@@ -2,6 +2,9 @@ package persistence;
 
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
+import domain.car.CarModel;
+import domain.car.CarModelSpecification;
+import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
@@ -9,10 +12,7 @@ import domain.scheduler.DateTime;
 import domain.scheduler.FIFOSchedulingAlgorithm;
 import domain.scheduler.SpecificationBatchSchedulingAlgorithm;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataSeeder {
 
@@ -104,7 +104,7 @@ public class DataSeeder {
         /*
          * TODO: Remove this method - pure testing
          */
-        Map<OptionCategory, List<Option>> options = new HashMap<>();
+        Map<OptionCategory, List<Option>> options = new LinkedHashMap<>();
 
         var body = new OptionCategory("Body");
         var color = new OptionCategory("Color");

@@ -39,7 +39,7 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     public DateTime subtractTime(DateTime time) {
-        return subtractTime(time.getMinutesOfHour());
+        return subtractTime(time.getMinutes());
     }
 
     /**

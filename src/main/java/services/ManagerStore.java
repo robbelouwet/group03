@@ -25,12 +25,9 @@ public class ManagerStore {
     public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
         var timemanager = new TimeManager();
-        var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new LinkedList<>(), new FIFOSchedulingAlgorithm());
-        var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
-        this.productionSchedulerManager = new ProductionSchedulerManager(scheduler, timemanager, carOrderRepository);
         var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new FIFOSchedulingAlgorithm());
+        this.productionSchedulerManager = new ProductionSchedulerManager(scheduler, timemanager, carOrderRepository);
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler, timemanager);
-        this.productionSchedulerManager = new ProductionSchedulerManager(scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);
         mechanicManager = new MechanicManager(assemblyLine);
