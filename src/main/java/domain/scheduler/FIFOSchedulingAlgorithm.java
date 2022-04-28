@@ -7,11 +7,6 @@ import java.util.List;
 
 public class FIFOSchedulingAlgorithm implements SchedulingAlgorithm {
     @Override
-    public boolean isFinished(List<CarOrder> pendingOrders) {
-        return false;
-    }
-
-    @Override
     public List<CarOrder> getOrderedListOfPendingOrders(List<CarOrder> carOrders) {
         return carOrders.stream()
                 .sorted(Comparator.comparing(CarOrder::getOrderTime))
@@ -22,6 +17,11 @@ public class FIFOSchedulingAlgorithm implements SchedulingAlgorithm {
     public CarOrder getNextOrder(List<CarOrder> carOrders) {
         var list = getOrderedListOfPendingOrders(carOrders);
         return list.size() > 0 ? list.get(0) : null;
+    }
+
+    @Override
+    public SchedulingAlgorithm nextAlgorithm(List<CarOrder> pendingOrders) {
+        return this;
     }
 
     @Override

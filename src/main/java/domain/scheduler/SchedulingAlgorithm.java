@@ -11,13 +11,6 @@ import java.util.List;
 public interface SchedulingAlgorithm {
 
     /**
-     * Determines when the algorithm is completely done.
-     *
-     * @return false if the algorithm still has pending orders.
-     */
-    boolean isFinished(List<CarOrder> pendingOrders);
-
-    /**
      * This method determines the order in which the pending orders should be processed.
      * Default implementation is ordered by FIFO principle.
      *
@@ -38,4 +31,11 @@ public interface SchedulingAlgorithm {
         if (orders.size() == 0) return null;
         return orders.get(0);
     }
+
+    /**
+     * TODO
+     * @param pendingOrders
+     * @return
+     */
+    SchedulingAlgorithm nextAlgorithm(List<CarOrder> pendingOrders);
 }

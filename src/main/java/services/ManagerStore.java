@@ -22,6 +22,8 @@ public class ManagerStore {
         this(new CarOrderRepository());
     }
 
+
+
     public ManagerStore(CarOrderRepository repository) {
         CarOrderRepository carOrderRepository = repository.copy();
         var timemanager = new TimeManager();

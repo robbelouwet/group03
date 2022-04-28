@@ -52,7 +52,7 @@ public class ProductionSchedulerManager {
      * @return list of scheduling algorithms that are available in the system.
      */
     public List<String> getSchedulingAlgorithms() {
-        return new ArrayList<>(DataSeeder.getSchedulingAlgorithms().keySet());
+        return new ArrayList<>(DataSeeder.getSchedulingAlgorithms().keySet().stream().sorted().toList());
     }
 
     /**

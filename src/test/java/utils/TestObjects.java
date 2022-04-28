@@ -3,14 +3,14 @@ package utils;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.car.CarModel;
+import domain.car.CarModelSpecification;
+import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
 import domain.scheduler.DateTime;
 import persistence.CarCatalog;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TestObjects {
     private final static CarCatalog carCatalog = new CarCatalog();
@@ -29,9 +29,136 @@ public class TestObjects {
         for (var options : selector.getNotSelectedCategories().values()) {
             selector.selectOption(options.get(0));
         }
-        var order =  new CarOrder(model, selector.getSelectedOptions());
+        var order = new CarOrder(model, selector.getSelectedOptions());
         order.setOrderTime(dateTime);
         return order;
+    }
+
+    public static Map<OptionCategory, List<Option>> getCarOptions() {
+        Map<OptionCategory, List<Option>> options = new HashMap<>();
+
+        var body = new OptionCategory("Body");
+        var color = new OptionCategory("Color");
+        var engine = new OptionCategory("Engine");
+        var gearbox = new OptionCategory("Gearbox");
+        var seats = new OptionCategory("Seats");
+        var airco = new OptionCategory("Airco");
+        var wheels = new OptionCategory("Wheels");
+        var spoiler = new OptionCategory("Spoiler");
+
+        options.put(body, List.of(new Option(body, "Sedan"), new Option(body, "Break")));
+        options.put(color, List.of(
+                new Option(color, "Red"),
+                new Option(color, "Blue"),
+                new Option(color, "Green"),
+                new Option(color, "Yellow"),
+                new Option(color, "Black"),
+                new Option(color, "White")));
+        options.put(engine, List.of(new Option(engine, "Standard 2l v4"), new Option(engine, "Performance 2.5l v6"), new Option(engine, "Ultra 3l v8")));
+        options.put(gearbox, List.of(new Option(gearbox, "6 speed manual"), new Option(gearbox, "5 speed manual"), new Option(gearbox, "5 speed automatic")));
+        options.put(seats, List.of(
+                new Option(seats, "Leather black"),
+                new Option(seats, "Leather white"),
+                new Option(seats, "Vinyl grey")));
+        options.put(airco, List.of(new Option(airco, "Manual"), new Option(airco, "Automatic"), new Option(airco, "None")));
+        options.put(wheels, List.of(new Option(wheels, "Comfort"), new Option(wheels, "Sports"), new Option(wheels, "Winter")));
+        options.put(spoiler, List.of(new Option(spoiler, "Low"), new Option(spoiler, "High"), new Option(spoiler, "None")));
+        return options;
+    }
+
+    public static List<CarOrder> getCarOrdersForAlgorithm() {
+        var options = getCarOptions();
+        CarModelSpecification specification = new CarModelSpecification(options);
+
+        var body = new OptionCategory("Body");
+        var color = new OptionCategory("Color");
+        var engine = new OptionCategory("Engine");
+        var gearbox = new OptionCategory("Gearbox");
+        var seats = new OptionCategory("Seats");
+        var airco = new OptionCategory("Airco");
+        var wheels = new OptionCategory("Wheels");
+        var spoiler = new OptionCategory("Spoiler");
+
+        return new ArrayList<>(List.of(
+                new CarOrder(
+                        new CarModel("Ford Fiesta", specification, 60),
+                        Map.of(
+                                new OptionCategory("Body"), new Option(body, "Sedan"),
+                                new OptionCategory("Color"), new Option(color, "Red"),
+                                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+                        )
+                ),
+                new CarOrder(
+                        new CarModel("Ford Fiesta", specification, 60),
+                        Map.of(
+                                new OptionCategory("Body"), new Option(body, "Sedan"),
+                                new OptionCategory("Color"), new Option(color, "Red"),
+                                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+                        )
+                ),
+                new CarOrder(
+                        new CarModel("Ford Fiesta", specification, 10),
+                        Map.of(
+                                new OptionCategory("Body"), new Option(body, "Sedan"),
+                                new OptionCategory("Color"), new Option(color, "Red"),
+                                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+                        )
+                ),
+                new CarOrder(
+                        new CarModel("Ford Fiesta", specification, 60),
+                        Map.of(
+                                new OptionCategory("Body"), new Option(body, "Sedan"),
+                                new OptionCategory("Color"), new Option(color, "Black"),
+                                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+                        )
+                ),
+                new CarOrder(
+                        new CarModel("Ford Fiesta", specification, 50),
+                        Map.of(
+                                new OptionCategory("Body"), new Option(body, "Sedan"),
+                                new OptionCategory("Color"), new Option(color, "Black"),
+                                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+                        )
+                ),
+                new CarOrder(
+                        new CarModel("Ford Fiesta", specification, 70),
+                        Map.of(
+                                new OptionCategory("Body"), new Option(body, "Sedan"),
+                                new OptionCategory("Color"), new Option(color, "Black"),
+                                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+                        )
+                )
+        ));
     }
 
     public static LinkedList<WorkStation> defaultAssemblyLine() {
