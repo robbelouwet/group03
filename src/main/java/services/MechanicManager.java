@@ -62,9 +62,9 @@ public class MechanicManager {
     /**
      * Finish the currently selected task
      */
-    public void finishTask() {
+    public void finishTask(int timeSpent) {
         if (selectedTask == null) throw new IllegalStateException("There is no selected task.");
-        selectedTask.finishTask();
+        currentWorkStation.finishTask(selectedTask, timeSpent);
     }
 
     /**
@@ -72,7 +72,7 @@ public class MechanicManager {
      */
     public List<String> getTaskNames() {
         if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
-        return currentWorkStation.getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList());
+        return currentWorkStation.getTasksInformation();
     }
 
     /**

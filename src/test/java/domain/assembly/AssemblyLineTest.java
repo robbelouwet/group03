@@ -1,6 +1,7 @@
 package domain.assembly;
 
 import domain.scheduler.ProductionScheduler;
+import domain.scheduler.TimeManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 public class AssemblyLineTest {
     private AssemblyLine assemblyLine;
 
+
     @BeforeEach
     public void setup() {
         // We mock the workstations because we ONLY want to test AssemblyLine's behaviour
@@ -21,11 +23,7 @@ public class AssemblyLineTest {
         when(fakeStation.hasCompleted()).thenReturn(true);
 
         assemblyLine = new AssemblyLine(
-                new LinkedList<>(Arrays.asList(fakeStation, fakeStation, fakeStation)), mock(ProductionScheduler.class));
+                new LinkedList<>(Arrays.asList(fakeStation, fakeStation, fakeStation)), mock(ProductionScheduler.class), new TimeManager());
     }
 
-    @Test
-    void advance() {
-        assertTrue(assemblyLine.advance(60, false));
-    }
 }

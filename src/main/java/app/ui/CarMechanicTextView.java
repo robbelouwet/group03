@@ -94,9 +94,25 @@ public class CarMechanicTextView implements ICarMechanicView {
             action = ConsoleReader.getInstance().ask("Finish task [finish] | Cancel [cancel]: ");
         }
         if (action.equals("finish")) {
-            controller.finishTask();
+            int timeSpent = askTimeSpent();
+            controller.finishTask(timeSpent);
         } else {
             controller.showMainMenu();
         }
+    }
+
+    private int askTimeSpent() {
+        boolean correct = false;
+        int result = 0;
+        while (!correct) {
+            String time = ConsoleReader.getInstance().ask("Time spent in minutes?");
+            try {
+                result = Integer.parseInt(time);
+                correct = result >= 0;
+            } catch (Exception e) {
+                ConsoleReader.getInstance().println("That's not a valid number!");
+            }
+        }
+        return result;
     }
 }

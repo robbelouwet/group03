@@ -5,6 +5,7 @@ import domain.car.CarModelSpecification;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
+import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import persistence.CarCatalog;
 

@@ -29,12 +29,10 @@ public abstract class AssemblyLineStatusController {
 
     public void showAssemblyLineStatus(IAssemblyLineStatusView ui){
         Map<WorkStation, CarOrder> currentOrdersOnAssemblyLine = assemblyManager.getOrdersOnAssemblyLine();
-        Map<WorkStation, CarOrder> simFinishedOrders = assemblyManager.getSimulatedOrders();
         Map<WorkStation, List<AssemblyTask>> pendingTasks = assemblyManager.getPendingTasks();
         Map<WorkStation, List<AssemblyTask>> finishedTasks = assemblyManager.getFinishedTasks();
         ui.showAssemblyLineStatus(
                 convertToStringMap(currentOrdersOnAssemblyLine),
-                convertToStringMap(simFinishedOrders),
                 convertToStringList(pendingTasks),
                 convertToStringList(finishedTasks));
     }
@@ -57,7 +55,7 @@ public abstract class AssemblyLineStatusController {
      */
     private Map<String, List<String>> convertToStringList(Map<WorkStation, List<AssemblyTask>> pendingTasks) {
         Map<String, List<String>> tasks = new LinkedHashMap<>();
-        pendingTasks.forEach((k, v) -> tasks.put(k.getName(), v.stream().map(AssemblyTask::toString).collect(Collectors.toList())));
+        pendingTasks.forEach((k, v) -> tasks.put(k.getName(), k.getTasksInformation(v) ));
         return tasks;
     }
 }

@@ -26,7 +26,7 @@ public class ManagerStore {
         CarOrderRepository carOrderRepository = repository.copy();
         var timemanager = new TimeManager();
         var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new FIFOSchedulingAlgorithm());
-        var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
+        var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler, timemanager);
         this.productionSchedulerManager = new ProductionSchedulerManager(scheduler);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);

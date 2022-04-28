@@ -23,13 +23,8 @@ public class AssemblyManager {
         assemblyLine = aline;
     }
 
-    /**
-     * This method will try to advance the assembly line forward with one step.
-     *
-     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
-     */
-    public boolean advance(int timeSpent) {
-        return assemblyLine.advance(timeSpent, false);
+    private interface WorkStationTaskMapper {
+        List<AssemblyTask> wsToTasks(WorkStation ws);
     }
 
     /**
@@ -39,7 +34,7 @@ public class AssemblyManager {
      * This means that the collection holds the pending assembly tasks per workstation.
      */
     public Map<WorkStation, List<AssemblyTask>> getPendingTasks() {
-        return getFilteredTasks(t -> !t.isFinished());
+        return getFilteredTasks(WorkStation::getPendingTasks);
     }
 
     /**
@@ -49,33 +44,20 @@ public class AssemblyManager {
      * This means that the collection holds the finished assembly tasks per workstation.
      */
     public Map<WorkStation, List<AssemblyTask>> getFinishedTasks() {
-        return getFilteredTasks(AssemblyTask::isFinished);
+        return getFilteredTasks(WorkStation::getFinishedTasks);
     }
 
-    private Map<WorkStation, List<AssemblyTask>> getFilteredTasks(Predicate<AssemblyTask> predicate) {
+    private Map<WorkStation, List<AssemblyTask>> getFilteredTasks(WorkStationTaskMapper workStationTaskMapper) {
         Map<WorkStation, List<AssemblyTask>> pendingTasks = new LinkedHashMap<>();
         for (WorkStation ws : assemblyLine.getWorkStations()) {
             if (ws.getCarOrder() != null) {
-                List<AssemblyTask> pTasks = new ArrayList<>(ws.getAllTasks().stream().filter(predicate).map(AssemblyTask::copy).toList());
+                List<AssemblyTask> pTasks = workStationTaskMapper.wsToTasks(ws).stream().map(AssemblyTask::copy).toList();
                 if (pTasks.size() > 0) {
                     pendingTasks.put(ws.copy(), pTasks);
                 }
             }
         }
         return pendingTasks;
-    }
-
-    /**
-     * This method retrieves the new pending orders after the assembly line WOULD have moved.
-     * This means that this is a best-case scenario and will retrieve all the pending orders but the {@code CarOrder} of the last workstation.
-     *
-     * @return {@code Map&#60;WorkStation, CarOrder&#62;} All car orders that still need to be processed on the
-     * assembly line without the car orders that would be finished after the assembly line moves one step forward.
-     */
-    public Map<WorkStation, CarOrder> getSimulatedOrders() {
-        AssemblyLine copy = assemblyLine.copy();
-        copy.advance(0, true);
-        return getOrdersOnAssemblyLine(copy);
     }
 
     public Map<WorkStation, CarOrder> getOrdersOnAssemblyLine() {

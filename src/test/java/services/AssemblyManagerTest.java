@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class AssemblyManagerTest {
     private AssemblyManager assemblyManager;
-
+/*
     @BeforeEach
     public void setup() {
         // mock an AssemblyManager
@@ -52,4 +52,6 @@ public class AssemblyManagerTest {
     void advance() {
         assertTrue(assemblyManager.advance(60));
     }
+
+ */
 }
