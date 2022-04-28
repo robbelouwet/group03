@@ -1,7 +1,17 @@
 package app;
 
+
+import app.ui.AppTextView;
+import app.utils.ConsoleReader;
+import app.utils.IConsoleReader;
+import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class PerformTasksIntegrationTest {
-    /*
+
     @Test
     public void uiTest_withTwoOrdersMade_NothingOnTheAssemblyLine() {
         ConsoleReader.setInstance(new IConsoleReader() {
@@ -14,8 +24,8 @@ public class PerformTasksIntegrationTest {
 
                 // garage holder logs in, places two orders, logs out
                 inputs.add("garage holder");
-                inputs.addAll(getInputsBasicOrder());
-                inputs.addAll(getInputsBasicOrder());
+                inputs.addAll(getInputsBasicOrderForModelA());
+                inputs.addAll(getInputsBasicOrderForModelC());
                 inputs.add("cancel");
 
                 // mechanic logs in, logs out
@@ -34,11 +44,21 @@ public class PerformTasksIntegrationTest {
             @Override
             public void println(String l) {
                 // nothing on assemblyLine yet, so no print after "Available workstations:"
-                assertTrue(prints <= 67);
+                assertTrue(prints <= 87);
                 switch (prints++) {
-                    case 32, 63 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:0, status=Pending}", l);
-                    case 64 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:0, status=Pending}", l);
-                    case 67 -> assertEquals("Available workstations:", l);
+                    // after the first order, order for model A is the only one
+                    case 44 -> assertEquals("Predicted end time: Day 0, 08:30", l);
+                    case 45 -> assertEquals("Pending orders:", l);
+                    case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=OnAssemblyLine}", l);
+                    case 47 -> assertEquals("Finished orders:", l);
+
+                    // after the second order
+                    case 82 -> assertEquals("Predicted end time: Day 0, 09:50", l);
+                    case 83 -> assertEquals("Pending orders:", l);
+                    // endTime for order model A should now be delayed by 20 minutes (model C takes 10' longer/WS on average)
+                    case 84 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:50, status=OnAssemblyLine}", l);
+                    case 85 -> assertEquals("Order (Model C): orderTime=Day 0, 06:00, endTime=Day 0, 09:50, status=Pending}", l);
+                    case 86 -> assertEquals("Finished orders:", l);
                 }
             }
 
@@ -56,7 +76,7 @@ public class PerformTasksIntegrationTest {
     }
 
     @Test
-    public void uiTest_withTwoOrdersMade_AdvancedOnce() {
+    public void uiTest_withTwoOrdersMade_AutomaticallyAdvancedOnce() {
         ConsoleReader.setInstance(new IConsoleReader() {
             int number = 0;
             int prints = 0;
@@ -68,16 +88,14 @@ public class PerformTasksIntegrationTest {
 
                 // garage holder logs in, places two orders, logs out
                 inputs.add("garage holder");
-                inputs.addAll(getInputsBasicOrder());
-                inputs.addAll(getInputsBasicOrder());
+                inputs.addAll(getInputsBasicOrderForModelA());
+                inputs.addAll(getInputsBasicOrderForModelC());
                 inputs.add("cancel");
 
-                // manager logs in, advances the assembly line, logs out
-                inputs.add("manager");
-                inputs.addAll(getInputsAdvance());
-
-                // mechanic logs in, logs out
+                // mechanic logs in, finishes all task at the first workstation
+                // so the assemblyLine advances and the second order's status will be OnAssemblyLine
                 inputs.add("mechanic");
+                inputs.addAll(getInputsFinishingAllTasksAtFirstWorkStation());
                 inputs.add("cancel");
 
                 inputs.add("quit");
@@ -92,112 +110,49 @@ public class PerformTasksIntegrationTest {
             public void println(String l) {
                 // manager moved the assemblyLine ONCE,
                 // so only the first workstation will be available, no prints after
-                assertTrue(prints <= 77);
+                assertTrue(prints <= 111);
                 switch (prints++) {
-                    case 32, 63 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 9:0, status=Pending}", l);
-                    case 64 -> assertEquals("Order (Ford Fiesta): startTime=Day 0, 6:0, endTime=Day 0, 10:0, status=Pending}", l);
-                    case 76, 72 -> assertEquals("Available workstations:", l);
-                    case 77, 73 -> assertEquals("- Workstation [Car Body Post]", l);
-                }
-            }
+                    case 44 -> assertEquals("Predicted end time: Day 0, 08:30", l);
+                    case 45 -> assertEquals("Pending orders:", l);
+                    case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=OnAssemblyLine}", l);
+                    case 47 -> assertEquals("Finished orders:", l);
 
-            @Override
-            public void print(String s) {
-            }
+                    // after the second order
+                    case 82 -> assertEquals("Predicted end time: Day 0, 09:50", l);
+                    case 83 -> assertEquals("Pending orders:", l);
+                    // endTime for order model A should now be delayed by 20 minutes (model C takes 10' longer/WS on average)
+                    case 84 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:50, status=OnAssemblyLine}", l);
+                    case 85 -> assertEquals("Order (Model C): orderTime=Day 0, 06:00, endTime=Day 0, 09:50, status=Pending}", l);
+                    case 86 -> assertEquals("Finished orders:", l);
 
-            @Override
-            public void printf(String format, Object obj) {
+                    // before finishing tasks at WorkStation [Car Body Post]
+                    case 88 -> assertEquals("Available workstations:", l);
+                    case 89 -> assertEquals("- Workstation [Car Body Post]", l);
+                    case 90 -> assertEquals("Available workstation tasks:", l);
+                    case 91 -> assertEquals("-Task [Assembly car body]: Sedan (pending)", l);
+                    case 92 -> assertEquals("-Task [Paint car]: Red (pending)", l);
 
-            }
-        });
-        var view = new AppTextView();
-        view.start();
-    }
+                    // mechanic selects first task and finishes it in 20 minutes
+                    case 93 -> assertEquals("Task [Assembly car body]: Sedan (pending)", l);
 
-    @Test
-    public void uiTest_withTwoOrdersMade_AdvancedOnce_CompleteTasks() {
-        ConsoleReader.setInstance(new IConsoleReader() {
-            int number = 0;
-            int prints = 0;
+                    case 97 -> assertEquals("Available workstation tasks:", l);
+                    case 98 -> assertEquals("-Task [Paint car]: Red (pending)", l);
 
-            @Override
-            public String ask(String str) {
-                List<String> inputs = new ArrayList<>();
+                    // mechanic selects second task and finishes it in 20 minutes
+                    case 99 -> assertEquals("Task [Paint car]: Red (pending)", l);
 
-                // garage holder logs in, places two orders, logs out
-                inputs.add("garage holder");
-                inputs.addAll(getInputsBasicOrder());
-                inputs.addAll(getInputsBasicOrder());
-                inputs.add("cancel");
+                    case 106 -> assertEquals("Available workstation tasks:", l);
 
-                // manager logs in, advances the assembly line, logs out
-                inputs.add("manager");
-                inputs.addAll(getInputsAdvance());
-                inputs.add("cancel");
+                    // after all tasks have been completed, the assemblyline advances automatically
+                    // and the tasks for the next order are now pending at the workstation
+                    case 107 -> assertEquals("-Task [Assembly car body]: Sport (pending)", l);
+                    case 108 -> assertEquals("-Task [Paint car]: Black (pending)", l);
 
-                // mechanic logs in, finishes tasks, logs out
-                inputs.add("mechanic");
-                inputs.add("Car Body Post"); // see 2 tasks
-                inputs.add("Assembly car body"); // see actions for task
-                inputs.add("finish"); // see only second task
-
-                inputs.add("cancel"); // workstation should still be available
-                inputs.add("Car Body Post"); // see 1 tasks
-                inputs.add("Paint car");
-                inputs.add("finish"); // no more tasks
-                inputs.add("cancel"); // no more available work stations
-                inputs.add("cancel");
-
-                inputs.add("quit");
-
-                if (number >= inputs.size()) {
-                    return "quit";
-                }
-
-                return inputs.get(number++);
-            }
-
-            @Override
-            public void println(String l) {
-                // manager moved the assemblyLine ONCE,
-                // so only the first workstation will be available, no prints after
-                assertTrue(prints <= 99);
-                switch (prints++) {
-                    case 69 -> assertEquals("Available workstations:", l);
-                    case 70 -> assertEquals("- Workstation [Car Body Post]", l);
-                    // Car Body Post
-                    case 71 -> assertEquals("Available workstation tasks:", l);
-                    case 72 -> assertEquals("-Task [Assembly car body]: is pending", l);
-                    case 73 -> assertEquals("-Task [Paint car]: is pending", l);
-                    // Assembly car body
-                    case 74 -> assertEquals("Task [Assembly car body]: is pending", l);
-                    case 75 -> assertEquals("Actions to complete this task:", l);
-                    case 76 -> assertEquals("-Lift the body shell onto the chassis frame.", l);
-                    case 77 -> assertEquals("-Bolt the shell and the frame together.", l);
-                    // finish
-                    case 78 -> assertEquals("Available workstation tasks:", l);
-                    case 79 -> assertEquals("-Task [Paint car]: is pending", l);
-                    // cancel (to see if workstation is still available)
-                    case 80 -> assertEquals("Available workstations:", l);
-                    case 81 -> assertEquals("- Workstation [Car Body Post]", l);
-                    // Car Body Post
-                    case 82 -> assertEquals("Available workstation tasks:", l);
-                    case 83 -> assertEquals("-Task [Paint car]: is pending", l);
-                    // Paint car
-                    case 84 -> assertEquals("Task [Paint car]: is pending", l);
-                    case 85 -> assertEquals("Actions to complete this task:", l);
-                    case 86 -> assertEquals("-Make sure the car is clean, remove dust  if not.", l);
-                    case 87 -> assertEquals("-Sand the body.", l);
-                    case 88 -> assertEquals("-Clean it.", l);
-                    case 89 -> assertEquals("-Tape the surfaces.", l);
-                    case 90 -> assertEquals("-Paint the car.", l);
-                    // finish
-                    case 91 -> assertEquals("Available workstation tasks:", l);
-                    // no more tasks, next print is
-                    // cancel
-                    case 92 -> assertEquals("Available workstations:", l);
-                    // no more available workstations, this will be the last print, so print <= 99
-
+                    // the mechanic goes back to the selectWorkstation menu
+                    // now there are 2 Workstations to work on
+                    case 109 -> assertEquals("Available workstations:", l);
+                    case 110 -> assertEquals("- Workstation [Car Body Post]", l);
+                    case 111 -> assertEquals("- Workstation [Drivetrain Post]", l);
                 }
             }
 
@@ -215,28 +170,54 @@ public class PerformTasksIntegrationTest {
     }
 
 
-    private List<String> getInputsBasicOrder() {
+    private List<String> getInputsBasicOrderForModelA() {
         return Arrays.asList(
                 "order",
-                "Ford Fiesta",
-                "manual",
-                "comfort",
-                "red",
+                "order",
+                "Model A",
+                "Sedan",
+                "Red",
+                "Standard 2l v4",
                 "6 speed manual",
-                "sedan",
-                "standard",
-                "leather black",
+                "Vinyl grey",
+                "Manual",
+                "Winter",
+                "None",
                 "confirm"
         );
     }
 
-
-    private List<String> getInputsAdvance() {
+    private List<String> getInputsBasicOrderForModelC() {
         return Arrays.asList(
-                "yes",
-                "30"
+                "order",
+                "order",
+                "Model C",
+                "Sport",
+                "Black",
+                "Ultra 3l v8",
+                "6 speed manual",
+                "Leather white",
+                "Manual",
+                "Winter",
+                "Low",
+                "confirm"
         );
     }
 
-     */
+    private List<String> getInputsFinishingAllTasksAtFirstWorkStation() {
+        return Arrays.asList(
+                "tasks",
+                "Car Body Post",
+                "Assembly car body",
+                "finish",
+                "20",
+                "Paint car",
+                "finish",
+                "20",
+                "cancel"
+
+        );
+    }
+
+
 }

@@ -18,6 +18,16 @@ public class TestObjects {
     public static CarOrder getCarOrder() {
         var model = carCatalog.getModels().get(0);
         return getCarOrder(model);
+        // this results in a car order for following model
+        // Model A
+        // body: Sedan
+        // color: Red
+        // engine: Standard 2l v4
+        // gearbox: 6 speed manual
+        // seats: Leather white
+        // airco: Manual
+        // wheels: Winter
+        // spoiler: None
     }
 
     public static CarOrder getCarOrder(CarModel model) {
