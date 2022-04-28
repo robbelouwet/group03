@@ -36,11 +36,11 @@ class ProductionSchedulerManagerTest {
 
         var s = PSManager.getStatistics();
 
-        assertEquals(s.lastDelay(), 1500L);
-        assertEquals(s.secondLastDelay(), 1500L);
+        assertEquals(s.lastDelay(), 60L);
+        assertEquals(s.secondLastDelay(), 60L);
 
-        assertEquals(s.averageDelay(), 2230.0f);
-        assertEquals(s.medianDelay(), 2880L);
+        assertEquals(s.averageDelay(), 70.0);
+        assertEquals(s.medianDelay(), 60L);
 
         assertEquals(s.ordersFinishedYesterday(), 3L);
         assertEquals(s.ordersFinishedDayBefore(), 3L);
