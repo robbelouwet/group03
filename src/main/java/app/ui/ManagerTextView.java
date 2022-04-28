@@ -20,10 +20,15 @@ public class ManagerTextView implements IManagerView {
 
     private void initialize() {
         ConsoleReader.getInstance().println("Hi manager!");
-        var askString = "Select menu option: \n\tAssembly Line Overview [assembly] \n\tScheduling Algorithm Overview [algorithm] \n\tCancel [cancel]:";
+        var askString = """
+                Select menu option:
+                \tAssembly Line Overview [assembly]
+                \tScheduling Algorithm Overview [algorithm]
+                \tShow statistics [statistics]
+                \tCancel [cancel]:""";
         String action = ConsoleReader.getInstance().ask(askString);
 
-        while (!(action.equals("assembly") || action.equals("algorithm") || action.equals("cancel"))) {
+        while (!(action.equals("assembly") || action.equals("algorithm") || action.equals("cancel") || action.equals("statistics"))) {
             ConsoleReader.getInstance().println("This is not a valid option.");
             action = ConsoleReader.getInstance().ask(askString);
         }
@@ -31,6 +36,7 @@ public class ManagerTextView implements IManagerView {
         switch (action) {
             case "assembly" -> managerController.showAssemblyLineOverview();
             case "algorithm" -> managerController.showAlgorithmOverview();
+            case "statistics" -> managerController.getStatistics();
             default -> {
             }
         }
@@ -105,6 +111,11 @@ public class ManagerTextView implements IManagerView {
         boolean success = managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
         if (!success)
             showErrorMessage("Something went wrong with selecting the algorithm!");
+    }
+
+    @Override
+    public void showStatistics(String statistics) {
+        ConsoleReader.getInstance().println(statistics);
     }
 
     /**

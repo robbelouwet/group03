@@ -4,6 +4,7 @@ import app.ui.interfaces.IManagerView;
 import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
 import services.ProductionSchedulerManager;
+import services.Statistics;
 
 import java.util.*;
 
@@ -58,7 +59,8 @@ public class ManagerController extends AssemblyLineStatusController {
 
     /**
      * The user has chosen an algorithm and it has to be altered now.
-     * @param algorithm The textual representation of the chosen algorithm.
+     *
+     * @param algorithm       The textual representation of the chosen algorithm.
      * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
      *                        Car Options need priority.
      *                        Will be Optional.empty() if the algorithm doesn't need this.
@@ -75,6 +77,7 @@ public class ManagerController extends AssemblyLineStatusController {
 
     /**
      * Method for the UI that retrieves the possible car options to give priority to.
+     *
      * @param algorithm The textual representation of the chosen algorithm.
      */
     public void showSpecificationBatchOrders(String algorithm) {
@@ -88,5 +91,13 @@ public class ManagerController extends AssemblyLineStatusController {
             listConversion.add(mapConversion);
         }
         ui.showPossibleOptionsForAlgorithm(listConversion, algorithm);
+    }
+
+    public void getStatistics(){
+        var stats = productionSchedulerManager.getStatistics();
+        if (stats != null)
+            ui.showStatistics(stats.toString());
+        else
+            ui.showErrorMessage("No Cars were produced!");
     }
 }
