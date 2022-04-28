@@ -33,9 +33,10 @@ public interface SchedulingAlgorithm {
     }
 
     /**
-     * TODO
-     * @param pendingOrders
-     * @return
+     * This method decides which instance of a Scheduling ALgorithm to change to when this instance is finished (no orders to process anymore)
+     *
+     * @param pendingOrders The pending orders in the system
+     * @return The Scheduling Algorithm instance to change to
      */
     SchedulingAlgorithm nextAlgorithm(List<CarOrder> pendingOrders);
 }
