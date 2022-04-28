@@ -1,20 +1,5 @@
 package services;
 
-import domain.assembly.AssemblyLine;
-import domain.assembly.AssemblyTask;
-import domain.assembly.WorkStation;
-import domain.order.CarOrder;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 public class AssemblyManagerTest {
     private AssemblyManager assemblyManager;
 /*

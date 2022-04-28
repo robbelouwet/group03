@@ -32,8 +32,8 @@ public class CheckAssemblyLineStatusIntegrationTest {
 
             @Override
             public void println(String l) {
-                switch (prints++) {
-                    case 0 -> assertEquals("Hi mechanic!", l);
+                if (prints++ == 0) {
+                    assertEquals("Hi mechanic!", l);
                 }
             }
 
@@ -91,8 +91,8 @@ public class CheckAssemblyLineStatusIntegrationTest {
 
             @Override
             public void println(String l) {
-                switch (prints++) {
-                    case 0 -> assertEquals("Hi mechanic!", l);
+                if (prints++ == 0) {
+                    assertEquals("Hi mechanic!", l);
                 }
             }
 

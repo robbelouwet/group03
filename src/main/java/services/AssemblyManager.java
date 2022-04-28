@@ -5,12 +5,9 @@ import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyManager} is responsible for the {@code AssemblyLine}.
@@ -72,9 +69,5 @@ public class AssemblyManager {
             }
         }
         return ordersOnAssembly;
-    }
-
-    public List<WorkStation> getBusyWorkStations() {
-        return assemblyLine.getBusyWorkstations().stream().map(WorkStation::copy).collect(Collectors.toList());
     }
 }

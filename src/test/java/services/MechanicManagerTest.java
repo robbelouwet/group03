@@ -1,18 +1,6 @@
 package services;
 
-import domain.assembly.AssemblyLine;
-import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
-import domain.order.CarOrder;
-import domain.scheduler.DateTime;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
-import utils.TestObjects;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MechanicManagerTest {
     private MechanicManager mechanicManager;

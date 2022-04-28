@@ -132,7 +132,7 @@ public class DataSeeder {
         CarModelSpecification specification = new CarModelSpecification(options);
 
 
-        List<CarOrder> testOrders = new ArrayList<>(List.of(
+        return new ArrayList<>(List.of(
                 new CarOrder(
                         new CarModel("Ford Fiesta", specification, 60),
                         Map.of(
@@ -206,7 +206,6 @@ public class DataSeeder {
                         )
                 )
         ));
-        return testOrders;
     }
 
     public static List<CarOrder> delayedTestOrders() {

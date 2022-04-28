@@ -1,15 +1,5 @@
 package domain.assembly;
 
-import domain.order.CarOrder;
-import domain.order.OrderStatus;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class WorkStationTest {
     private WorkStation station;
     AssemblyTask mockedTask1;

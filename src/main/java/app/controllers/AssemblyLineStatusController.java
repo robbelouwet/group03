@@ -10,7 +10,6 @@ import services.AssemblyManager;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyLineStatusController} is responsible for the overlapping use case of showing the

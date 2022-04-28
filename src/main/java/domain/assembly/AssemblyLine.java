@@ -1,11 +1,9 @@
 package domain.assembly;
 
-import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
 import lombok.Getter;
-import persistence.CarOrderRepository;
 
 import java.util.Collections;
 import java.util.LinkedList;

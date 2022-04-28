@@ -1,28 +1,6 @@
 package app.controllers;
 
-import app.ui.interfaces.ICarMechanicView;
-import domain.assembly.AssemblyLine;
-import domain.assembly.AssemblyTask;
-import domain.assembly.WorkStation;
-import domain.order.CarOrder;
-import domain.scheduler.DateTime;
-import domain.scheduler.TimeManager;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import persistence.CarCatalog;
-import services.AssemblyManager;
 import services.ManagerStore;
-import services.MechanicManager;
-import utils.TestObjects;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 
 public class MechanicControllerTest {

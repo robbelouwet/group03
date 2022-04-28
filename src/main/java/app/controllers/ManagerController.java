@@ -4,7 +4,6 @@ import app.ui.interfaces.IManagerView;
 import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
 import services.ProductionSchedulerManager;
-import services.Statistics;
 
 import java.util.*;
 
@@ -12,13 +11,11 @@ import java.util.*;
  * Class {@code ManagerController} is responsible for the communication between the UI and the Domain.
  */
 public class ManagerController extends AssemblyLineStatusController {
-    private final AssemblyManager assemblyManager;
     private final ProductionSchedulerManager productionSchedulerManager;
     private IManagerView ui;
 
     ManagerController(AssemblyManager assemblyManager, ProductionSchedulerManager productionSchedulerManager) {
         super(assemblyManager);
-        this.assemblyManager = assemblyManager;
         this.productionSchedulerManager = productionSchedulerManager;
     }
 
@@ -31,21 +28,6 @@ public class ManagerController extends AssemblyLineStatusController {
      */
     public void showAssemblyLineOverview() {
         showAssemblyLineStatus(ui);
-        ui.showAdvanceOverview();
-    }
-
-    /**
-     * This method will try to advance the assembly line forward with one step.
-     * If the assembly line has been successfully moved forward, this method will show an overview of the new assembly line status.
-     *
-     * @param timeSpent The time that was spent during the current phase in minutes (normally, a phase lasts 1 hour).
-     */
-    public void advanceAssemblyLine(int timeSpent) {
-        //boolean success = assemblyManager.startDay();
-        if (false) ui.showErrorMessage("Assembly line is blocked!");
-
-        var ordersOnAssembly = assemblyManager.getOrdersOnAssemblyLine();
-        showAssemblyLineStatusAfterMove(ordersOnAssembly, ui);
     }
 
     /**

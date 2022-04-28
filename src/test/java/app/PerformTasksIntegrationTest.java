@@ -1,16 +1,5 @@
 package app;
 
-import app.ui.AppTextView;
-import app.utils.ConsoleReader;
-import app.utils.IConsoleReader;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class PerformTasksIntegrationTest {
     /*
     @Test

@@ -3,17 +3,14 @@ package domain.assembly;
 import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class AssemblyLineTest {
-    private AssemblyLine assemblyLine;
 
 
     @BeforeEach
@@ -22,7 +19,7 @@ public class AssemblyLineTest {
         var fakeStation = mock(WorkStation.class);
         when(fakeStation.hasCompleted()).thenReturn(true);
 
-        assemblyLine = new AssemblyLine(
+        AssemblyLine assemblyLine = new AssemblyLine(
                 new LinkedList<>(Arrays.asList(fakeStation, fakeStation, fakeStation)), mock(ProductionScheduler.class), new TimeManager());
     }
 

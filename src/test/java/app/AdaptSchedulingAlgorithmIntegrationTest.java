@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AdaptSchedulingAlgorithmIntegrationTest {
     CarOrderRepository repo;
     ProductionScheduler scheduler;
-    List<CarOrder> orders = new ArrayList<>();
+    final List<CarOrder> orders = new ArrayList<>();
 
     @BeforeEach
     void setup() {

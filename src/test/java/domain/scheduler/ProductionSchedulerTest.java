@@ -19,7 +19,7 @@ class ProductionSchedulerTest {
     CarOrderRepository repo;
     ProductionScheduler scheduler;
     TimeManager timeManager;
-    List<CarOrder> orders = new ArrayList<>();
+    final List<CarOrder> orders = new ArrayList<>();
 
     @BeforeEach
     void setup() {

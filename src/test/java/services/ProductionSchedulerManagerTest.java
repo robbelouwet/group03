@@ -5,11 +5,8 @@ import domain.scheduler.ProductionScheduler;
 import domain.scheduler.TimeManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
