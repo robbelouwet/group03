@@ -56,14 +56,14 @@ public class CarCatalog {
         var sport = new Option(body, "Sport");
 
         Map<Option, Map<OptionCategory, List<Option>>> bodyRule = new LinkedHashMap<>();
-        Map<OptionCategory, List<Option>> sportsRules = new HashMap<>();
+        Map<OptionCategory, List<Option>> sportsRules = new LinkedHashMap<>();
         sportsRules.put(spoiler, List.of(low, high));  // If you select a sport body, a spoiler is also mandatory
         sportsRules.put(engine, List.of(performance, ultra));  // If you select a sport body, you must also select the performance or ultra engine.
         bodyRule.put(sport, sportsRules);
         body.setOptionCategoryRule(new OptionCategoryRule(bodyRule));
 
         Map<Option, Map<OptionCategory, List<Option>>> engineRule = new LinkedHashMap<>();
-        Map<OptionCategory, List<Option>> ultraRules = new HashMap<>();
+        Map<OptionCategory, List<Option>> ultraRules = new LinkedHashMap<>();
         ultraRules.put(airco, List.of(manual, noAirco));  // If you select the ultra engine, you can only fit the manual airco into your car.
         engineRule.put(ultra, ultraRules);
         engine.setOptionCategoryRule(new OptionCategoryRule(engineRule));

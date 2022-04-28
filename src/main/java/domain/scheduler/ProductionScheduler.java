@@ -64,7 +64,8 @@ public class ProductionScheduler {
      */
     public CarOrder getNextOrder() {
         var orders = getPendingOrders();
-        if (schedulingAlgorithm.isFinished(orders)) schedulingAlgorithm = new FIFOSchedulingAlgorithm();
+        // What if scheduling algorithm ends and needs to change to another one?
+        schedulingAlgorithm = schedulingAlgorithm.nextAlgorithm(orders);
         var order = schedulingAlgorithm.getNextOrder(orders);
         // If this order will be finished the next day
         if (order != null && order.getEndTime().getDays() > timeManager.getCurrentTime().getDays()) {

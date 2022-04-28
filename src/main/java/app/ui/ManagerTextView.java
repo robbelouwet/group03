@@ -82,7 +82,7 @@ public class ManagerTextView implements IManagerView {
                 }
                 default -> managerController.selectAlgorithm(action, Optional.empty());
             }
-        } else showErrorMessage("This algorithm doesn't exist!");
+        } else if (!action.equals("cancel")) showErrorMessage("This algorithm doesn't exist!");
     }
 
     @Override

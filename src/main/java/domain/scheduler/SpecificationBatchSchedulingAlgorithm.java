@@ -17,12 +17,12 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
         this.selectedOptions = selectedOptions;
     }
 
-    @Override
+
     /*
       The Specification-Batch Algorithm is only finished when there are
       no pending orders in remainingOrders any longer.
      */
-    public boolean isFinished(List<CarOrder> pendingOrders) {
+    private boolean isFinished(List<CarOrder> pendingOrders) {
         return pendingOrders.stream()
                 .noneMatch(o -> o.getSelections().equals(selectedOptions));
     }
@@ -37,6 +37,11 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
                         .filter(o -> !o.getSelections().equals(selectedOptions))
                         .sorted(Comparator.comparing(CarOrder::getOrderTime))
         ).collect(Collectors.toList());
+    }
+
+    @Override
+    public SchedulingAlgorithm nextAlgorithm(List<CarOrder> pendingOrders) {
+        return isFinished(pendingOrders) ? new FIFOSchedulingAlgorithm() : this;
     }
 
     @Override
