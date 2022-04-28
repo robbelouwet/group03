@@ -58,17 +58,14 @@ public class ManagerControllerTest {
 
             @Override
             public void showSchedulingAlgorithms(List<String> algorithms, String selectedAlgorithm) {
-                // TODO
             }
 
             @Override
             public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
-                // TODO
             }
 
             @Override
             public void showAssemblyLineStatusAfterMove(Map<String, String> pendingOrders) {
-
             }
         };
 
