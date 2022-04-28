@@ -1,13 +1,14 @@
 package domain.scheduler;
 
-import java.time.Instant;
-import java.time.ZoneOffset;
+import lombok.Getter;
+
 import java.util.Objects;
 
 /**
  * An immutable class that represents time in our application.
  */
 public class DateTime implements Comparable<DateTime> {
+    @Getter
     private final long minutes;
 
     public DateTime(long minutes) {
@@ -37,6 +38,10 @@ public class DateTime implements Comparable<DateTime> {
         return new DateTime(this.minutes - minutes);
     }
 
+    public DateTime subtractTime(DateTime time) {
+        return subtractTime(time.getMinutesOfHour());
+    }
+
     /**
      * @return the amount of days `this `represents
      */
@@ -47,14 +52,14 @@ public class DateTime implements Comparable<DateTime> {
     /**
      * @return the amount of hours in the current day `this `represents
      */
-    public long getHours() {
+    public long getHoursOfDay() {
         return (minutes % (24 * 60)) / 60;
     }
 
     /**
      * @return the amount of minutes in the current hour `this `represents
      */
-    public long getMinutes() {
+    public long getMinutesOfHour() {
         return minutes % 60;
     }
 
@@ -67,7 +72,7 @@ public class DateTime implements Comparable<DateTime> {
 
     @Override
     public String toString() {
-        return "Day " + getDays() + ", " + String.format("%02d", getHours()) + ":" + String.format("%02d", getMinutes());
+        return "Day " + getDays() + ", " + String.format("%02d", getHoursOfDay()) + ":" + String.format("%02d", getMinutesOfHour());
     }
 
     @Override

@@ -16,13 +16,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 public class ProductionSchedulerManager {
     private final ProductionScheduler productionScheduler;
-    private TimeManager timeManager;
+    private final TimeManager timeManager;
+    private final CarOrderRepository carOrderRepository;
 
-    public ProductionSchedulerManager(ProductionScheduler productionScheduler, TimeManager timeManager) {
+    public ProductionSchedulerManager(ProductionScheduler productionScheduler, TimeManager timeManager, CarOrderRepository carOrderRepository) {
         this.productionScheduler = productionScheduler;
         this.timeManager = timeManager;
+        this.carOrderRepository = carOrderRepository;
     }
 
     /**
@@ -88,34 +92,50 @@ public class ProductionSchedulerManager {
         return productionScheduler.getSchedulingAlgorithm();
     }
 
-    public Map<String, String> getStatistics() {
-        var map = new HashMap<String, String>();
-
-        var orders = CarOrderRepository.getInstance().getOrders();
-
-        // beware, this is JodaTime, not java's DateTime!
+    public Statistics getStatistics() {
+        var orders = carOrderRepository.getOrders();
         DateTime now = timeManager.getCurrentTime();
 
-        var last2days = orders.stream().filter(o -> o.getEndTime().getDays() > now.getDays() - 2).toList();
-        var yesterday = orders.stream().filter(o -> o.getEndTime().getDays() > now.getDays() - 1).toList();
+        // amount of car orders finished, grouped per day
+        var ordersGroupedPerDay = orders.stream().filter(CarOrder::isFinished).collect(groupingBy(o -> o.getStartTime().getDays()));
+        // a sorted list of the amounts only, still grouped per day
+        var amountsGroupedPerDay = ordersGroupedPerDay.values().stream().map(List::size).sorted().toList();
 
-        var _2DaysAgo = last2days.stream().filter(o -> !yesterday.contains(o)).toList();
+        if (amountsGroupedPerDay.size() == 0) return null;
 
-        map.put("# orders finished day before yesterday", Integer.toString(_2DaysAgo.size()));
-        map.put("# orders finished yesterday", Integer.toString(yesterday.size()));
-        map.put("average amount of orders finished per day", Integer.toString((_2DaysAgo.size() + yesterday.size()) / 2));
+        // total amount of finished orders
+        var totalAmountFinished = orders.stream().filter(CarOrder::isFinished).toList().size();
 
-        // map to their delays, and sort delays on date of occurrence
-        var delaysInMinutes = orders.stream().sorted((o1, o2) ->
-                (int) (o1.getEndTime().getMinutes() - o2.getEndTime().getMinutes())
-        ).map(o -> o.getOrderTime().subtractTime(o.getEndTime().getMinutes()).getMinutes()).toList();
+        // average and median finished per day
+        var averageFinishedPerDay = totalAmountFinished / amountsGroupedPerDay.size();
+        var medianFinishedPerDay = amountsGroupedPerDay.get(amountsGroupedPerDay.size() / 2);
 
+        // amount finished yesterday and day before
+        var ordersFinishedYesterday = ordersGroupedPerDay.getOrDefault(now.subtractTime(60L * 24L).getDays(), new ArrayList<>()).size();
+        var ordersFinishedDayBefore = ordersGroupedPerDay.getOrDefault(now.subtractTime(2L * 60L * 24L).getDays(), new ArrayList<>()).size();
+
+        // every order mapped to its delay in minutes
+        var delaysInMinutes = orders.stream().map(co -> co.getStartTime().subtractTime(co.getOrderTime()).getMinutes()).collect(Collectors.toList());
         var sumDelays = delaysInMinutes.stream().reduce(0L, (acc, e) -> acc += e);
 
-        map.put("Average delay", Long.toString(sumDelays / delaysInMinutes.size()));
-        map.put("last 2 delays", String.format("%l %l"))
+        // Average and median delay
+        var averageDelay = sumDelays / delaysInMinutes.size();
+        delaysInMinutes.sort(Long::compareTo);
+        var medianDelay = delaysInMinutes.get((int) (delaysInMinutes.size() / 2L));
 
+        // last 2 delayed orders
+        var sortedDelays = orders.stream().sorted(Comparator.comparing(CarOrder::getStartTime)).toList();
+        var lastDelayDate = sortedDelays.size() >= 1 ? sortedDelays.get(0).getStartTime() : null;
+        Long lastDelay = sortedDelays.size() >= 1
+                ? sortedDelays.get(0).getStartTime().subtractTime(sortedDelays.get(0).getOrderTime()).getMinutes()
+                : null;
 
-        return map;
+        var secondToLastDelayDate = sortedDelays.size() >= 2 ? sortedDelays.get(1).getStartTime() : null;
+        Long secondToLastDelay = sortedDelays.size() >= 2
+                ? sortedDelays.get(1).getStartTime().subtractTime(sortedDelays.get(1).getOrderTime()).getMinutes()
+                : null;
+
+        return new Statistics(lastDelay, lastDelayDate, secondToLastDelay, secondToLastDelayDate, medianDelay, averageDelay,
+                ordersFinishedYesterday, ordersFinishedDayBefore, medianFinishedPerDay, averageFinishedPerDay);
     }
 }

@@ -4,6 +4,7 @@ import app.ui.interfaces.IManagerView;
 import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
 import services.ProductionSchedulerManager;
+import services.Statistics;
 
 import java.util.*;
 
@@ -92,7 +93,11 @@ public class ManagerController extends AssemblyLineStatusController {
         ui.showPossibleOptionsForAlgorithm(listConversion, algorithm);
     }
 
-    public Map<String, String> getStatistics(){
-        return productionSchedulerManager.getStatistics();
+    public void getStatistics(){
+        var stats = productionSchedulerManager.getStatistics();
+        if (stats != null)
+            ui.showStatistics(stats.toString());
+        else
+            ui.showErrorMessage("No Cars were produced!");
     }
 }

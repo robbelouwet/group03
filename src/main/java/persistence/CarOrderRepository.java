@@ -4,7 +4,11 @@ import domain.order.CarOrder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * A class that is responsible for keeping track of all car orders in our application
@@ -58,6 +62,7 @@ public class CarOrderRepository {
     public void registerListener(CarOrderCatalogObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.add(listener);
+        var iets = orders.stream().collect(groupingBy(CarOrder::getEndTime));
     }
 
     /**
@@ -74,6 +79,5 @@ public class CarOrderRepository {
         if (instance == null) instance = new CarOrderRepository();
         return instance;
     }
-
 
 }

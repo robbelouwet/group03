@@ -29,7 +29,7 @@ public class ManagerStore {
         var timemanager = new TimeManager();
         var scheduler = new ProductionScheduler(carOrderRepository, timemanager, new LinkedList<>(), new FIFOSchedulingAlgorithm());
         var assemblyLine = new AssemblyLine(DataSeeder.defaultAssemblyLine(), scheduler);
-        this.productionSchedulerManager = new ProductionSchedulerManager(scheduler);
+        this.productionSchedulerManager = new ProductionSchedulerManager(scheduler, timemanager, carOrderRepository);
         assemblyLineManager = new AssemblyManager(assemblyLine);
         carOrderManager = new CarOrderManager(carOrderRepository);
         mechanicManager = new MechanicManager(assemblyLine);

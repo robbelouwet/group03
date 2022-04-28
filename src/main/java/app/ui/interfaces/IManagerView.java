@@ -37,4 +37,6 @@ public interface IManagerView extends IAssemblyLineStatusView {
      * @param algorithm The scheduling algorithm that has been chosen to change to.
      */
     void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm);
+
+    void showStatistics(String statistics);
 }

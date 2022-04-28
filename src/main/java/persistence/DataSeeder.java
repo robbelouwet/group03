@@ -7,6 +7,8 @@ import domain.car.CarModelSpecification;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
+import domain.order.OrderStatus;
+import domain.scheduler.DateTime;
 import domain.scheduler.FIFOSchedulingAlgorithm;
 import domain.scheduler.SpecificationBatchSchedulingAlgorithm;
 
@@ -82,8 +84,9 @@ public class DataSeeder {
     /**
      * Representation of the available scheduling algorithms that are available in the system.
      * Based on Key-Value pair:
-     *      Key = Textual representation of the Algorithm
-     *      Value = Textual class name which represents the scheduling algorithm
+     * Key = Textual representation of the Algorithm
+     * Value = Textual class name which represents the scheduling algorithm
+     *
      * @return Map of Scheduling algorithms
      */
     public static Map<String, String> getSchedulingAlgorithms() {
@@ -93,7 +96,7 @@ public class DataSeeder {
         );
     }
 
-    public static List<CarOrder> getTestCarsForAlgorithm(){
+    public static List<CarOrder> getTestCarsForAlgorithm() {
         /*
          * TODO: Remove this method - pure testing
          */
@@ -200,5 +203,27 @@ public class DataSeeder {
                 )
         ));
         return testOrders;
+    }
+
+    public static List<CarOrder> delayedTestOrders() {
+        var orders = getTestCarsForAlgorithm();
+
+        var delays = Arrays.asList(0L, 120L, 60L, 60L, 120L, 60L);
+        var startTimes = Arrays.asList(2 * 60 * 24L,
+                60 * 24L,
+                60 * 24L,
+                60 * 24L,
+                2 * 60 * 24L,
+                2 * 60 * 24L);
+
+        for (int i = 0; i < orders.size(); i++) {
+            orders.get(i).setStatus(OrderStatus.Finished);
+            orders.get(i).setOrderTime(new DateTime(startTimes.get(i)));
+            orders.get(i).setStartTime(new DateTime(
+                    startTimes.get(i) + delays.get(i)
+            ));
+        }
+
+        return orders;
     }
 }
