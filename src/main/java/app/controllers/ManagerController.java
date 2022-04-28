@@ -58,7 +58,8 @@ public class ManagerController extends AssemblyLineStatusController {
 
     /**
      * The user has chosen an algorithm and it has to be altered now.
-     * @param algorithm The textual representation of the chosen algorithm.
+     *
+     * @param algorithm       The textual representation of the chosen algorithm.
      * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
      *                        Car Options need priority.
      *                        Will be Optional.empty() if the algorithm doesn't need this.
@@ -75,18 +76,23 @@ public class ManagerController extends AssemblyLineStatusController {
 
     /**
      * Method for the UI that retrieves the possible car options to give priority to.
+     *
      * @param algorithm The textual representation of the chosen algorithm.
      */
     public void showSpecificationBatchOrders(String algorithm) {
         List<Map<String, String>> listConversion = new ArrayList<>();
         var options = productionSchedulerManager.getPossibleOrdersForSpecificationBatch();
-        for (var map : options){
+        for (var map : options) {
             Map<String, String> mapConversion = new HashMap<>();
-            for (var key : map.keySet()){
-                   mapConversion.put(key.toString(), map.get(key).toString());
+            for (var key : map.keySet()) {
+                mapConversion.put(key.toString(), map.get(key).toString());
             }
             listConversion.add(mapConversion);
         }
         ui.showPossibleOptionsForAlgorithm(listConversion, algorithm);
+    }
+
+    public Map<String, String> getStatistics(){
+        return productionSchedulerManager.getStatistics();
     }
 }

@@ -1,9 +1,11 @@
 package domain.scheduler;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
 /**
- * An immutable class that represents time in our application
+ * An immutable class that represents time in our application.
  */
 public class DateTime implements Comparable<DateTime> {
     private final long minutes;
@@ -25,6 +27,14 @@ public class DateTime implements Comparable<DateTime> {
      */
     public DateTime addTime(long minutes) {
         return new DateTime(this.minutes + minutes);
+    }
+
+    /**
+     * @param minutes the amount of minutes to subtract
+     * @return a new DateTime object that is `minutes` minutes before the time of `this`
+     */
+    public DateTime subtractTime(long minutes) {
+        return new DateTime(this.minutes - minutes);
     }
 
     /**
