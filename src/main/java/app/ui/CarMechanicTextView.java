@@ -101,7 +101,6 @@ public class CarMechanicTextView implements ICarMechanicView {
         }
     }
 
-    // TODO == gekopieerde code van ManagerTextView
     private int askTimeSpent() {
         boolean correct = false;
         int result = 0;

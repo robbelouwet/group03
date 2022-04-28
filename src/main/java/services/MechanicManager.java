@@ -72,7 +72,7 @@ public class MechanicManager {
      */
     public List<String> getTaskNames() {
         if (currentWorkStation == null) throw new IllegalStateException("There is no current workstation selected.");
-        return currentWorkStation.getPendingTasks().stream().map(AssemblyTask::toString).collect(Collectors.toList());
+        return currentWorkStation.getTasksInformation();
     }
 
     /**

@@ -123,6 +123,10 @@ public class WorkStation {
         return getPendingTasks().stream().map(t -> t.getInformation(currentOrder)).collect(Collectors.toList());
     }
 
+    public List<String> getTasksInformation(List<AssemblyTask> tasks){
+        return tasks.stream().map(t -> t.getInformation(currentOrder)).collect(Collectors.toList());
+    }
+
     public void addListener(WorkStationListener listener) {
         listeners.add(listener);
     }

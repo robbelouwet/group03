@@ -55,7 +55,7 @@ public abstract class AssemblyLineStatusController {
      */
     private Map<String, List<String>> convertToStringList(Map<WorkStation, List<AssemblyTask>> pendingTasks) {
         Map<String, List<String>> tasks = new LinkedHashMap<>();
-        pendingTasks.forEach((k, v) -> tasks.put(k.getName(), v.stream().map(AssemblyTask::toString).collect(Collectors.toList())));
+        pendingTasks.forEach((k, v) -> tasks.put(k.getName(), k.getTasksInformation(v) ));
         return tasks;
     }
 }
