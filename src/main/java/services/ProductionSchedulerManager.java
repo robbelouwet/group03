@@ -34,7 +34,12 @@ public class ProductionSchedulerManager {
             if (selectedOptions.isPresent()) {
                 // Specification-Batch
                 Constructor<?> ctor = clazz.getConstructor(Map.class);
-                schedulingAlgorithm = (SchedulingAlgorithm) ctor.newInstance(selectedOptions.get());
+                Map<OptionCategory, Option> options = new LinkedHashMap<>();
+                for (var cat : selectedOptions.get().keySet()) {
+                    var category = new OptionCategory(cat);
+                    options.put(category, new Option(category, selectedOptions.get().get(cat)));
+                }
+                schedulingAlgorithm = (SchedulingAlgorithm) ctor.newInstance(options);
             } else {
                 // FIFO
                 Constructor<?> ctor = clazz.getConstructor();

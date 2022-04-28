@@ -69,7 +69,7 @@ public class ProductionScheduler {
         // If this order will be finished the next day
         if (order != null && order.getEndTime().getDays() > timeManager.getCurrentTime().getDays()) {
             // If there are no orders on the assembly line, we can change to the next day and return this order
-            if (currentOrdersOnAssemblyLine.stream().allMatch(Objects::isNull)) {
+            if (currentOrdersOnAssemblyLine.stream().allMatch(o -> o == null || o.isFinished())) {
                 overtime = timeManager.getCurrentTime().getMinutesInDay() - END_SHIFT;
                 timeManager.nextDay();
             } else {  // If there are orders, we should wait till there are no orders on the assemblyline anymore

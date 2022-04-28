@@ -99,6 +99,7 @@ public class ManagerTextView implements IManagerView {
                     .collect(Collectors.joining(", ", i + 1 + ". -> {", "}"));
             ConsoleReader.getInstance().println(optionsString);
         }
+
         int index = askCarOptionsIndex(options.size());
         Map<String, String> selectedOptions = options.get(index - 1);
         boolean success = managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
