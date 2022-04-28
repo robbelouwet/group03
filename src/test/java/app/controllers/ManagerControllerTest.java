@@ -1,20 +1,5 @@
 package app.controllers;
 
-import app.ui.interfaces.IManagerView;
-import app.utils.ConsoleReader;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import services.AssemblyManager;
-import services.CarOrderManager;
-import services.ManagerStore;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import static org.mockito.Mockito.*;
-
 public class ManagerControllerTest {
     /*
     private ManagerController mgrController;
