@@ -3,7 +3,6 @@ package app;
 import app.ui.AppTextView;
 import app.utils.ConsoleReader;
 import app.utils.IConsoleReader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
@@ -44,15 +43,10 @@ public class StatisticsIntegrationTest {
     @Test
     public void mainScenarioTest() {
         var testOrders = DataSeeder.delayedTestOrders();
+        var repo = mock(CarOrderRepository.class);
+        when(repo.getOrders()).thenReturn(testOrders);
 
-        try (var staticCarRpo = mockStatic(CarOrderRepository.class)) {
-            var repo = mock(CarOrderRepository.class);
-            when(repo.getOrders()).thenReturn(testOrders);
-            staticCarRpo.when(CarOrderRepository::getInstance).thenReturn(repo);
-
-            var view = new AppTextView();
-            view.start();
-        }
-
+        var view = new AppTextView();
+        view.start();
     }
 }

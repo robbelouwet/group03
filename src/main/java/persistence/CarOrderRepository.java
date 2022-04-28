@@ -4,8 +4,6 @@ import domain.order.CarOrder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -73,11 +71,6 @@ public class CarOrderRepository {
     public void unregisterListener(CarOrderCatalogObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.remove(listener);
-    }
-
-    public static CarOrderRepository getInstance() {
-        if (instance == null) instance = new CarOrderRepository();
-        return instance;
     }
 
 }
