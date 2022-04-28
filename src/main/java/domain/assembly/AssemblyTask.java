@@ -55,10 +55,6 @@ public class AssemblyTask {
         return String.format("Task [%s]: %s (%s)", name, order.getSelections().get(category).name(), isFinished(order) ? "finished" : "pending");
     }
 
-    public String getTaskInformation() {
-        return this.toString();
-    }
-
     public AssemblyTask copy() {
         return new AssemblyTask(name, actions, category, finished);
     }

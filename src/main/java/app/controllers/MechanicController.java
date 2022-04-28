@@ -51,7 +51,8 @@ public class MechanicController extends AssemblyLineStatusController {
      */
     public void selectTask(String assemblyTaskName){
         var task = mechanicManager.selectTask(assemblyTaskName);
-        ui.showTaskInfo(task.getTaskInformation(), task.getActions());
+        var ws = mechanicManager.getCurrentWorkStation();
+        ui.showTaskInfo(task.getInformation(ws.getCarOrder()), task.getActions());
     }
 
     /**
