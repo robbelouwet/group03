@@ -15,8 +15,6 @@ public class FullIntegrationTest {
             int prints = 0;
             @Override
             public String ask(String str) {
-                System.out.println(asks);
-                System.out.println(str);
                 return switch (asks++) {
                     case 0 -> "garage holder";
                     case 1 -> "order";
@@ -179,8 +177,6 @@ public class FullIntegrationTest {
 
             @Override
             public void println(String l) {
-                System.out.println(prints);
-                System.out.println(l);
                 switch (prints++) {
                     case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=OnAssemblyLine}", l);
                     case 110, 149 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 09:00, status=Pending}", l);
