@@ -1,7 +1,6 @@
 package app.controllers;
 
 import app.ui.interfaces.IAssemblyLineStatusView;
-import app.ui.interfaces.IManagerView;
 import domain.assembly.AssemblyTask;
 import domain.assembly.WorkStation;
 import domain.order.CarOrder;
@@ -34,12 +33,6 @@ public abstract class AssemblyLineStatusController {
                 convertToStringMap(currentOrdersOnAssemblyLine),
                 convertToStringList(pendingTasks),
                 convertToStringList(finishedTasks));
-    }
-
-    public void showAssemblyLineStatusAfterMove(Map<WorkStation, CarOrder> ordersOnAssembly, IManagerView ui){
-        ui.showAssemblyLineStatusAfterMove(
-                convertToStringMap(ordersOnAssembly)
-        );
     }
 
     private Map<String, String> convertToStringMap(Map<WorkStation, CarOrder> orders) {
