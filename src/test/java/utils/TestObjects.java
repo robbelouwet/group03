@@ -2,6 +2,7 @@ package utils;
 
 import domain.car.CarModel;
 import domain.order.CarOrder;
+import domain.order.OrderStatus;
 import domain.scheduler.DateTime;
 import persistence.CarCatalog;
 

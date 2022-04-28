@@ -7,14 +7,10 @@ import java.util.Map;
 
 public interface IAssemblyLineStatusView {
     default void showAssemblyLineStatus(Map<String, String> pendingOrders,
-                                        Map<String, String> simFinishedOrders,
                                         Map<String, List<String>> pendingTasks,
                                         Map<String, List<String>> finishedTasks){
         ConsoleReader.getInstance().printf("Current Assembly Line Status: %s\n", pendingOrders.size() > 0 ? "" : "Empty");
         printOrders(pendingOrders);
-
-        ConsoleReader.getInstance().printf("Future Assembly Line Status: %s\n", simFinishedOrders.size() > 0 ? "" : "Empty");
-        printOrders(simFinishedOrders);
 
         ConsoleReader.getInstance().printf("Pending tasks of workstations: %s\n", pendingTasks.size() > 0 ? "" : "Nothing");
         printTasks(pendingTasks);

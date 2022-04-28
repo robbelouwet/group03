@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 
 public class AdvanceIntegrationTest {
-
+/*
     public AdvanceIntegrationTest() {
         ConsoleReader mReader = mock(ConsoleReader.class);
         ConsoleReader.setInstance(mReader);
@@ -181,5 +181,7 @@ public class AdvanceIntegrationTest {
 
         assertEquals("Assembly line is blocked!", e.getMessage());
     }
+
+ */
 
 }

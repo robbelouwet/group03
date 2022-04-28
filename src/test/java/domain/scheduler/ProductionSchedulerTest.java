@@ -18,17 +18,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ProductionSchedulerTest {
-    // TODO this entire test needs to be rewritten
     CarOrderRepository repo;
     ProductionScheduler scheduler;
+    TimeManager timeManager;
     List<CarOrder> orders = new ArrayList<>();
 
     @BeforeEach
     void setup() {
+        timeManager = new TimeManager();
         repo = new CarOrderRepository();
         scheduler = new ProductionScheduler(
                 repo,
-                new TimeManager(),
+                timeManager,
                 new FIFOSchedulingAlgorithm()
         );
 
@@ -56,7 +57,9 @@ class ProductionSchedulerTest {
 
     @Test
     void recalculatePredictedEndTimes() {
-        scheduler.advanced(20, new LinkedList<>(Arrays.asList(null, null, null)));
+        timeManager.addTime(20);
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(Arrays.asList(null, null, null)));
+        scheduler.recalculatePredictedEndTimes();
         assertEquals(new DateTime(0, 8, 50), orders.get(0).getEndTime());
         assertEquals(new DateTime(0, 9, 40), orders.get(1).getEndTime());
         assertEquals(new DateTime(0, 10, 30), orders.get(2).getEndTime());
@@ -65,11 +68,29 @@ class ProductionSchedulerTest {
     @Test
     void recalculatePredictedEndTimesWithOrderOnAssemblyLine() {
         var orderModelB = TestObjects.getCarOrder((new CarCatalog()).getModels().get(1));
-        scheduler.advanced(20, new LinkedList<>(Arrays.asList(null, null, orderModelB)));
+        timeManager.addTime(20);
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(Arrays.asList(null, null, orderModelB)));
+        scheduler.recalculatePredictedEndTimes();
         assertEquals(new DateTime(0, 9, 50), orderModelB.getEndTime());
         assertEquals(new DateTime(0, 10, 40), orders.get(0).getEndTime());
         assertEquals(new DateTime(0, 11, 30), orders.get(1).getEndTime());
         assertEquals(new DateTime(0, 12, 20), orders.get(2).getEndTime());
+    }
+
+    @Test
+    void scheduleWhenNotSameDay() {
+        var repo = new CarOrderRepository();
+        var timeManager = new TimeManager();
+        var scheduler = new ProductionScheduler(repo, timeManager, new FIFOSchedulingAlgorithm());
+        var order = TestObjects.getCarOrder();
+        order.setStatus(OrderStatus.OnAssemblyLine);
+        repo.addOrder(order);
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(Arrays.asList(null, order, null)));
+        timeManager.addTime(810);
+        var order2 = TestObjects.getCarOrder();
+        repo.addOrder(order2);
+        assertEquals(new DateTime(0, 21, 10), order.getEndTime());
+        assertEquals(new DateTime(1, 8, 30), order2.getEndTime());
     }
 
     @Test
@@ -193,7 +214,7 @@ class ProductionSchedulerTest {
         );
         for (var order : testOrders) repo.addOrder(order);
 
-        scheduler.advanced(0, new LinkedList<>(Arrays.asList(null, null, null)));
+        scheduler.setCurrentOrdersOnAssemblyLine(new LinkedList<>(Arrays.asList(null, null, null)));
         assertEquals(new DateTime(0, 9, 10), testOrders.get(3).getEndTime());
         assertEquals(new DateTime(0, 10, 20), testOrders.get(4).getEndTime());
         assertEquals(new DateTime(0, 11, 30), testOrders.get(5).getEndTime());
