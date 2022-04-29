@@ -3,7 +3,7 @@ package services;
 import domain.scheduler.DateTime;
 
 public record Statistics(Long lastDelay, DateTime lastDelayDate, Long secondLastDelay, DateTime secondLastDelayDate,
-                         long medianDelay, float averageDelay, long ordersFinishedYesterday,
+                         float medianDelay, float averageDelay, long ordersFinishedYesterday,
                          long ordersFinishedDayBefore,
                          long medianFinishedPerDay, float averageFinishedPerDay) {
 

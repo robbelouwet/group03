@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.reverse;
 import static java.util.stream.Collectors.groupingBy;
 
 public class ProductionSchedulerManager {
@@ -128,15 +129,16 @@ public class ProductionSchedulerManager {
 
         // every order mapped to its delay in minutes
         var delaysInMinutes = orders.stream().filter(CarOrder::isFinished).map(co -> co.getStartTime().subtractTime(co.getOrderTime()).getMinutes()).collect(Collectors.toList());
-        var sumDelays = delaysInMinutes.stream().reduce(0L, (acc, e) -> acc += e);
+        var sumDelays = delaysInMinutes.stream().mapToInt(Math::toIntExact).sum();
 
         // Average and median delay
         var averageDelay = sumDelays / delaysInMinutes.size();
         delaysInMinutes.sort(Long::compareTo);
-        var medianDelay = delaysInMinutes.get((int) (delaysInMinutes.size() / 2L));
+        float medianDelay = delaysInMinutes.size() % 2 == 1 ? delaysInMinutes.get((int) (delaysInMinutes.size() / 2L)) : ((float) delaysInMinutes.get((int) (delaysInMinutes.size() / 2L)) + delaysInMinutes.get((int) (delaysInMinutes.size() / 2L) - 1)) / 2;
 
         // last 2 delayed orders
-        var sortedDelays = orders.stream().filter(CarOrder::isFinished).sorted(Comparator.comparing(CarOrder::getStartTime)).toList();
+        var sortedDelays = orders.stream().filter(CarOrder::isFinished).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());
+        reverse(sortedDelays);
         var lastDelayDate = sortedDelays.size() >= 1 ? sortedDelays.get(0).getStartTime() : null;
         Long lastDelay = sortedDelays.size() >= 1
                 ? sortedDelays.get(0).getStartTime().subtractTime(sortedDelays.get(0).getOrderTime()).getMinutes()

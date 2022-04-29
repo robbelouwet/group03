@@ -13,6 +13,7 @@ public class FullIntegrationTest {
         ConsoleReader.setInstance(new IConsoleReader() {
             int asks = 0;
             int prints = 0;
+
             @Override
             public String ask(String str) {
                 return switch (asks++) {
@@ -178,26 +179,41 @@ public class FullIntegrationTest {
             @Override
             public void println(String l) {
                 switch (prints++) {
-                    case 46 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=OnAssemblyLine}", l);
-                    case 110, 149 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 09:00, status=Pending}", l);
-                    case 150 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 10:00, status=Pending}", l);
-                    case 387 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 09:00, status=Pending}", l);
-                    case 388 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 10:00, status=Pending}", l);
-                    case 389 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 11:00, status=Pending}", l);
-                    case 390 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 12:10, status=Pending}", l);
-                    case 391 -> assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 13:20, status=Pending}", l);
-                    case 392 -> assertEquals("Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 14:30, status=Pending}", l);
-                    case 393 -> assertEquals("Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 15:40, status=Pending}", l);
-                    case 502 -> assertEquals("Order (Model C): orderTime=Day 1, 06:00, endTime=Day 1, 16:40, status=Pending}", l);
-                    case 508 -> assertEquals("Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 14:30, status=Pending}", l);
-                    case 520 -> assertEquals("0: Order (Model C): orderTime=Day 1, 06:00, endTime=Day 1, 14:20, status=Pending}", l);
-                    case 526 -> assertEquals("6: Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 15:30, status=Pending}", l);
+                    case 46 ->
+                            assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 08:30, status=OnAssemblyLine}", l);
+                    case 110, 149 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 09:00, status=Pending}", l);
+                    case 150 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 10:00, status=Pending}", l);
+                    case 387 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 09:00, status=Pending}", l);
+                    case 388 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 10:00, status=Pending}", l);
+                    case 389 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 11:00, status=Pending}", l);
+                    case 390 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 12:10, status=Pending}", l);
+                    case 391 ->
+                            assertEquals("Order (Model C): orderTime=Day 0, 19:30, endTime=Day 1, 13:20, status=Pending}", l);
+                    case 392 ->
+                            assertEquals("Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 14:30, status=Pending}", l);
+                    case 393 ->
+                            assertEquals("Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 15:40, status=Pending}", l);
+                    case 502 ->
+                            assertEquals("Order (Model C): orderTime=Day 1, 06:00, endTime=Day 1, 16:40, status=Pending}", l);
+                    case 508 ->
+                            assertEquals("Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 14:30, status=Pending}", l);
+                    case 520 ->
+                            assertEquals("0: Order (Model C): orderTime=Day 1, 06:00, endTime=Day 1, 14:20, status=Pending}", l);
+                    case 526 ->
+                            assertEquals("6: Order (Model B): orderTime=Day 0, 19:30, endTime=Day 1, 15:30, status=Pending}", l);
                     case 528 -> assertEquals("Finished Orders:", l);
-                    case 529 -> assertEquals("8: Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 21:00, status=Finished}", l);
+                    case 529 ->
+                            assertEquals("8: Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 21:00, status=Finished}", l);
                     case 533 -> assertEquals("""
                             Last delay was 0 minutes, at Day 0, 06:00 minutes
                             Second last delay was null minutes, at null minutes
-                            The median amount of delay was: 0 minutes, the average was 0.0 minutes
+                            The median amount of delay was: 0.0 minutes, the average was 0.0 minutes
                             Yesterday, 1 orders got finished
                             The day before that: 0
                             The median amount of finished orders per day is: 1, the average is 1.0
@@ -214,7 +230,8 @@ public class FullIntegrationTest {
             public void printf(String format, Object obj) {
                 switch (prints++) {
                     case 154 -> assertEquals("", obj);
-                    case 156 -> assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 21:10, status=OnAssemblyLine}", obj);
+                    case 156 ->
+                            assertEquals("Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 21:10, status=OnAssemblyLine}", obj);
                     case 157 -> assertEquals("", obj);
                     case 159 -> assertEquals("Task [Insert engine]: Standard 2l v4 (pending)", obj);
                     case 160 -> assertEquals("Task [Insert gearbox]: 6 speed manual (pending)", obj);
