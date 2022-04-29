@@ -58,21 +58,18 @@ public class ManagerController extends AssemblyLineStatusController {
     public void showSpecificationBatchOrders(String algorithm) {
         List<Map<String, String>> listConversion = new ArrayList<>();
         var options = productionSchedulerManager.getPossibleOrdersForSpecificationBatch();
-        for (var map : options){
+        for (var map : options) {
             Map<String, String> mapConversion = new LinkedHashMap<>();
-            for (var key : map.keySet()){
-                   mapConversion.put(key.toString(), map.get(key).toString());
+            for (var key : map.keySet()) {
+                mapConversion.put(key.toString(), map.get(key).toString());
             }
             listConversion.add(mapConversion);
         }
         ui.showPossibleOptionsForAlgorithm(listConversion, algorithm);
     }
 
-    public void getStatistics(){
+    public void getStatistics() {
         var stats = productionSchedulerManager.getStatistics();
-        if (stats != null)
-            ui.showStatistics(stats.toString());
-        else
-            ui.showErrorMessage("No Cars were produced!");
+        ui.showStatistics(stats.toString());
     }
 }

@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.reverse;
 import static java.util.stream.Collectors.groupingBy;
+import static math.Math.average;
+import static math.Math.median;
 
 public class ProductionSchedulerManager {
     private final ProductionScheduler productionScheduler;
@@ -107,34 +109,21 @@ public class ProductionSchedulerManager {
         // a sorted list of the amounts only, still grouped per day
         var amountsGroupedPerDay = ordersGroupedPerDay.values().stream().map(List::size).sorted().toList();
 
-        if (amountsGroupedPerDay.size() == 0) return null;
-
-        // total amount of finished orders
-        var totalAmountFinished = orders.stream().filter(CarOrder::isFinished).toList().size();
-
         // average and median finished per day
-        var averageFinishedPerDay = totalAmountFinished / amountsGroupedPerDay.size();
-        var medianFinishedPerDay = amountsGroupedPerDay.get(amountsGroupedPerDay.size() / 2);
+        var averageFinishedPerDay = average(amountsGroupedPerDay.stream().map(Integer::longValue).toList());
+        var medianFinishedPerDay = median(amountsGroupedPerDay.stream().map(Integer::longValue).toList());
 
         // amount finished yesterday and day before
-        long yesterday;
-        if (now.getDays() == 0) yesterday = -1;
-        else yesterday = now.getDays() - 1;
-        var ordersFinishedYesterday = ordersGroupedPerDay.getOrDefault(yesterday, new ArrayList<>()).size();
+        var ordersFinishedYesterday = ordersGroupedPerDay.getOrDefault(now.getDays() - 1, new ArrayList<>()).size();
 
-        long twoDaysAgo;
-        if (now.getDays() <= 1) twoDaysAgo = -1;
-        else twoDaysAgo = now.getDays() - 1;
-        var ordersFinishedDayBefore = ordersGroupedPerDay.getOrDefault(twoDaysAgo, new ArrayList<>()).size();
+        var ordersFinishedDayBefore = ordersGroupedPerDay.getOrDefault(now.getDays() - 2, new ArrayList<>()).size();
 
         // every order mapped to its delay in minutes
         var delaysInMinutes = orders.stream().filter(CarOrder::isFinished).map(co -> co.getStartTime().subtractTime(co.getOrderTime()).getMinutes()).collect(Collectors.toList());
-        var sumDelays = delaysInMinutes.stream().mapToInt(Math::toIntExact).sum();
 
         // Average and median delay
-        var averageDelay = sumDelays / delaysInMinutes.size();
-        delaysInMinutes.sort(Long::compareTo);
-        float medianDelay = delaysInMinutes.size() % 2 == 1 ? delaysInMinutes.get((int) (delaysInMinutes.size() / 2L)) : ((float) delaysInMinutes.get((int) (delaysInMinutes.size() / 2L)) + delaysInMinutes.get((int) (delaysInMinutes.size() / 2L) - 1)) / 2;
+        var averageDelay = average(delaysInMinutes);
+        float medianDelay = median(delaysInMinutes);
 
         // last 2 delayed orders
         var sortedDelays = orders.stream().filter(CarOrder::isFinished).sorted(Comparator.comparing(CarOrder::getStartTime)).collect(Collectors.toList());

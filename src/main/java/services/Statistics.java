@@ -5,10 +5,12 @@ import domain.scheduler.DateTime;
 public record Statistics(Long lastDelay, DateTime lastDelayDate, Long secondLastDelay, DateTime secondLastDelayDate,
                          float medianDelay, float averageDelay, long ordersFinishedYesterday,
                          long ordersFinishedDayBefore,
-                         long medianFinishedPerDay, float averageFinishedPerDay) {
+                         float medianFinishedPerDay, float averageFinishedPerDay) {
+
 
     @Override
     public String toString() {
+        if (lastDelay == null) return "No Cars were produced!";
         return "Last delay was " + lastDelay() + " minutes, at " + lastDelayDate() + " minutes\n" +
                 "Second last delay was " + secondLastDelay() + " minutes, at " + secondLastDelayDate() + " minutes\n" +
                 "The median amount of delay was: " + medianDelay() + " minutes, the average was " + averageDelay() + " minutes\n" +

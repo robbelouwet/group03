@@ -216,7 +216,7 @@ public class FullIntegrationTest {
                             The median amount of delay was: 0.0 minutes, the average was 0.0 minutes
                             Yesterday, 1 orders got finished
                             The day before that: 0
-                            The median amount of finished orders per day is: 1, the average is 1.0
+                            The median amount of finished orders per day is: 1.0, the average is 1.0
                             """, l);
                 }
             }
