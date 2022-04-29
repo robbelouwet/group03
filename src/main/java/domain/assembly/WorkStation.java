@@ -43,7 +43,7 @@ public class WorkStation {
     /**
      * This method will reset all the assembly tasks of a workstation back to not finished.
      */
-    public void resetAllTasks(){
+    public void resetAllTasks() {
         tasks.forEach(AssemblyTask::resetTask);
     }
 
@@ -109,11 +109,22 @@ public class WorkStation {
         return "Workstation: [" + this.getName() + "]";
     }
 
+    /**
+     * Get information about all the tasks that are not finished
+     *
+     * @return Information string about every pending task
+     */
     public List<String> getTasksInformation() {
         return getPendingTasks().stream().map(t -> t.getInformation(currentOrder)).collect(Collectors.toList());
     }
 
-    public List<String> getTasksInformation(List<AssemblyTask> tasks){
+    /**
+     * Get information about tasks
+     *
+     * @param tasks The tasks you want information about
+     * @return Information for every task in the order that you passed the tasks
+     */
+    public List<String> getTasksInformation(List<AssemblyTask> tasks) {
         return tasks.stream().map(t -> t.getInformation(currentOrder)).collect(Collectors.toList());
     }
 
@@ -121,17 +132,24 @@ public class WorkStation {
         listeners.add(listener);
     }
 
-    public void removeListener(WorkStationListener listener){
+    public void removeListener(WorkStationListener listener) {
         listeners.remove(listener);
     }
 
-    public void finishTask(AssemblyTask task, int timeSpent){
-        if (!tasks.contains(task)) throw new IllegalStateException("The task you're trying to finish is not linked with this workstation.");
+    /**
+     * Finish a task
+     *
+     * @param task      The task at this workstation to finish
+     * @param timeSpent The time that was spent on this single task
+     */
+    public void finishTask(AssemblyTask task, int timeSpent) {
+        if (!tasks.contains(task))
+            throw new IllegalStateException("The task you're trying to finish is not linked with this workstation.");
         task.finishTask(timeSpent);
 
         int accumulatedTimeSpentAtWorkStation = tasks.stream().mapToInt(AssemblyTask::getTimeSpent).sum();
 
-        for(WorkStationListener listener: new ArrayList<>(listeners)){
+        for (WorkStationListener listener : new ArrayList<>(listeners)) {
             listener.finishedTask(accumulatedTimeSpentAtWorkStation);
         }
     }

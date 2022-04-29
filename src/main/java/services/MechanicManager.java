@@ -59,6 +59,8 @@ public class MechanicManager {
 
     /**
      * Finish the currently selected task
+     *
+     * @param timeSpent The time the mechanic spent on this single task
      */
     public void finishTask(int timeSpent) {
         if (selectedTask == null) throw new IllegalStateException("There is no selected task.");

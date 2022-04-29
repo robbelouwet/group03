@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * Class {@code AssemblyManager} is responsible for the {@code AssemblyLine}.
- * It can tell the assembly line to advance, and retrieve car orders & assembly tasks.
+ * It can show the status of the assembly line.
  */
 public class AssemblyManager {
     private final AssemblyLine assemblyLine;
