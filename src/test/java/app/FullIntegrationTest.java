@@ -211,12 +211,17 @@ public class FullIntegrationTest {
                     case 529 ->
                             assertEquals("8: Order (Model A): orderTime=Day 0, 06:00, endTime=Day 0, 21:00, status=Finished}", l);
                     case 533 -> assertEquals("""
-                            Last delay was 0 minutes, at Day 0, 06:00 minutes
-                            Second last delay was null minutes, at null minutes
-                            The median amount of delay was: 0.0 minutes, the average was 0.0 minutes
-                            Yesterday, 1 orders got finished
-                            The day before that: 0
-                            The median amount of finished orders per day is: 1.0, the average is 1.0
+                            STATISTICS
+                                                                                                    
+                            Recent delays
+                            - Last delay was 0 minutes, at Day 0, 06:00
+                            - Second last delay was null minutes, at null minutes
+                            Average and median
+                            - The median amount of delay was: 0.0 minutes, the average was 0.0 minutes
+                            - The median amount of finished orders per day is: 1.0, the average is 1.0
+                            Recent finished
+                            - Yesterday, 1 orders got finished
+                            - The day before that: 0
                             """, l);
                 }
             }

@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.ui.ConsoleStatisticsReportGenerator;
 import app.ui.interfaces.IManagerView;
 import domain.scheduler.SchedulingAlgorithm;
 import services.AssemblyManager;
@@ -69,7 +70,8 @@ public class ManagerController extends AssemblyLineStatusController {
     }
 
     public void getStatistics() {
-        var stats = productionSchedulerManager.getStatistics();
-        ui.showStatistics(stats.toString());
+        ConsoleStatisticsReportGenerator reportGenerator = new ConsoleStatisticsReportGenerator(productionSchedulerManager.getStatistics());
+        reportGenerator.generateReport();
+        ui.showStatistics(reportGenerator.toString());
     }
 }
