@@ -4,8 +4,8 @@ package services;
 import domain.car.CarModel;
 import domain.car.options.OptionSelector;
 import domain.order.CarOrder;
-import persistence.CarOrderRepository;
 import persistence.CarCatalog;
+import persistence.CarOrderRepository;
 
 import java.util.Comparator;
 import java.util.List;
@@ -44,6 +44,9 @@ public class CarOrderManager {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return A list of all car models in the application
+     */
     public List<CarModel> getCarModels() {
         return carCatalog.getModels();
     }
