@@ -3,7 +3,7 @@ package domain.scheduler;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
 import lombok.Getter;
-import persistence.CarOrderCatalogObserver;
+import persistence.CarOrderRepositoryObserver;
 import persistence.CarOrderRepository;
 
 import java.util.*;
@@ -32,7 +32,7 @@ public class ProductionScheduler {
         this.currentOrdersOnAssemblyLine = currentOrdersOnAssemblyLine;
         this.carOrderRepository = carOrderRepository;
         this.schedulingAlgorithm = schedulingAlgorithm;
-        CarOrderCatalogObserver orderCatalogObserver = order -> {
+        CarOrderRepositoryObserver orderCatalogObserver = order -> {
             order.setOrderTime(timeManager.getCurrentTime());
             recalculatePredictedEndTimes();
             for (var listener : listeners) {

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  */
 public class CarOrderRepository {
     private final List<CarOrder> orders;
-    private final List<CarOrderCatalogObserver> listeners = new ArrayList<>();
+    private final List<CarOrderRepositoryObserver> listeners = new ArrayList<>();
     private static CarOrderRepository instance;
 
     public CarOrderRepository() {
@@ -55,7 +55,7 @@ public class CarOrderRepository {
      *
      * @param listener should not be null
      */
-    public void registerListener(CarOrderCatalogObserver listener) {
+    public void registerListener(CarOrderRepositoryObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.add(listener);
     }
@@ -65,7 +65,7 @@ public class CarOrderRepository {
      *
      * @param listener should not be null
      */
-    public void unregisterListener(CarOrderCatalogObserver listener) {
+    public void unregisterListener(CarOrderRepositoryObserver listener) {
         if (listener == null) throw new IllegalArgumentException();
         listeners.remove(listener);
     }
