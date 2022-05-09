@@ -102,8 +102,8 @@ class ProductionSchedulerTest {
                 new FIFOSchedulingAlgorithm()
         );
 
-        var model = new CarModel("PEND", new CarModelSpecification(new HashMap<>()), 100);
-        var model2 = new CarModel("ASS", new CarModelSpecification(new HashMap<>()), 60 * 6);
+        var model = new CarModel("P", new CarModelSpecification(new HashMap<>()), 95);
+        var model2 = new CarModel("A", new CarModelSpecification(new HashMap<>()), 60 * 6);
         var pendingOrder = new CarOrder(model, new HashMap<>());
         var pendingOrder2 = new CarOrder(model, new HashMap<>());
         var pendingOrder3 = new CarOrder(model, new HashMap<>());
@@ -123,13 +123,15 @@ class ProductionSchedulerTest {
         scheduler.recalculatePredictedEndTimes();
 
         assertEquals(new DateTime(1, 0, 0), assOrder.getEndTime());
-        assertEquals(new DateTime(1, 11, 0), pendingOrder.getEndTime());
-        assertEquals(new DateTime(1, 12, 40), pendingOrder2.getEndTime());
-        assertEquals(new DateTime(1, 14, 20), pendingOrder3.getEndTime());
-        assertEquals(new DateTime(1, 16, 0), pendingOrder4.getEndTime());
-        assertEquals(new DateTime(1, 17, 40), pendingOrder5.getEndTime());
-        assertEquals(new DateTime(1, 19, 20), pendingOrder6.getEndTime());
-        assertEquals(new DateTime(2, 11, 0), pendingOrder7.getEndTime());
+        assertEquals(new DateTime(1, 10, 45), pendingOrder.getEndTime());
+        assertEquals(new DateTime(1, 12, 20), pendingOrder2.getEndTime());
+        assertEquals(new DateTime(1, 13, 55), pendingOrder3.getEndTime());
+        assertEquals(new DateTime(1, 15, 30), pendingOrder4.getEndTime());
+        assertEquals(new DateTime(1, 17, 5), pendingOrder5.getEndTime());
+        assertEquals(new DateTime(1, 18, 40), pendingOrder6.getEndTime());
+
+        // This order would be finished at 20.15 but since there was overtime, we stop at 20
+        assertEquals(new DateTime(2, 10, 45), pendingOrder7.getEndTime());
     }
 
     @Test

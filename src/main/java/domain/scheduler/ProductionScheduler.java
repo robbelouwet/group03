@@ -109,8 +109,6 @@ public class ProductionScheduler {
             private final LinkedList<CarOrder> ordersOnAssemblyLine;
             private final LinkedList<CarOrder> pendingOrders;
 
-            //private CarOrder finishedOrder;
-
             private int backtrack = 0;
 
             public StepSimulator(DateTime startTime, long previousOvertime, List<CarOrder> ordersOnAssemblyLine, List<CarOrder> pendingOrders) {
