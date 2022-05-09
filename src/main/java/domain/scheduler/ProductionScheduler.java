@@ -8,6 +8,7 @@ import persistence.CarOrderRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ProductionScheduler {
     private static final long START_SHIFT = 6 * 60;  // Day starts at 6 o' clock
@@ -56,6 +57,18 @@ public class ProductionScheduler {
         this.currentOrdersOnAssemblyLine = currentOrdersOnAssemblyLine;
     }
 
+    private long getOverTimeMinutes(DateTime endTime, long previousOvertime) {
+        if (endTime.getMinutesInDay() > END_SHIFT - previousOvertime)
+            return endTime.getMinutesInDay() - (END_SHIFT - previousOvertime);
+        else if (endTime.getMinutesInDay() < START_SHIFT)
+            return 24 * 60 - (END_SHIFT - previousOvertime) + endTime.getMinutesInDay();
+        return 0;
+    }
+
+    private void setOvertime() {
+        overtime = getOverTimeMinutes(timeManager.getCurrentTime(), overtime);
+    }
+
     /**
      * Gets the next order to put on the assembly line
      * Also checks whether a new day has started
@@ -71,7 +84,7 @@ public class ProductionScheduler {
         if (order != null && order.getEndTime().getDays() > timeManager.getCurrentTime().getDays()) {
             // If there are no orders on the assembly line, we can change to the next day and return this order
             if (currentOrdersOnAssemblyLine.stream().allMatch(o -> o == null || o.isFinished())) {
-                overtime = timeManager.getCurrentTime().getMinutesInDay() - END_SHIFT;
+                setOvertime();
                 timeManager.nextDay();
             } else {  // If there are orders, we should wait till there are no orders on the assemblyline anymore
                 return null;
@@ -80,93 +93,156 @@ public class ProductionScheduler {
         return order;
     }
 
-    /**
-     * @param carOrders A list of orders and null values that are a snapshot of the orders on the assembly line
-     * @return How long a step will take with these orders on the belt
-     */
-    private long getMinutesOnStep(List<CarOrder> carOrders) {
-        long minutes = 0;
-        for (var order : carOrders) {
-            if (order != null) {
-                minutes = Math.max(minutes, order.getExpectedMinutesPerWorkStation());
+    private class Simulator {
+        private void simulate() {
+            var ordersOnAssemblyLine = new LinkedList<>(currentOrdersOnAssemblyLine);
+            var pendingOrders = new LinkedList<>(getOrderedListOfPendingOrders());
+
+            new StepSimulator(timeManager.getCurrentTime(), overtime, timeManager.getTimeSpentOnThisStep(), ordersOnAssemblyLine, pendingOrders);
+        }
+
+        private class StepSimulator {
+            private final DateTime endTime;
+            private final long previousOvertime;
+            private long overtime = 0;
+
+            private final LinkedList<CarOrder> ordersOnAssemblyLine;
+            private final LinkedList<CarOrder> pendingOrders;
+
+            //private CarOrder finishedOrder;
+
+            private int backtrack = 0;
+
+            public StepSimulator(DateTime startTime, long previousOvertime, List<CarOrder> ordersOnAssemblyLine, List<CarOrder> pendingOrders) {
+                this(startTime, previousOvertime, 0, ordersOnAssemblyLine, pendingOrders);
+            }
+
+            public StepSimulator(DateTime startTime, long previousOvertime, long timeSpentOnThisStep, List<CarOrder> ordersOnAssemblyLine, List<CarOrder> pendingOrders) {
+                this.previousOvertime = previousOvertime;
+                this.ordersOnAssemblyLine = new LinkedList<>(ordersOnAssemblyLine);
+                this.pendingOrders = new LinkedList<>(pendingOrders);
+
+                endTime = startTime.addTime(Math.max(getExpectedMinutesOnStep() - timeSpentOnThisStep, timeSpentOnThisStep));
+
+                simulate();
+            }
+
+            private boolean finished() {
+                return pendingOrders.size() == 0 && ordersOnAssemblyLine.stream().allMatch(Objects::isNull);
+            }
+
+            private long getExpectedMinutesOnStep() {
+                long minutes = 0;
+                for (var order : ordersOnAssemblyLine) {
+                    if (order != null) {
+                        minutes = Math.max(minutes, order.getExpectedMinutesPerWorkStation());
+                    }
+                }
+                return minutes;
+            }
+
+            private boolean afterHours() {
+                return endTime.getMinutesInDay() > END_SHIFT - previousOvertime || endTime.getMinutesInDay() < START_SHIFT;
+            }
+
+            private long getOvertimeMinutes() {
+                return getOverTimeMinutes(endTime, previousOvertime);
+            }
+
+            private DateTime startNextDay() {
+                if (endTime.getMinutesInDay() < START_SHIFT) {
+                    return new DateTime(endTime.getDays(), 0, START_SHIFT);
+                }
+                return new DateTime(endTime.getDays() + 1, 0, START_SHIFT);
+            }
+
+            private void getOrderOffBelt() {
+                var finishedOrder = ordersOnAssemblyLine.pop();  // Remove the order from the assembly line
+
+                if (afterHours()) {
+                    if (finishedOrder != null && finishedOrder.getStatus().equals(OrderStatus.Pending)) {  // This is an order that is not yet on the assemblyline, so we can schedule it at another time
+                        backtrack = ordersOnAssemblyLine.size() + 1;
+                        return;
+                    }
+                }
+
+                if (finishedOrder != null) {
+                    finishedOrder.setEndTime(endTime);  // Set the predicted end time
+                }
+            }
+
+            private StepSimulator putNextOrderOnBeltToday() {
+                var nextPendingOrders = new LinkedList<>(pendingOrders);
+
+                CarOrder nextOrderOnLine;
+                try {
+                    nextOrderOnLine = nextPendingOrders.pop();
+                } catch (NoSuchElementException e) {
+                    nextOrderOnLine = null;
+                }
+
+                // Now put the next order on the line
+                var nextOrdersOnAssemblyLine = new LinkedList<>(ordersOnAssemblyLine);
+                nextOrdersOnAssemblyLine.addLast(nextOrderOnLine);
+
+                // And simulate it
+                return new StepSimulator(endTime, previousOvertime, nextOrdersOnAssemblyLine, nextPendingOrders);
+            }
+
+            private void finishSimulationToday() {
+                var simulationCurrentDay = new StepSimulator(endTime, previousOvertime, ordersOnAssemblyLine, new LinkedList<>());
+
+                // If this fails, the predicted time is longer than a whole day for a single order
+                if (!simulationCurrentDay.isValid())
+                    throw new RuntimeException("You've added an order that takes longer than a single day to make. We can't schedule it");
+                overtime = simulationCurrentDay.overtime;
+            }
+
+            private void simulateNextDay() {
+                var nextDay = startNextDay();
+                var emptyLine = IntStream.range(0, ordersOnAssemblyLine.size() + 1).mapToObj(o -> (CarOrder) null).toList();
+
+                var simulationNextDay = new StepSimulator(nextDay, overtime, emptyLine, pendingOrders);
+
+                if (!simulationNextDay.isValid()) {
+                    // Rare case that the overtime is too much for a single order to be finished in a day
+                    simulationNextDay = new StepSimulator(nextDay.addTime(60 * 24), 0, emptyLine, pendingOrders);
+                    if (!simulationNextDay.isValid())
+                        throw new RuntimeException("You've added an order that takes longer than a single day to make. We can't schedule it");
+                }
+            }
+
+            private void simulate() {
+                if (finished()) {
+                    overtime = getOvertimeMinutes();
+                    return;
+                }
+
+                getOrderOffBelt();
+                if (!isValid()) return;  // Backtrack was set in subroutine getOrderOffBelt
+
+                var simulation = putNextOrderOnBeltToday();
+                if (simulation.isValid()) {
+                    overtime = simulation.overtime;
+                    return;
+                } else if (simulation.backtrack == 1) {  // We could not add the order we just added. Wait till the next day
+                    // Simulate orders that are on it already
+                    finishSimulationToday();
+
+                    simulateNextDay();
+                    return;
+                }
+                backtrack = simulation.backtrack - 1;  // We couldn't put an order on the belt in a previous simulationstep
+            }
+
+            private boolean isValid() {
+                return backtrack == 0;
             }
         }
-        return minutes;
-    }
-
-    /**
-     * @param currentTime          The current time
-     * @param timeSpentOnThisStep  The time that is already spent on the current cycle
-     * @param ordersOnAssemblyLine An ordered list of orders and null values which is a snapshot of orders on the assembly line (first order is at the end of the line)
-     * @param pendingOrders        A list of orders that need to be placed on the assembly line
-     * @return The amount of steps you need to backtrack to get a valid scheduling. 0 means it is valid
-     */
-    private int simulateScheduling(DateTime currentTime, long overtime, long timeSpentOnThisStep, LinkedList<CarOrder> ordersOnAssemblyLine, LinkedList<CarOrder> pendingOrders) {
-        if (pendingOrders.size() == 0 && ordersOnAssemblyLine.stream().allMatch(Objects::isNull))
-            return 0;  // We have scheduled everything
-
-        // When will this cycle be done?
-        DateTime endTime = currentTime.addTime(-timeSpentOnThisStep + Math.max(getMinutesOnStep(ordersOnAssemblyLine), timeSpentOnThisStep));
-        var orderFinished = ordersOnAssemblyLine.pop();  // Remove the order from the assembly line
-
-        // If we are over the end of the day
-        if (endTime.getMinutesInDay() > END_SHIFT - overtime || endTime.getMinutesInDay() < START_SHIFT) {
-            if (orderFinished == null) { // If the first workstation is empty, and we are already over the deadline
-                var toBackTrack = ordersOnAssemblyLine.size();
-                while (ordersOnAssemblyLine.pop() == null) toBackTrack--;
-                return toBackTrack;
-            }
-            if (orderFinished.getStatus().equals(OrderStatus.Pending))
-                return ordersOnAssemblyLine.size() + 1;  // This is not a valid scheduling, and we need to backtrack the size of the assembly line
-        }
-
-        if (orderFinished != null) {
-            orderFinished.setEndTime(endTime);  // Set the predicted end time
-        }
-
-        // Now we add another order on the line
-        CarOrder nextOrderOnLine;
-        try {
-            nextOrderOnLine = pendingOrders.pop();
-        } catch (NoSuchElementException e) {
-            nextOrderOnLine = null;
-        }
-
-        // Now try to put the next order on the line
-        ordersOnAssemblyLine.addLast(nextOrderOnLine);
-        // Simulate the rest
-        int backtrack = simulateScheduling(endTime, overtime, 0, new LinkedList<>(ordersOnAssemblyLine), new LinkedList<>(pendingOrders));
-        if (backtrack == 0)
-            return 0;  // We can just add the next order on the line, without any problems at the end of the day
-        else if (backtrack == 1) {  // We could not add this order at the end of the assembly line. Wait till the next day
-            // Remove the order from the assembly line
-            ordersOnAssemblyLine.removeLast();
-            ordersOnAssemblyLine.add(null);
-
-            // We can first set the end times of the orders on the assembly line by simulating this first
-            backtrack = simulateScheduling(endTime, overtime, 0, new LinkedList<>(ordersOnAssemblyLine), new LinkedList<>());
-            if (backtrack != 0) return backtrack - 1;  // This is not really possible
-
-            // Now we put the next order on an empty assembly line the next day, the overtime is now always 0
-            currentTime = new DateTime(currentTime.getDays() + 1, START_SHIFT / 60, START_SHIFT % 60);
-            backtrack = simulateScheduling(currentTime, 0, 0, new LinkedList<>(Arrays.asList(null, null, nextOrderOnLine)), new LinkedList<>(pendingOrders));
-            if (backtrack == 0) return 0;
-        }
-        return backtrack - 1;
     }
 
     public void recalculatePredictedEndTimes() {
-        var ordersAssembly = new LinkedList<>(currentOrdersOnAssemblyLine);  // We need to make a copy
-        var pendingOrders = new LinkedList<>(getOrderedListOfPendingOrders());  // We need a linked list
-        int backtrack = simulateScheduling(timeManager.getCurrentTime(), 0, timeManager.getTimeSpentOnThisStep(), ordersAssembly, pendingOrders);
-        if (backtrack != 0) {
-            LinkedList<CarOrder> head = new LinkedList<>();
-            for (int i= 0; i < backtrack; i++) {
-                head.add(null);
-            }
-            head.addAll(pendingOrders);
-            simulateScheduling(timeManager.getCurrentTime(), overtime, timeManager.getTimeSpentOnThisStep(), ordersAssembly, head);
-        }
+        new Simulator().simulate();
     }
 
     public ProductionScheduler copy() {
