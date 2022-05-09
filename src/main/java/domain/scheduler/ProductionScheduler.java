@@ -190,25 +190,19 @@ public class ProductionScheduler {
             }
 
             private void finishSimulationToday() {
-                var simulationCurrentDay = new StepSimulator(endTime, previousOvertime, ordersOnAssemblyLine, new LinkedList<>());
-
-                // If this fails, the predicted time is longer than a whole day for a single order
-                if (!simulationCurrentDay.isValid())
-                    throw new RuntimeException("You've added an order that takes longer than a single day to make. We can't schedule it");
-                overtime = simulationCurrentDay.overtime;
+                var simulation = new StepSimulator(endTime, previousOvertime, ordersOnAssemblyLine, new LinkedList<>());
+                overtime = simulation.overtime;
             }
 
             private void simulateNextDay() {
                 var nextDay = startNextDay();
                 var emptyLine = IntStream.range(0, ordersOnAssemblyLine.size() + 1).mapToObj(o -> (CarOrder) null).toList();
 
-                var simulationNextDay = new StepSimulator(nextDay, overtime, emptyLine, pendingOrders);
+                var simulation = new StepSimulator(nextDay, overtime, emptyLine, pendingOrders);
 
-                if (!simulationNextDay.isValid()) {
+                if (!simulation.isValid()) {
                     // Rare case that the overtime is too much for a single order to be finished in a day
-                    simulationNextDay = new StepSimulator(nextDay.addTime(60 * 24), 0, emptyLine, pendingOrders);
-                    if (!simulationNextDay.isValid())
-                        throw new RuntimeException("You've added an order that takes longer than a single day to make. We can't schedule it");
+                    new StepSimulator(nextDay.addTime(60 * 24), 0, emptyLine, pendingOrders);
                 }
             }
 

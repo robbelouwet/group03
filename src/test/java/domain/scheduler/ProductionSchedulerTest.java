@@ -14,8 +14,7 @@ import utils.TestObjects;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -131,6 +130,39 @@ class ProductionSchedulerTest {
         assertEquals(new DateTime(1, 17, 40), pendingOrder5.getEndTime());
         assertEquals(new DateTime(1, 19, 20), pendingOrder6.getEndTime());
         assertEquals(new DateTime(2, 11, 0), pendingOrder7.getEndTime());
+    }
+
+    @Test
+    void recalculatePredictedEndTimesEndOfDay() {
+        timeManager = new TimeManager(new DateTime(0, 20, 0));
+        repo = new CarOrderRepository();
+        scheduler = new ProductionScheduler(
+                repo,
+                timeManager,
+                new FIFOSchedulingAlgorithm()
+        );
+
+        var order = TestObjects.getCarOrder();
+
+        repo.addOrder(order);
+
+        assertEquals(new DateTime(1, 8, 30), order.getEndTime());
+    }
+
+    @Test
+    void recalculatePredictedEndTimesWithTimeTooLong() {
+        timeManager = new TimeManager();
+        repo = new CarOrderRepository();
+        scheduler = new ProductionScheduler(
+                repo,
+                timeManager,
+                new FIFOSchedulingAlgorithm()
+        );
+
+        var model = new CarModel("PEND", new CarModelSpecification(new HashMap<>()), 60 * 6);
+        var order = new CarOrder(model, new HashMap<>());
+
+        assertThrows(Error.class, () -> repo.addOrder(order));
     }
 
     @Test
