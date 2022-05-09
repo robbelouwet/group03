@@ -19,8 +19,8 @@ public interface IManagerView extends IAssemblyLineStatusView {
 
     /**
      * This method shows the Car Options that can be chosen to give priority in the algorithm
-     * @param options A list of Key-Value pairs for the selected car options (Car Option - value)
-     *                This is not the same as all the possible options for an option, rather 1 selected
+     * @param options A list of Key-Value pairs for the selected car selectedOptions (Car Option - value)
+     *                This is not the same as all the possible selectedOptions for an option, rather 1 selected
      *                value for a Car Option Category.
      * @param algorithm The scheduling algorithm that has been chosen to change to.
      */

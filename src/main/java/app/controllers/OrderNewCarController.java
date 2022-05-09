@@ -66,15 +66,15 @@ public class OrderNewCarController {
 
     private void askNextOption(CarModel carModel, OptionSelector optionSelector) {
         var cat = getNextCategory(optionSelector);
-        if (cat != null) {  // If we are not finished selecting options
-            var options = optionSelector.getNotSelectedCategories().get(cat);  // Get the available options in this category
+        if (cat != null) {  // If we are not finished selecting selectedOptions
+            var options = optionSelector.getNotSelectedCategories().get(cat);  // Get the available selectedOptions in this category
             var option = ui.showCarOption(cat.getName(), options.stream().map(Option::name).collect(Collectors.toList()));
             if (option == null) {  // If we decided to cancel, return
                 return;
             }
             optionSelector.selectOption(options.stream().filter(option1 -> option1.name().equals(option)).findAny().orElseThrow());
             askNextOption(carModel, optionSelector);
-        } else {  // We are finished selecting options
+        } else {  // We are finished selecting selectedOptions
             if (ui.confirmOrder()) {  // Ask the user to confirm
                 var order = carOrderManager.submitCarOrder(carModel, optionSelector);
                 ui.showPredictedEndTime(order.getEndTime());

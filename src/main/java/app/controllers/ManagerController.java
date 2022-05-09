@@ -1,8 +1,12 @@
 package app.controllers;
 
+import app.ui.AlgorithmOptionsWrapper;
 import app.ui.ConsoleStatisticsReportGenerator;
 import app.ui.interfaces.IManagerView;
+import domain.car.options.Option;
+import domain.car.options.OptionCategory;
 import domain.scheduler.SchedulingAlgorithm;
+import services.AlgorithmOptions;
 import services.AssemblyManager;
 import services.ProductionSchedulerManager;
 
@@ -37,22 +41,30 @@ public class ManagerController extends AssemblyLineStatusController {
      * The user has chosen an algorithm and it has to be altered now.
      *
      * @param algorithm       The textual representation of the chosen algorithm.
-     * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
-     *                        Car Options need priority.
-     *                        Will be Optional.empty() if the algorithm doesn't need this.
+     * @param options wrapper class to store data or fields. Some algorithms need to know which selected Car Options need priority.
      */
-    public boolean selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
+    public boolean selectAlgorithm(String algorithm, AlgorithmOptionsWrapper options) {
         var algorithms = productionSchedulerManager.getSchedulingAlgorithms();
         for (String alg : algorithms) {
             if (alg.equals(algorithm)) {
-                return productionSchedulerManager.selectAlgorithm(algorithm, selectedOptions);
+                var selectedOptions = options.options();
+                return productionSchedulerManager.selectAlgorithm(algorithm, new AlgorithmOptions(convertOptions(selectedOptions)));
             }
         }
         return false;
     }
 
+    private Map<OptionCategory, Option> convertOptions(Map<String, String> selectedOptions) {
+        Map<OptionCategory, Option> options = new HashMap<>();
+        for (var cat : selectedOptions.keySet()) {
+            var category = new OptionCategory(cat);
+            options.put(category, new Option(category, selectedOptions.get(cat)));
+        }
+        return options;
+    }
+
     /**
-     * Method for the UI that retrieves the possible car options to give priority to.
+     * Method for the UI that retrieves the possible car selectedOptions to give priority to.
      *
      * @param algorithm The textual representation of the chosen algorithm.
      */

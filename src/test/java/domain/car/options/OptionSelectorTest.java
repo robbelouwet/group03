@@ -31,7 +31,7 @@ class OptionSelectorTest {
         assertEquals("Sport", sport.name());
         selector.selectOption(sport);
 
-        // Now there should be less spoiler options
+        // Now there should be less spoiler selectedOptions
         var options2 = selector.getNotSelectedCategories();
         assertEquals(List.of("Low"), options2.get(spoilerCat).stream().map(Option::name).collect(Collectors.toList()));
     }
