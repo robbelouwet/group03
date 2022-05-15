@@ -35,7 +35,7 @@ public class DateTime implements Comparable<DateTime> {
      * @return a new DateTime object that is `minutes` minutes before the time of `this`
      */
     public DateTime subtractTime(long minutes) {
-        return new DateTime(this.minutes - minutes);
+        return addTime(-minutes);
     }
 
     public DateTime subtractTime(DateTime time) {
@@ -43,21 +43,21 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * @return the amount of days `this `represents
+     * @return the amount of days `this` represents
      */
     public long getDays() {
         return minutes / (24 * 60);
     }
 
     /**
-     * @return the amount of hours in the current day `this `represents
+     * @return the amount of hours in the current day `this` represents
      */
     public long getHoursOfDay() {
         return (minutes % (24 * 60)) / 60;
     }
 
     /**
-     * @return the amount of minutes in the current hour `this `represents
+     * @return the amount of minutes in the current hour `this` represents
      */
     public long getMinutesOfHour() {
         return minutes % 60;
