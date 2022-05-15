@@ -6,7 +6,6 @@ import app.utils.ConsoleReader;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ManagerTextView implements IManagerView {
@@ -65,7 +64,7 @@ public class ManagerTextView implements IManagerView {
             if ("SB".equals(action)) {
                 managerController.showSpecificationBatchOrders(action);
             } else {
-                managerController.selectAlgorithm(action, Optional.empty());
+                managerController.selectAlgorithm(action, new AlgorithmOptionsWrapper(Map.of()));
             }
         } else if (!action.equals("cancel")) showErrorMessage("This algorithm doesn't exist!");
     }
@@ -73,7 +72,7 @@ public class ManagerTextView implements IManagerView {
     @Override
     public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
         if (options.isEmpty()) {
-            ConsoleReader.getInstance().println("No options possible... Choose other algorithm");
+            ConsoleReader.getInstance().println("No orders with the same set of car options... Choose other algorithm");
             return;
         }
         ConsoleReader.getInstance().println("Possible Car Options to Give Priority:");
@@ -87,7 +86,7 @@ public class ManagerTextView implements IManagerView {
 
         int index = askCarOptionsIndex(options.size());
         Map<String, String> selectedOptions = options.get(index - 1);
-        boolean success = managerController.selectAlgorithm(algorithm, Optional.of(selectedOptions));
+        boolean success = managerController.selectAlgorithm(algorithm, new AlgorithmOptionsWrapper(selectedOptions));
         if (!success)
             showErrorMessage("Something went wrong with selecting the algorithm!");
     }
@@ -98,7 +97,7 @@ public class ManagerTextView implements IManagerView {
     }
 
     /**
-     * For every unique key-value pairs of options we want to choose 1 and validate
+     * For every unique key-value pairs of selectedOptions we want to choose 1 and validate
      * if the input number is correct.
      */
     private int askCarOptionsIndex(int max) {

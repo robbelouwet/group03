@@ -41,7 +41,7 @@ public class OrderNewCarTextView implements IOrderNewCarView {
 
     @Override
     public String showCarModels(List<String> models) {
-        ConsoleReader.getInstance().println("Carmodel options:");
+        ConsoleReader.getInstance().println("Carmodel selectedOptions:");
         for (var model : models) {
             ConsoleReader.getInstance().println(model);
         }

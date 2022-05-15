@@ -70,7 +70,7 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> selectedOptions, String algorithm) {
 
             }
 
@@ -154,7 +154,7 @@ public class AdvanceIntegrationTest {
             }
 
             @Override
-            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> options, String algorithm) {
+            public void showPossibleOptionsForAlgorithm(List<Map<String, String>> selectedOptions, String algorithm) {
                 // TODO
             }
 

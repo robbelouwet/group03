@@ -8,9 +8,7 @@ import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
 import domain.order.OrderStatus;
-import domain.scheduler.DateTime;
-import domain.scheduler.FIFOSchedulingAlgorithm;
-import domain.scheduler.SpecificationBatchSchedulingAlgorithm;
+import domain.scheduler.*;
 
 import java.util.*;
 
@@ -89,14 +87,14 @@ public class DataSeeder {
      * Representation of the available scheduling algorithms that are available in the system.
      * Based on Key-Value pair:
      * Key = Textual representation of the Algorithm
-     * Value = Textual class name which represents the scheduling algorithm
+     * Value = Builder of the algorithm class so that we can construct it in a dynamic way.
      *
      * @return Map of Scheduling algorithms
      */
-    public static Map<String, String> getSchedulingAlgorithms() {
+    public static Map<String, AlgorithmBuilder> getSchedulingAlgorithms() {
         return Map.of(
-                "FIFO", FIFOSchedulingAlgorithm.class.getCanonicalName(),
-                "SB", SpecificationBatchSchedulingAlgorithm.class.getCanonicalName()
+                "FIFO", new FIFOBuilder(),
+                "SB", new SpecificationBatchBuilder()
         );
     }
 

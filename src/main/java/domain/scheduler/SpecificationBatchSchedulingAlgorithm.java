@@ -3,6 +3,7 @@ package domain.scheduler;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
+import lombok.Setter;
 
 import java.util.Comparator;
 import java.util.List;
@@ -11,12 +12,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorithm {
-    private final Map<OptionCategory, Option> selectedOptions;
-
-    public SpecificationBatchSchedulingAlgorithm(Map<OptionCategory, Option> selectedOptions) {
-        this.selectedOptions = selectedOptions;
-    }
-
+    // TODO this should be final but can't because we can't make a parametrized constructor
+    @Setter
+    private Map<OptionCategory, Option> selectedOptions;
 
     /*
       The Specification-Batch Algorithm is only finished when there are
