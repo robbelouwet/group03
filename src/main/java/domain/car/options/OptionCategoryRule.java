@@ -19,17 +19,17 @@ public class OptionCategoryRule {
 
     /**
      * When an option is selected for the category that contains this rule, call this method.
-     * It filters the available options on other categories based on the selected option.
+     * It filters the available selectedOptions on other categories based on the selected option.
      *
      * @param option           The selected option
-     * @param availableOptions All options that could be selected in each category before selecting this option
-     * @return All options that can be selected in each category after selecting this option
+     * @param availableOptions All selectedOptions that could be selected in each category before selecting this option
+     * @return All selectedOptions that can be selected in each category after selecting this option
      */
     public Map<OptionCategory, List<Option>> selected(Option option, Map<OptionCategory, List<Option>> availableOptions) {
         var newAvailable = availableReplacements.get(option);
         if (newAvailable != null) {
             for (var cat : newAvailable.entrySet()) {
-                // Filter the options we had available on the options which are available after selecting this option
+                // Filter the selectedOptions we had available on the selectedOptions which are available after selecting this option
                 availableOptions.put(cat.getKey(), availableOptions.get(cat.getKey()).stream().filter(option1 -> cat.getValue().contains(option1)).collect(Collectors.toList()));
             }
         }

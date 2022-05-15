@@ -28,10 +28,12 @@ class ProductionSchedulerTest {
     void setup() {
         timeManager = new TimeManager();
         repo = new CarOrderRepository();
+        var algorithmBuilder = new FIFOBuilder();
+        algorithmBuilder.reset();
         scheduler = new ProductionScheduler(
                 repo,
                 timeManager,
-                new FIFOSchedulingAlgorithm()
+                algorithmBuilder.getAlgorithm()
         );
 
         for (int i = 0; i < 3; i++) {
@@ -171,7 +173,9 @@ class ProductionSchedulerTest {
     void scheduleWhenNotSameDay() {
         var repo = new CarOrderRepository();
         var timeManager = new TimeManager();
-        var scheduler = new ProductionScheduler(repo, timeManager, new FIFOSchedulingAlgorithm());
+        var algorithmBuilder = new FIFOBuilder();
+        algorithmBuilder.reset();
+        var scheduler = new ProductionScheduler(repo, timeManager, algorithmBuilder.getAlgorithm());
         var order = TestObjects.getCarOrder();
         order.setStatus(OrderStatus.OnAssemblyLine);
         repo.addOrder(order);
@@ -197,20 +201,24 @@ class ProductionSchedulerTest {
         List<CarOrder> testOrders = TestObjects.getCarOrdersForAlgorithm();
 
         repo = new CarOrderRepository();
+        var algorithmBuilder = new SpecificationBatchBuilder();
+        algorithmBuilder.reset();
+        algorithmBuilder.setSelectedOptions(Map.of(
+                new OptionCategory("Body"), new Option(body, "Sedan"),
+                new OptionCategory("Color"), new Option(color, "Black"),
+                new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
+                new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
+                new OptionCategory("Seats"), new Option(seats, "Leather black"),
+                new OptionCategory("Airco"), new Option(airco, "Manual"),
+                new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
+                new OptionCategory("Spoiler"), new Option(spoiler, "None")
+        ));
+
 
         var scheduler = new ProductionScheduler(
                 repo,
                 new TimeManager(),
-                new SpecificationBatchSchedulingAlgorithm(Map.of(
-                        new OptionCategory("Body"), new Option(body, "Sedan"),
-                        new OptionCategory("Color"), new Option(color, "Black"),
-                        new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
-                        new OptionCategory("Gearbox"), new Option(gearbox, "6 speed manual"),
-                        new OptionCategory("Seats"), new Option(seats, "Leather black"),
-                        new OptionCategory("Airco"), new Option(airco, "Manual"),
-                        new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
-                        new OptionCategory("Spoiler"), new Option(spoiler, "None")
-                ))
+                algorithmBuilder.getAlgorithm()
         );
         for (var order : testOrders) repo.addOrder(order);
 

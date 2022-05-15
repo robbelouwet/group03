@@ -3,15 +3,10 @@ package services;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
-import domain.scheduler.DateTime;
-import domain.scheduler.ProductionScheduler;
-import domain.scheduler.SchedulingAlgorithm;
-import domain.scheduler.TimeManager;
+import domain.scheduler.*;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,46 +19,31 @@ public class ProductionSchedulerManager {
     private final ProductionScheduler productionScheduler;
     private final TimeManager timeManager;
     private final CarOrderRepository carOrderRepository;
+    private final AlgorithmDirector director;
 
     public ProductionSchedulerManager(ProductionScheduler productionScheduler, TimeManager timeManager, CarOrderRepository carOrderRepository) {
         this.productionScheduler = productionScheduler;
         this.timeManager = timeManager;
         this.carOrderRepository = carOrderRepository;
+        this.director = new AlgorithmDirector();
     }
 
     /**
      * New algorithm has been chosen. Needs to be altered in the system.
      *
-     * @param algorithm       Textual representation of the algorithm.
-     * @param selectedOptions Optional of selectedOptions. Some algorithms need to know which selected
-     *                        Car Options need priority.
+     * @param algorithm Textual representation of the algorithm.
+     * @param options   wrapper class to store data/fields for algorithm construction.
+     *                  Almost all algorithms need different parameters.
      * @return boolean whether the algorithm has been changed succesfully.
      */
-    public boolean selectAlgorithm(String algorithm, Optional<Map<String, String>> selectedOptions) {
-        var selectedAlgorithm = DataSeeder.getSchedulingAlgorithms().get(algorithm);
-        SchedulingAlgorithm schedulingAlgorithm;
-        try {
-            Class<?> clazz = Class.forName(selectedAlgorithm);
-            if (selectedOptions.isPresent()) {
-                // Specification-Batch
-                Constructor<?> ctor = clazz.getConstructor(Map.class);
-                Map<OptionCategory, Option> options = new LinkedHashMap<>();
-                for (var cat : selectedOptions.get().keySet()) {
-                    var category = new OptionCategory(cat);
-                    options.put(category, new Option(category, selectedOptions.get().get(cat)));
-                }
-                schedulingAlgorithm = (SchedulingAlgorithm) ctor.newInstance(options);
-            } else {
-                // FIFO
-                Constructor<?> ctor = clazz.getConstructor();
-                schedulingAlgorithm = (SchedulingAlgorithm) ctor.newInstance();
-            }
-            productionScheduler.switchAlgorithm(schedulingAlgorithm);
+    public boolean selectAlgorithm(String algorithm, AlgorithmOptions options) {
+        if (DataSeeder.getSchedulingAlgorithms().containsKey(algorithm)) {
+            var algorithmBuilder = DataSeeder.getSchedulingAlgorithms().get(algorithm);
+            var builtAlgorithm = director.buildAlgorithm(algorithmBuilder, options);
+            productionScheduler.switchAlgorithm(builtAlgorithm);
             return true;
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException e) {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -74,7 +54,7 @@ public class ProductionSchedulerManager {
     }
 
     /**
-     * Method for that calculates the possible car options to give priority to.
+     * Method for that calculates the possible car selectedOptions to give priority to.
      * Checks if the unique key-value pair combinations is present more than 2 times, if so:
      * then that unique combination is a possible combination to prioritize.
      *

@@ -24,10 +24,10 @@ public interface IOrderNewCarView {
     String showCarModels(List<String> models);
 
     /**
-     * Show the available options for a category
+     * Show the available selectedOptions for a category
      *
      * @param category The category
-     * @param options  All available options
+     * @param options  All available selectedOptions
      * @return The option that was selected, or null if cancelled
      */
     String showCarOption(String category, List<String> options);

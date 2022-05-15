@@ -44,7 +44,7 @@ public class OrderNewCarIntegrationTest {
                 switch (prints++) {
                     case 1 -> assertEquals("Pending orders:", l);  // 1
                     case 2, 47, 141 -> assertEquals("Finished orders:", l); // 1
-                    case 3 -> assertEquals("Carmodel options:", l);  // 3
+                    case 3 -> assertEquals("Carmodel selectedOptions:", l);  // 3
                     case 4 -> assertEquals("Model A", l);  // 3
                     case 5 -> assertEquals("Model B", l);  // 3
                     case 6 -> assertEquals("Model C", l);  // 3

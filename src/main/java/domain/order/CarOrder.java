@@ -32,7 +32,7 @@ public class CarOrder {
 
     /**
      * @param carModel  the model of this car
-     * @param data      the selection op options, a map which maps the option-name to its selected value
+     * @param data      the selection op selectedOptions, a map which maps the option-name to its selected value
      */
     public CarOrder(CarModel carModel, Map<OptionCategory, Option> data) {
         if (data == null || carModel == null) {
@@ -88,7 +88,7 @@ public class CarOrder {
     }
 
     /**
-     * @return the concrete selection of options, a map which maps the option-name to its value
+     * @return the concrete selection of selectedOptions, a map which maps the option-name to its value
      */
     public Map<OptionCategory, Option> getSelections() {
         return copySelections(selections);

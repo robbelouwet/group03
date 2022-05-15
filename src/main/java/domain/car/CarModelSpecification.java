@@ -7,7 +7,7 @@ import domain.car.options.OptionSelector;
 import java.util.*;
 
 /**
- * An immutable object that represents the options you can select for a carmodel
+ * An immutable object that represents the selectedOptions you can select for a carmodel
  */
 public class CarModelSpecification {
     private final Map<OptionCategory, List<Option>> options;
@@ -20,7 +20,7 @@ public class CarModelSpecification {
     }
 
     /**
-     * Get a helper class which validates selected options for this specification
+     * Get a helper class which validates selected selectedOptions for this specification
      */
     public OptionSelector getOptionSelector() {
         return new OptionSelector(copyOptions(options));
