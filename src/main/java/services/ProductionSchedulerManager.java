@@ -3,10 +3,7 @@ package services;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
-import domain.scheduler.DateTime;
-import domain.scheduler.ProductionScheduler;
-import domain.scheduler.SchedulingAlgorithm;
-import domain.scheduler.TimeManager;
+import domain.scheduler.*;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
 
@@ -22,27 +19,31 @@ public class ProductionSchedulerManager {
     private final ProductionScheduler productionScheduler;
     private final TimeManager timeManager;
     private final CarOrderRepository carOrderRepository;
+    private final AlgorithmDirector director;
 
     public ProductionSchedulerManager(ProductionScheduler productionScheduler, TimeManager timeManager, CarOrderRepository carOrderRepository) {
         this.productionScheduler = productionScheduler;
         this.timeManager = timeManager;
         this.carOrderRepository = carOrderRepository;
+        this.director = new AlgorithmDirector();
     }
 
     /**
      * New algorithm has been chosen. Needs to be altered in the system.
      *
-     * @param algorithm       Textual representation of the algorithm.
-     * @param options wrapper class to store data/fields for algorithm construction.
-     *                Almost all algorithms need different parameters.
+     * @param algorithm Textual representation of the algorithm.
+     * @param options   wrapper class to store data/fields for algorithm construction.
+     *                  Almost all algorithms need different parameters.
      * @return boolean whether the algorithm has been changed succesfully.
      */
     public boolean selectAlgorithm(String algorithm, AlgorithmOptions options) {
-        var algorithmBuilder = DataSeeder.getSchedulingAlgorithms().get(algorithm);
-        algorithmBuilder.reset();
-        algorithmBuilder.setSelectedOptions(options.selectedOptions());
-        productionScheduler.switchAlgorithm(algorithmBuilder.getAlgorithm());
-        return true;
+        if (DataSeeder.getSchedulingAlgorithms().containsKey(algorithm)) {
+            var algorithmBuilder = DataSeeder.getSchedulingAlgorithms().get(algorithm);
+            var builtAlgorithm = director.buildAlgorithm(algorithmBuilder, options);
+            productionScheduler.switchAlgorithm(builtAlgorithm);
+            return true;
+        }
+        return false;
     }
 
     /**
