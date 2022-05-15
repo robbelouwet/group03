@@ -43,7 +43,7 @@ public class DateTime implements Comparable<DateTime> {
     }
 
     /**
-     * @return the amount of days `this `represents
+     * @return the amount of days `this` represents
      */
     public long getDays() {
         return minutes / (24 * 60);
