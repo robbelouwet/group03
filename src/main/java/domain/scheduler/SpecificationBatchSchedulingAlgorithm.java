@@ -3,17 +3,12 @@ package domain.scheduler;
 import domain.car.options.Option;
 import domain.car.options.OptionCategory;
 import domain.order.CarOrder;
-import lombok.Setter;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorithm {
-    // TODO this should be final but can't because we can't make a parametrized constructor
-    @Setter
     private Map<OptionCategory, Option> selectedOptions;
 
     /*
@@ -23,6 +18,20 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
     private boolean isFinished(List<CarOrder> pendingOrders) {
         return pendingOrders.stream()
                 .noneMatch(o -> o.getSelections().equals(selectedOptions));
+    }
+
+    /**
+     * We need to validate the selectedOptions and make a copy without reference to the original one.
+     * @param selectedOptions a Map of OptionCategory as key and an Option as value.
+     *        This serves as the chosen options to prioritize the orders for the specification batch algorithm.
+     */
+    public void setSelectedOptions(Map<OptionCategory, Option> selectedOptions){
+        if (selectedOptions != null &&
+                selectedOptions.keySet().stream().allMatch(Objects::nonNull) &&
+                selectedOptions.entrySet().stream().allMatch(Objects::nonNull)){
+            this.selectedOptions = new HashMap<>(selectedOptions);
+        }
+        else throw new IllegalStateException("The selected options are not valid!");
     }
 
     @Override

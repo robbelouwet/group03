@@ -19,12 +19,16 @@ public class AppController {
 
         boolean quit = false;
 
-        switch (role) {
-            case "manager" -> appView.showManager();
-            case "garage holder" -> appView.showGarageHolder();
-            case "mechanic" -> appView.showMechanic();
-            case "quit" -> quit = true;
-            default -> ConsoleReader.getInstance().println("Sorry, don't know that role");
+        try {
+            switch (role) {
+                case "manager" -> appView.showManager();
+                case "garage holder" -> appView.showGarageHolder();
+                case "mechanic" -> appView.showMechanic();
+                case "quit" -> quit = true;
+                default -> ConsoleReader.getInstance().println("Sorry, don't know that role");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
         if (quit) return;
         loop();
