@@ -7,16 +7,20 @@ import org.junit.jupiter.api.Test;
 import persistence.CarOrderRepository;
 import persistence.DataSeeder;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StatisticsIntegrationTest {
 
     public StatisticsIntegrationTest() {
         ConsoleReader.setInstance(new IConsoleReader() {
             int number = 0;
+            int prints = 0;
+
             @Override
             public String ask(String str) {
-                return switch (number++){
+                return switch (number++) {
                     case 0 -> "manager";
                     case 1 -> "statistics";
                     default -> "quit";
@@ -25,12 +29,18 @@ public class StatisticsIntegrationTest {
 
             @Override
             public void println(String l) {
+                switch (prints++) {
+                    case 0 -> assertEquals("Hi manager!", l);
+                    case 1 -> assertEquals("""
+                            STATISTICS
 
+                            No orders were finished!
+                            """, l);
+                }
             }
 
             @Override
             public void print(String s) {
-
             }
 
             @Override
