@@ -10,13 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarCatalog;
 import persistence.CarOrderRepository;
+import services.AlgorithmOptions;
 import utils.TestObjects;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ProductionSchedulerTest {
     CarOrderRepository repo;
@@ -203,7 +202,7 @@ class ProductionSchedulerTest {
         repo = new CarOrderRepository();
         var algorithmBuilder = new SpecificationBatchBuilder();
         algorithmBuilder.reset();
-        algorithmBuilder.setSelectedOptions(Map.of(
+        AlgorithmOptions options = new AlgorithmOptions(Map.of(
                 new OptionCategory("Body"), new Option(body, "Sedan"),
                 new OptionCategory("Color"), new Option(color, "Black"),
                 new OptionCategory("Engine"), new Option(engine, "Standard 2l v4"),
@@ -213,6 +212,7 @@ class ProductionSchedulerTest {
                 new OptionCategory("Wheels"), new Option(wheels, "Comfort"),
                 new OptionCategory("Spoiler"), new Option(spoiler, "None")
         ));
+        algorithmBuilder.setSelectedOptions(options);
 
 
         var scheduler = new ProductionScheduler(

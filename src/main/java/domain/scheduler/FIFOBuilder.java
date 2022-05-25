@@ -1,9 +1,6 @@
 package domain.scheduler;
 
-import domain.car.options.Option;
-import domain.car.options.OptionCategory;
-
-import java.util.Map;
+import services.AlgorithmOptions;
 
 public class FIFOBuilder implements AlgorithmBuilder {
     private FIFOSchedulingAlgorithm schedulingAlgorithm;
@@ -14,7 +11,7 @@ public class FIFOBuilder implements AlgorithmBuilder {
     }
 
     @Override
-    public void setSelectedOptions(Map<OptionCategory, Option> options) {
+    public void setSelectedOptions(AlgorithmOptions options) {
         // this does nothing
     }
 

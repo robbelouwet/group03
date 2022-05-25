@@ -1,9 +1,6 @@
 package domain.scheduler;
 
-import domain.car.options.Option;
-import domain.car.options.OptionCategory;
-
-import java.util.Map;
+import services.AlgorithmOptions;
 
 /**
  * --- BUILDER PATTERN ---
@@ -24,7 +21,7 @@ public interface AlgorithmBuilder {
      *
      * @param options a Map that serves as the chosen options to prioritize the pending orders for the algorithm.
      */
-    void setSelectedOptions(Map<OptionCategory, Option> options);
+    void setSelectedOptions(AlgorithmOptions options);
 
     /**
      * Construction of the algorithm has been completed, now we need the concrete implementation.

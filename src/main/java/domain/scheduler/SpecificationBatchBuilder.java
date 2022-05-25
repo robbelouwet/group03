@@ -1,9 +1,6 @@
 package domain.scheduler;
 
-import domain.car.options.Option;
-import domain.car.options.OptionCategory;
-
-import java.util.Map;
+import services.AlgorithmOptions;
 
 public class SpecificationBatchBuilder implements AlgorithmBuilder {
     private SpecificationBatchSchedulingAlgorithm schedulingAlgorithm;
@@ -14,8 +11,8 @@ public class SpecificationBatchBuilder implements AlgorithmBuilder {
     }
 
     @Override
-    public void setSelectedOptions(Map<OptionCategory, Option> options) {
-        schedulingAlgorithm.setSelectedOptions(options);
+    public void setSelectedOptions(AlgorithmOptions options) {
+        schedulingAlgorithm.setSelectedOptions(options.selectedOptions());
     }
 
     @Override

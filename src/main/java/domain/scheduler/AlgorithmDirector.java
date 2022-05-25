@@ -22,7 +22,7 @@ public class AlgorithmDirector {
      */
     public SchedulingAlgorithm buildAlgorithm(AlgorithmBuilder builder, AlgorithmOptions options){
         builder.reset();
-        builder.setSelectedOptions(options.selectedOptions());
+        builder.setSelectedOptions(options);
         return builder.getAlgorithm();
     }
 }
