@@ -24,6 +24,7 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
      * We need to validate the selectedOptions and make a copy without reference to the original one.
      * @param selectedOptions a Map of OptionCategory as key and an Option as value.
      *        This serves as the chosen options to prioritize the orders for the specification batch algorithm.
+     * @throws IllegalArgumentException if selectedOptions is null, a key is null or an entry is null
      */
     public void setSelectedOptions(Map<OptionCategory, Option> selectedOptions){
         if (selectedOptions != null &&
@@ -31,7 +32,7 @@ public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorith
                 selectedOptions.entrySet().stream().allMatch(Objects::nonNull)){
             this.selectedOptions = new HashMap<>(selectedOptions);
         }
-        else throw new IllegalStateException("The selected options are not valid!");
+        else throw new IllegalArgumentException("The selected options are not valid!");
     }
 
     @Override
