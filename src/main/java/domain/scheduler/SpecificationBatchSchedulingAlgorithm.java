@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SpecificationBatchSchedulingAlgorithm implements SchedulingAlgorithm {
-    // TODO this should be final but can't because we can't make a parametrized constructor
     @Setter
     private Map<OptionCategory, Option> selectedOptions;
 
