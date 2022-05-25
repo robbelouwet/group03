@@ -48,7 +48,12 @@ public class ManagerController extends AssemblyLineStatusController {
         for (String alg : algorithms) {
             if (alg.equals(algorithm)) {
                 var selectedOptions = options.options();
-                return productionSchedulerManager.selectAlgorithm(algorithm, new AlgorithmOptions(convertOptions(selectedOptions)));
+                try {
+                    return productionSchedulerManager.selectAlgorithm(algorithm, new AlgorithmOptions(convertOptions(selectedOptions)));
+                } catch (Exception e) {
+                    ui.showErrorMessage(e.getMessage());
+                    return false;
+                }
             }
         }
         return false;
