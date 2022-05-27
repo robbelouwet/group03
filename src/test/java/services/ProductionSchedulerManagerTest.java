@@ -7,7 +7,7 @@ import domain.scheduler.TimeManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.CarOrderRepository;
-import persistence.DataSeeder;
+import utils.TestObjects;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ class ProductionSchedulerManagerTest {
     @Test
     void getStatistics() {
         var repo = mock(CarOrderRepository.class);
-        var testOrders = DataSeeder.delayedTestOrders();
+        var testOrders = TestObjects.delayedTestOrders();
         when(repo.getOrders()).thenReturn(testOrders);
 
         var PSManager = new ProductionSchedulerManager(productionScheduler, timeManager, repo);

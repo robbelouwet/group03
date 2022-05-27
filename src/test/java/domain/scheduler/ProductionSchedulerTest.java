@@ -16,6 +16,9 @@ import utils.TestObjects;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ProductionSchedulerTest {
     CarOrderRepository repo;
@@ -27,12 +30,19 @@ class ProductionSchedulerTest {
     void setup() {
         timeManager = new TimeManager();
         repo = new CarOrderRepository();
-        var algorithmBuilder = new FIFOBuilder();
-        algorithmBuilder.reset();
+
+        // Create a mocked instance of a scheduling algorithm
+        var algorithm = mock(SchedulingAlgorithm.class);
+
+        when(algorithm.getOrderedListOfPendingOrders(any())).thenAnswer((invocation) -> invocation.getArguments()[0]);
+        when(algorithm.getNextOrder(any())).thenCallRealMethod();
+        when(algorithm.nextAlgorithm(any())).thenReturn(algorithm);
+
+
         scheduler = new ProductionScheduler(
                 repo,
                 timeManager,
-                algorithmBuilder.getAlgorithm()
+                algorithm
         );
 
         for (int i = 0; i < 3; i++) {
